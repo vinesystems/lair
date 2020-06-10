@@ -7,3 +7,7 @@ edition = "2018"
 
 [dependencies]
 ndarray = "0.13"
+num-traits = "0.2"
+
+[dev-dependencies]
+approx = "0.3"

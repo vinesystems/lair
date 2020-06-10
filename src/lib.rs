@@ -1,0 +1,16 @@
+pub(crate) mod lapack;
+
+use ndarray::{Array1, ArrayBase, Data, Ix1, Ix2};
+use num_traits::Float;
+use std::ops::{DivAssign, SubAssign};
+
+pub fn solve<A, SA, SB>(a: &ArrayBase<SA, Ix2>, b: &ArrayBase<SB, Ix1>) -> Array1<A>
+where
+    A: Float + SubAssign + DivAssign,
+    SA: Data<Elem = A>,
+    SB: Data<Elem = A>,
+{
+    let mut a = a.to_owned();
+    let p = lapack::getrf(&mut a);
+    lapack::getrs(&a, &p, b)
+}
