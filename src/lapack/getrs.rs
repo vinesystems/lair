@@ -1,6 +1,4 @@
-use ndarray::{Array1, ArrayBase, Axis, Data, Ix1, Ix2};
-use num_traits::Float;
-use std::ops::{DivAssign, SubAssign};
+use ndarray::{Array1, ArrayBase, Axis, Data, Ix1, Ix2, NdFloat};
 
 pub(crate) fn getrs<A, SA, SB>(
     a: &ArrayBase<SA, Ix2>,
@@ -8,7 +6,7 @@ pub(crate) fn getrs<A, SA, SB>(
     b: &ArrayBase<SB, Ix1>,
 ) -> Array1<A>
 where
-    A: Float + SubAssign + DivAssign,
+    A: NdFloat,
     SA: Data<Elem = A>,
     SB: Data<Elem = A>,
 {

@@ -1,10 +1,8 @@
-use ndarray::{ArrayBase, DataMut, Ix2};
-use num_traits::Float;
-use std::ops::{Div, SubAssign};
+use ndarray::{ArrayBase, DataMut, Ix2, NdFloat};
 
 pub(crate) fn getrf<A, S>(a: &mut ArrayBase<S, Ix2>) -> Vec<usize>
 where
-    A: Float + Div + SubAssign,
+    A: NdFloat,
     S: DataMut<Elem = A>,
 {
     let mut p = (0..a.nrows()).collect::<Vec<_>>();
