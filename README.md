@@ -11,6 +11,14 @@ matrix representation.
 
 * Rust ≥ 1.37
 
+## Features
+
+Lair is still in an early stage, and provides only a limited set of functions,
+including the followings:
+
+* An equation solver for a system of linear scalar equations
+* Matrix builders for special matrices such as circulant and companion matrices
+
 ## License
 
 Licensed under [Apache License, Version 2.0][apache-license]
