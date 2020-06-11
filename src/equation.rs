@@ -1,4 +1,4 @@
-//! Solving equations.
+//! Matrix equation solvers.
 
 use crate::{lapack, InvalidInput};
 use ndarray::{Array1, ArrayBase, Data, Ix1, Ix2, NdFloat};
@@ -17,7 +17,7 @@ use ndarray::{Array1, ArrayBase, Data, Ix1, Ix2, NdFloat};
 /// # Examples
 ///
 /// ```
-/// use lair::solving::solve;
+/// use lair::equation::solve;
 ///
 /// // Solve the system of equations:
 /// //   3 * x0 + x1 = 9

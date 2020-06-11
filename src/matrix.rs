@@ -1,4 +1,4 @@
-//! Special matrices.
+//! Matrix functions and special matrices.
 
 use crate::InvalidInput;
 use ndarray::{Array2, ArrayBase, NdFloat};
@@ -8,7 +8,7 @@ use ndarray::{Array2, ArrayBase, NdFloat};
 /// # Examples
 ///
 /// ```
-/// use lair::matrices::circulant;
+/// use lair::matrix::circulant;
 ///
 /// let a = vec![1., 2., 3.];
 /// let c = circulant(&a);
@@ -42,7 +42,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use lair::matrices::companion;
+/// use lair::matrix::companion;
 ///
 /// let a = vec![1., -10., 31., -30.];
 /// let c = companion(&a).expect("valid input");
