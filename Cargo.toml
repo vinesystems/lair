@@ -1,9 +1,16 @@
 [package]
 name = "lair"
 version = "0.1.0"
+description = "Linear algebra in Rust"
+readme = "README.md"
+homepage = "https://github.com/vinesystems/lair"
+repository = "https://github.com/vinesystems/lair"
 license = "Apache-2.0"
+keywords = ["linear-algebra", "matrix", "decomposition"]
+categories = ["mathematics"]
 authors = ["Min Kim <msk@dolbo.net>"]
 edition = "2018"
+exclude = ["./github"]
 
 [dependencies]
 ndarray = "0.13"
