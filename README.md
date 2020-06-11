@@ -5,6 +5,8 @@ matrix representation.
 
 [ndarray]: https://github.com/bluss/ndarray
 
+[![Coverage Status](https://codecov.io/gh/vinesystems/lair/branch/master/graphs/badge.svg)](https://codecov.io/gh/vinesystems/lair)
+
 ## Requirements
 
 * Rust ≥ 1.37
