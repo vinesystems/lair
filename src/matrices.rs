@@ -33,8 +33,11 @@ where
 ///
 /// # Errors
 ///
-/// If `a` contains less than two coefficients, or `a[0]` is 0, an error is
-/// returned.
+/// * [`InvalidInput::Shape`] if `a` contains less than two coefficients.
+/// * [`InvalidInput::Value`] if `a[0]` is zero.
+///
+/// [`InvalidInput::Shape`]: ../enum.InvalidInput.html#variant.Shape
+/// [`InvalidInput::Value`]: ../enum.InvalidInput.html#variant.Value
 ///
 /// # Examples
 ///
@@ -50,12 +53,16 @@ where
     A: NdFloat,
 {
     if a.len() < 2 {
-        return Err("input polynomial must have at least two coefficients"
-            .to_string()
-            .into());
+        return Err(InvalidInput::Shape(format!(
+            "input polynomial has {} coefficient; expected at least two",
+            a.len()
+        )));
     }
     if a[0] == A::zero() {
-        return Err("the first coefficient may not be zero".to_string().into());
+        return Err(InvalidInput::Value(format!(
+            "invalid first coefficient {}, expected a non-zero value",
+            a[0]
+        )));
     }
 
     let mut matrix = Array2::<A>::zeros((a.len() - 1, a.len() - 1));

@@ -38,9 +38,9 @@ mod test {
     use ndarray::{arr1, arr2};
 
     #[test]
-    fn getrs_2() {
+    fn square_2x2() {
         let mut a = arr2(&[[1_f64, 2_f64], [3_f64, 4_f64]]);
-        let p = crate::lapack::getrf(&mut a);
+        let p = crate::lapack::getrf(&mut a).expect("valid input");
         assert_eq!(p, vec![1, 0]);
         let b = arr1(&[3_f64, 7_f64]);
         let x = super::getrs(&a, &p, &b);
@@ -49,21 +49,21 @@ mod test {
     }
 
     #[test]
-    fn getrs_5() {
+    fn square_5x5() {
         let mut a = arr2(&[
-            [1_f64, 2_f64, 3_f64, 4_f64, 5_f64],
-            [2_f64, 3_f64, 4_f64, 5_f64, 6_f64],
-            [3_f64, 4_f64, 5_f64, 6_f64, 7_f64],
-            [4_f64, 5_f64, 6_f64, 7_f64, 8_f64],
-            [5_f64, 6_f64, 7_f64, 8_f64, 9_f64],
+            [1_f64, 2_f64, 3_f64, 1_f64, 2_f64],
+            [2_f64, 2_f64, 1_f64, 3_f64, 3_f64],
+            [3_f64, 1_f64, 2_f64, 2_f64, 1_f64],
+            [2_f64, 3_f64, 3_f64, 1_f64, 1_f64],
+            [1_f64, 3_f64, 1_f64, 3_f64, 1_f64],
         ]);
-        let p = crate::lapack::getrf(&mut a);
-        let b = arr1(&[5_f64, 6_f64, 7_f64, 8_f64, 9_f64]);
+        let p = crate::lapack::getrf(&mut a).expect("valid input");
+        let b = arr1(&[9_f64, 11_f64, 9_f64, 10_f64, 9_f64]);
         let x = super::getrs(&a, &p, &b);
-        assert_abs_diff_eq!(x[0], 0., epsilon = 1e-8);
-        assert_abs_diff_eq!(x[1], 0., epsilon = 1e-8);
-        assert_abs_diff_eq!(x[2], 0., epsilon = 1e-8);
-        assert_abs_diff_eq!(x[3], 0., epsilon = 1e-8);
-        assert_abs_diff_eq!(x[4], 1., epsilon = 1e-8);
+        assert_abs_diff_eq!(x[0], 1.);
+        assert_abs_diff_eq!(x[1], 1.);
+        assert_abs_diff_eq!(x[2], 1.);
+        assert_abs_diff_eq!(x[3], 1.);
+        assert_abs_diff_eq!(x[4], 1.);
     }
 }
