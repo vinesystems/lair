@@ -2,7 +2,7 @@ use ndarray::{Array2, ArrayBase, Data, DataMut, Ix1, Ix2, LinalgScalar};
 use num_traits::Float;
 use std::ops::SubAssign;
 
-pub(crate) fn geqrf<A, S>(a: &mut ArrayBase<S, Ix2>) -> Array2<A>
+pub fn geqrf<A, S>(a: &mut ArrayBase<S, Ix2>) -> Array2<A>
 where
     A: Float + std::iter::Sum + LinalgScalar + SubAssign,
     S: DataMut<Elem = A>,
