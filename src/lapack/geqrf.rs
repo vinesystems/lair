@@ -1,10 +1,9 @@
-use ndarray::{Array2, ArrayBase, Data, DataMut, Ix1, Ix2, LinalgScalar};
-use num_traits::Float;
+use ndarray::{Array2, ArrayBase, Data, DataMut, Ix1, Ix2, LinalgScalar, NdFloat};
 use std::ops::SubAssign;
 
 pub fn geqrf<A, S>(a: &mut ArrayBase<S, Ix2>) -> Array2<A>
 where
-    A: Float + std::iter::Sum + LinalgScalar + SubAssign,
+    A: NdFloat + std::iter::Sum + LinalgScalar + SubAssign,
     S: DataMut<Elem = A>,
 {
     let mut r = Array2::<A>::zeros((a.nrows(), a.ncols()));
@@ -14,7 +13,7 @@ where
     let len = euclidean(&a.column(0));
     r.row_mut(0)[0] = len;
     for ai in a.column_mut(0) {
-        *ai = *ai / len;
+        *ai /= len;
     }
 
     for j in 1..a.ncols() {
@@ -41,7 +40,7 @@ where
 
 fn euclidean<A, S>(v: &ArrayBase<S, Ix1>) -> A
 where
-    A: Float + LinalgScalar + std::iter::Sum,
+    A: NdFloat + LinalgScalar + std::iter::Sum,
     S: Data<Elem = A>,
 {
     let len_sq: A = v.iter().map(|vi| *vi * *vi).sum();
