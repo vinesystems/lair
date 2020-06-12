@@ -5,6 +5,8 @@ matrix representation.
 
 [ndarray]: https://github.com/bluss/ndarray
 
+[![crates.io](https://img.shields.io/crates/v/lair)](https://crates.io/crates/lair)
+[![Documentation](https://docs.rs/lair/badge.svg)](https://docs.rs/lair)
 [![Coverage Status](https://codecov.io/gh/vinesystems/lair/branch/master/graphs/badge.svg)](https://codecov.io/gh/vinesystems/lair)
 
 ## Requirements
