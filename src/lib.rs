@@ -8,7 +8,6 @@ pub mod decomposition;
 pub mod equation;
 pub(crate) mod lapack;
 pub mod matrix;
-pub use lapack::geqrf;
 
 /// An error which can be returned when a function argument is invalid.
 #[derive(Debug, thiserror::Error)]
