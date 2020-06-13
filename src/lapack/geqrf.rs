@@ -49,6 +49,7 @@ where
 
 #[cfg(test)]
 mod test {
+    use approx::relative_eq;
     use ndarray::{arr1, arr2};
 
     #[test]
@@ -71,7 +72,7 @@ mod test {
     }
 
     #[test]
-    fn geqrf_4() {
+    fn geqrf_43() {
         let a = arr2(&[
             [1_f32, 2_f32, 3_f32],
             [2_f32, 2_f32, 1_f32],
@@ -82,5 +83,21 @@ mod test {
 
         let r = super::geqrf(&mut q);
         assert_eq!(q.dot(&r), a);
+    }
+
+    #[test]
+    fn geqrf_34() {
+        let a = arr2(&[
+            [1_f32, 2_f32, 3_f32, 2_f32],
+            [2_f32, 2_f32, 1_f32, 3_f32],
+            [3_f32, 1_f32, 2_f32, 3_f32],
+        ]);
+        let mut q = a.clone();
+
+        let r = super::geqrf(&mut q);
+        assert!(a
+            .iter()
+            .zip(q.dot(&r).iter())
+            .all(|(a_elem, ret_elem)| relative_eq!(*a_elem, *ret_elem)));
     }
 }
