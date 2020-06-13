@@ -3,7 +3,7 @@
 //!
 //! [ndarray]: https://docs.rs/ndarray/
 
-// TODO: pub mod decomposition;
+pub mod decomposition;
 // TODO: pub mod eigen;
 pub mod equation;
 pub(crate) mod lapack;

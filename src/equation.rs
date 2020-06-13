@@ -1,7 +1,9 @@
 //! Matrix equation solvers.
 
-use crate::{lapack, InvalidInput};
+use crate::decomposition::LUFactorized;
+use crate::InvalidInput;
 use ndarray::{Array1, ArrayBase, Data, Ix1, Ix2, NdFloat};
+use std::convert::TryFrom;
 
 /// Solves a system of linear scalar equations.
 ///
@@ -48,10 +50,7 @@ where
             a.nrows()
         )));
     }
-    let mut a = a.to_owned();
-    let p = match lapack::getrf(&mut a) {
-        Ok(p) => p,
-        Err(_) => return Err(InvalidInput::Value("`a` is a singular matrix".to_string())),
-    };
-    Ok(lapack::getrs(&a, &p, b))
+    let factorized = LUFactorized::try_from(a.to_owned())
+        .map_err(|_| InvalidInput::Value("`a` is a singular matrix".to_string()))?;
+    Ok(factorized.solve(b))
 }

@@ -18,6 +18,7 @@ matrix representation.
 Lair is still in an early stage, and provides only a limited set of functions,
 including the followings:
 
+* LU decomposition
 * An equation solver for a system of linear scalar equations
 * Matrix builders for special matrices such as circulant and companion matrices
 
