@@ -6,7 +6,7 @@ where
     A: NdFloat + std::iter::Sum + LinalgScalar + SubAssign,
     S: DataMut<Elem = A>,
 {
-    let mut r = Array2::<A>::zeros((a.nrows(), a.ncols()));
+    let mut r = Array2::<A>::zeros((a.ncols(), a.ncols()));
     if a.ncols() < 1 {
         return r;
     }
@@ -59,24 +59,28 @@ mod test {
 
     #[test]
     fn geqrf_3() {
-        let mut a = arr2(&[
+        let a = arr2(&[
             [1_f64, 2_f64, 4_f64],
             [0_f64, 0_f64, 5_f64],
             [0_f64, 3_f64, 6_f64],
         ]);
-        let q = arr2(&[
-            [1_f64, 0_f64, 0_f64],
-            [0_f64, 0_f64, 1_f64],
-            [0_f64, 1_f64, 0_f64],
-        ]);
-        let r = arr2(&[
-            [1_f64, 2_f64, 4_f64],
-            [0_f64, 3_f64, 6_f64],
-            [0_f64, 0_f64, 5_f64],
-        ]);
+        let mut q = a.clone();
 
-        let r_ret = super::geqrf(&mut a);
-        assert_eq!(r_ret, r);
-        assert_eq!(a, q);
+        let r = super::geqrf(&mut q);
+        assert_eq!(q.dot(&r), a);
+    }
+
+    #[test]
+    fn geqrf_4() {
+        let a = arr2(&[
+            [1_f32, 2_f32, 3_f32],
+            [2_f32, 2_f32, 1_f32],
+            [3_f32, 1_f32, 2_f32],
+            [2_f32, 3_f32, 3_f32],
+        ]);
+        let mut q = a.clone();
+
+        let r = super::geqrf(&mut q);
+        assert_eq!(q.dot(&r), a);
     }
 }
