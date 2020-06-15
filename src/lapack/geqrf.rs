@@ -1,6 +1,16 @@
 use ndarray::{Array2, ArrayBase, Data, DataMut, Ix1, Ix2, LinalgScalar, NdFloat};
 use std::ops::SubAssign;
 
+/// Returns `R` matrix, and modify `a` to `Q` matrix
+///
+/// # Arguments
+///
+/// * `a` - A full column rank matrix
+///
+/// # Remarks
+///
+/// This function does QR decomposition using Gram-Schmidt method
+/// a (Q): m x n; R: n x n;
 pub fn geqrf<A, S>(a: &mut ArrayBase<S, Ix2>) -> Array2<A>
 where
     A: NdFloat + std::iter::Sum + LinalgScalar + SubAssign,
@@ -83,21 +93,5 @@ mod test {
 
         let r = super::geqrf(&mut q);
         assert_eq!(q.dot(&r), a);
-    }
-
-    #[test]
-    fn geqrf_34() {
-        let a = arr2(&[
-            [1_f32, 2_f32, 3_f32, 2_f32],
-            [2_f32, 2_f32, 1_f32, 3_f32],
-            [3_f32, 1_f32, 2_f32, 3_f32],
-        ]);
-        let mut q = a.clone();
-
-        let r = super::geqrf(&mut q);
-        assert!(a
-            .iter()
-            .zip(q.dot(&r).iter())
-            .all(|(a_elem, ret_elem)| relative_eq!(*a_elem, *ret_elem)));
     }
 }
