@@ -59,7 +59,6 @@ where
 
 #[cfg(test)]
 mod test {
-    use approx::relative_eq;
     use ndarray::{arr1, arr2};
 
     #[test]
