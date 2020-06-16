@@ -1,5 +1,5 @@
-use ndarray::{Array2, ArrayBase, Data, DataMut, Ix1, Ix2, LinalgScalar, NdFloat};
-use std::ops::SubAssign;
+use crate::Scalar;
+use ndarray::{Array2, ArrayBase, Data, DataMut, Ix1, Ix2};
 
 /// Returns `R` matrix, and modify `a` to `Q` matrix
 ///
@@ -13,7 +13,7 @@ use std::ops::SubAssign;
 /// a (Q): m x n; R: n x n;
 pub fn geqrf<A, S>(a: &mut ArrayBase<S, Ix2>) -> Array2<A>
 where
-    A: NdFloat + std::iter::Sum + LinalgScalar + SubAssign,
+    A: Scalar,
     S: DataMut<Elem = A>,
 {
     let mut r = Array2::<A>::zeros((a.ncols(), a.ncols()));
@@ -50,7 +50,7 @@ where
 
 fn euclidean<A, S>(v: &ArrayBase<S, Ix1>) -> A
 where
-    A: NdFloat + LinalgScalar + std::iter::Sum,
+    A: Scalar + std::iter::Sum,
     S: Data<Elem = A>,
 {
     let len_sq: A = v.iter().map(|vi| *vi * *vi).sum();

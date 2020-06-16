@@ -1,4 +1,5 @@
-use ndarray::{Array1, ArrayBase, Axis, Data, Ix1, Ix2, NdFloat};
+use crate::Scalar;
+use ndarray::{Array1, ArrayBase, Axis, Data, Ix1, Ix2};
 
 pub(crate) fn getrs<A, SA, SB>(
     a: &ArrayBase<SA, Ix2>,
@@ -6,7 +7,7 @@ pub(crate) fn getrs<A, SA, SB>(
     b: &ArrayBase<SB, Ix1>,
 ) -> Array1<A>
 where
-    A: NdFloat,
+    A: Scalar,
     SA: Data<Elem = A>,
     SB: Data<Elem = A>,
 {

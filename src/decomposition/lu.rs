@@ -1,7 +1,7 @@
 //! LU decomposition.
 
-use crate::lapack;
-use ndarray::{Array1, Array2, ArrayBase, Data, DataMut, Ix1, Ix2, NdFloat};
+use crate::{lapack, Scalar};
+use ndarray::{Array1, Array2, ArrayBase, Data, DataMut, Ix1, Ix2};
 use std::cmp::min;
 use std::convert::TryFrom;
 use std::fmt;
@@ -19,7 +19,7 @@ where
 
 impl<A, S> LUFactorized<A, S>
 where
-    A: NdFloat + fmt::Debug,
+    A: Scalar,
     S: Data<Elem = A>,
 {
     /// Returns the permutation matrix *P* of LU decomposition.
@@ -75,7 +75,7 @@ where
 
 impl<A, S> TryFrom<ArrayBase<S, Ix2>> for LUFactorized<A, S>
 where
-    A: NdFloat + fmt::Debug,
+    A: Scalar,
     S: DataMut<Elem = A>,
 {
     type Error = Singular;

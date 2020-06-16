@@ -1,4 +1,5 @@
-use ndarray::{ArrayBase, DataMut, Ix2, NdFloat};
+use crate::{blas, Scalar};
+use ndarray::{s, ArrayBase, DataMut, Ix2};
 use std::cmp;
 
 #[derive(Debug)]
@@ -6,25 +7,18 @@ pub(crate) struct Singular();
 
 pub(crate) fn getrf<A, S>(a: &mut ArrayBase<S, Ix2>) -> Result<Vec<usize>, Singular>
 where
-    A: NdFloat,
+    A: Scalar,
     S: DataMut<Elem = A>,
 {
     let mut p = (0..a.nrows()).collect::<Vec<_>>();
     for i in 0..cmp::min(a.nrows(), a.ncols()) {
-        let mut abs_max = A::zero();
-        let mut max_row = i;
-        for k in i..a.nrows() {
-            let abs = a[(k, i)].abs();
-            if abs > abs_max {
-                abs_max = abs;
-                max_row = k;
-            }
-        }
-        if abs_max == A::zero() {
+        let (max_idx, abs_max) = blas::iamax(&a.slice(s![i.., i]));
+        if abs_max == A::zero().re() {
             return Err(Singular());
         }
 
-        if max_row != i {
+        if max_idx != 0 {
+            let max_row = max_idx + i;
             p.swap(i, max_row);
 
             for j in 0..a.ncols() {

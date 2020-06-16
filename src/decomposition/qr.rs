@@ -1,7 +1,7 @@
 //! QR decomposition.
 
-use crate::lapack;
-use ndarray::{Array2, ArrayBase, Data, DataMut, Ix2, NdFloat};
+use crate::{lapack, Scalar};
+use ndarray::{Array2, ArrayBase, Data, DataMut, Ix2};
 use std::fmt;
 use std::iter::Sum;
 
@@ -34,7 +34,7 @@ where
 
 impl<A, S> From<ArrayBase<S, Ix2>> for QRFactorized<A, S>
 where
-    A: NdFloat + Sum + fmt::Debug,
+    A: Scalar + Sum + fmt::Debug,
     S: DataMut<Elem = A>,
 {
     /// Converts a matrix into the QR-factorized form, *Q* * *R*.

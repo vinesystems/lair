@@ -1,8 +1,8 @@
 //! Matrix equation solvers.
 
 use crate::decomposition::LUFactorized;
-use crate::InvalidInput;
-use ndarray::{Array1, ArrayBase, Data, Ix1, Ix2, NdFloat};
+use crate::{InvalidInput, Scalar};
+use ndarray::{Array1, ArrayBase, Data, Ix1, Ix2};
 use std::convert::TryFrom;
 
 /// Solves a system of linear scalar equations.
@@ -34,7 +34,7 @@ pub fn solve<A, SA, SB>(
     b: &ArrayBase<SB, Ix1>,
 ) -> Result<Array1<A>, InvalidInput>
 where
-    A: NdFloat,
+    A: Scalar,
     SA: Data<Elem = A>,
     SB: Data<Elem = A>,
 {

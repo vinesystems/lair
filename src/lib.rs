@@ -3,11 +3,14 @@
 //!
 //! [ndarray]: https://docs.rs/ndarray/
 
+pub(crate) mod blas;
 pub mod decomposition;
 // TODO: pub mod eigen;
 pub mod equation;
 pub(crate) mod lapack;
 pub mod matrix;
+
+pub use cauchy::Scalar;
 
 /// An error which can be returned when a function argument is invalid.
 #[derive(Debug, thiserror::Error)]
