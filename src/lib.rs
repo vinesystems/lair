@@ -10,6 +10,7 @@ pub mod equation;
 pub(crate) mod lapack;
 pub mod matrix;
 
+/// A trait for real and complex numbers.
 pub use cauchy::Scalar;
 
 /// An error which can be returned when a function argument is invalid.
