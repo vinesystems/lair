@@ -52,5 +52,5 @@ where
     }
     let factorized = LUFactorized::try_from(a.to_owned())
         .map_err(|_| InvalidInput::Value("`a` is a singular matrix".to_string()))?;
-    Ok(factorized.solve(b))
+    factorized.solve(b)
 }

@@ -14,7 +14,7 @@ fn getrs_100(c: &mut Criterion) {
     let lu = LUFactorized::try_from(a).expect("non-singular");
     c.bench_function("getrs", |bencher| {
         bencher.iter(|| {
-            lu.solve(&b);
+            lu.solve(&b).unwrap();
         })
     });
 }

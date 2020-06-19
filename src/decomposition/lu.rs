@@ -1,6 +1,6 @@
 //! LU decomposition.
 
-use crate::{lapack, Scalar};
+use crate::{lapack, InvalidInput, Scalar};
 use ndarray::{Array1, Array2, ArrayBase, Data, DataMut, Ix1, Ix2};
 use std::cmp::min;
 use std::convert::TryFrom;
@@ -65,11 +65,24 @@ where
     }
 
     /// Solves the system of equations `P * L * U * x = b` for `x`.
-    pub fn solve<SB>(&self, b: &ArrayBase<SB, Ix1>) -> Array1<A>
+    ///
+    /// # Errors
+    ///
+    /// Returns [`InvalidInput::Shape`] if the number of elements in `b` does
+    /// not match with the number of rows in *L*.
+    ///
+    /// [`InvalidInput::Shape`]: ../enum.InvalidInput.html#variant.Shape
+    pub fn solve<SB>(&self, b: &ArrayBase<SB, Ix1>) -> Result<Array1<A>, InvalidInput>
     where
         SB: Data<Elem = A>,
     {
-        lapack::getrs(&self.lu, &self.pivots, b)
+        if b.len() != self.lu.nrows() {
+            return Err(InvalidInput::Shape(format!(
+                "b must have {} elements",
+                self.lu.nrows()
+            )));
+        }
+        Ok(lapack::getrs(&self.lu, &self.pivots, b))
     }
 }
 

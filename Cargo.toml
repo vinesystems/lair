@@ -24,6 +24,9 @@ criterion = "0.3"
 ndarray-rand = "0.11"
 rand_isaac = "0.2"
 
+[profile.bench]
+lto = true
+
 [[bench]]
 name = "geqrf"
 harness = false

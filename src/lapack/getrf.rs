@@ -11,30 +11,33 @@ where
     S: DataMut<Elem = A>,
 {
     let mut p = (0..a.nrows()).collect::<Vec<_>>();
-    for i in 0..cmp::min(a.nrows(), a.ncols()) {
-        let (max_idx, abs_max) = blas::iamax(&a.slice(s![i.., i]));
-        if abs_max == A::zero().re() {
-            return Err(Singular());
-        }
-
-        if max_idx != 0 {
-            let max_row = max_idx + i;
-            p.swap(i, max_row);
-
-            for j in 0..a.ncols() {
-                let max_val = a[(max_row, j)];
-                let i_val = std::mem::replace(&mut a[(i, j)], max_val);
-                a[(max_row, j)] = i_val;
+    unsafe {
+        for i in 0..cmp::min(a.nrows(), a.ncols()) {
+            let (max_idx, abs_max) = blas::iamax(&a.slice(s![i.., i]));
+            if abs_max == A::zero().re() {
+                return Err(Singular());
             }
-        }
 
-        let pivot = a[(i, i)];
-        for j in i + 1..a.nrows() {
-            let ratio = a[(j, i)] / pivot;
-            a[(j, i)] = ratio;
-            for k in i + 1..a.ncols() {
-                let elem = ratio * a[(i, k)];
-                a[(j, k)] -= elem;
+            if max_idx != 0 {
+                let max_row = max_idx + i;
+                p.swap(i, max_row);
+
+                for j in 0..a.ncols() {
+                    let max_val = *a.uget((max_row, j));
+                    let i_val = std::mem::replace(a.uget_mut((i, j)), max_val);
+                    *a.uget_mut((max_row, j)) = i_val;
+                }
+            }
+
+            let pivot = *a.uget((i, i));
+            for j in i + 1..a.nrows() {
+                let lead = a.uget_mut((j, i));
+                *lead /= pivot;
+                let ratio = *lead;
+                for k in i + 1..a.ncols() {
+                    let elem = ratio * *a.uget((i, k));
+                    *a.uget_mut((j, k)) -= elem;
+                }
             }
         }
     }
