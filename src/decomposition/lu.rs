@@ -95,7 +95,7 @@ where
 
     /// Converts a matrix into the LU-factorized form, *P* * *L* * *U*.
     fn try_from(mut a: ArrayBase<S, Ix2>) -> Result<Self, Self::Error> {
-        let pivots = match lapack::getrf(&mut a) {
+        let pivots = match lapack::getrf(a.view_mut()) {
             Ok(ipiv) => ipiv,
             Err(_) => return Err(Singular),
         };
