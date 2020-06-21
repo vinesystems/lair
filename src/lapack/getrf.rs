@@ -1,67 +1,89 @@
 use crate::{blas, Scalar};
-use ndarray::{s, ArrayViewMut2};
+use ndarray::{s, ArrayViewMut2, Axis};
 use std::cmp;
 use std::ptr;
 
 #[derive(Debug)]
 pub(crate) struct Singular();
 
-#[allow(clippy::cast_possible_wrap)] // The number of elements in the matrix does not exceed `isize::MAX`.
 pub(crate) fn getrf<A>(mut a: ArrayViewMut2<A>) -> Result<Vec<usize>, Singular>
 where
     A: Scalar,
 {
+    if a.is_standard_layout() {
+        unsafe { getrf_row_major(&mut a) }
+    } else {
+        unsafe { getrf_col_major(&mut a) }
+    }
+}
+
+#[allow(clippy::cast_possible_wrap)] // The number of elements in the matrix does not exceed `isize::MAX`.
+unsafe fn getrf_row_major<A: Scalar>(a: &mut ArrayViewMut2<A>) -> Result<Vec<usize>, Singular> {
     let mut p = (0..a.nrows()).collect::<Vec<_>>();
-    let strides = a.strides();
-    let row_stride = strides[0];
-    let col_stride = strides[1];
+    let lda = a.stride_of(Axis(0));
     let a_ptr = a.as_mut_ptr();
-    unsafe {
-        for i in 0..cmp::min(a.nrows(), a.ncols()) {
-            let (max_idx, max_val) = blas::iamax(&a.slice(s![i.., i]));
-            if max_val == A::zero().re() {
-                return Err(Singular());
+    for i in 0..cmp::min(a.nrows(), a.ncols()) {
+        let (max_idx, max_val) = blas::iamax(&a.slice(s![i.., i]));
+        if max_val == A::zero().re() {
+            return Err(Singular());
+        }
+
+        if max_idx != 0 {
+            let max_row = max_idx + i;
+            p.swap(i, max_row);
+            swap_rows(
+                a.ncols(),
+                a_ptr.offset(i as isize * lda),
+                a_ptr.offset(max_row as isize * lda),
+                1,
+            );
+        }
+
+        let inv_pivot = A::one() / *a.uget((i, i));
+        let mut row_j = a_ptr.offset(lda * i as isize + i as isize);
+        for j in 1..(a.nrows() - i) as isize {
+            row_j = row_j.offset(lda);
+            *row_j *= inv_pivot;
+            let ratio = *row_j;
+            let mut row_i = a_ptr.offset(lda * i as isize + i as isize);
+            for _ in i + 1..a.ncols() {
+                row_i = row_i.offset(1);
+                let elem = ratio * *row_i;
+                *row_i.offset(j * lda) -= elem;
             }
+        }
+    }
+    Ok(p)
+}
 
-            if max_idx == 0 {
-                let inv_pivot = A::one() / *a.uget((i, i));
-                let mut row_j = a_ptr.offset(row_stride * i as isize + col_stride * (i as isize));
-                for j in 1..(a.nrows() - i) as isize {
-                    row_j = row_j.offset(row_stride);
-                    *row_j *= inv_pivot;
-                    let ratio = *row_j;
-                    let mut row_i =
-                        a_ptr.offset(row_stride * i as isize + col_stride * (i as isize));
-                    for _ in i + 1..a.ncols() {
-                        row_i = row_i.offset(col_stride);
-                        let elem = ratio * *row_i;
-                        *row_i.offset(j * row_stride) -= elem;
-                    }
-                }
-            } else {
-                let max_row = max_idx + i;
-                p.swap(i, max_row);
-                swap_rows(
-                    a.ncols(),
-                    a_ptr.offset(i as isize * row_stride),
-                    a_ptr.offset(max_row as isize * row_stride),
-                    col_stride,
-                );
+#[allow(clippy::cast_possible_wrap)] // The number of elements in the matrix does not exceed `isize::MAX`.
+unsafe fn getrf_col_major<A: Scalar>(a: &mut ArrayViewMut2<A>) -> Result<Vec<usize>, Singular> {
+    let mut p = (0..a.nrows()).collect::<Vec<_>>();
+    let lda = a.stride_of(Axis(1));
+    let a_ptr = a.as_mut_ptr();
+    for i in 0..cmp::min(a.nrows(), a.ncols()) {
+        let (max_idx, max_val) = blas::iamax(&a.slice(s![i.., i]));
+        if max_val == A::zero().re() {
+            return Err(Singular());
+        }
 
-                let inv_pivot = A::one() / *a.uget((i, i));
-                let mut row_j = a_ptr.offset(row_stride * i as isize + col_stride * (i as isize));
-                for j in 1..(a.nrows() - i) as isize {
-                    row_j = row_j.offset(row_stride);
-                    *row_j *= inv_pivot;
-                    let ratio = *row_j;
-                    let mut row_i =
-                        a_ptr.offset(row_stride * i as isize + col_stride * (i as isize));
-                    for _ in i + 1..a.ncols() {
-                        row_i = row_i.offset(col_stride);
-                        let elem = ratio * *row_i;
-                        *row_i.offset(j * row_stride) -= elem;
-                    }
-                }
+        if max_idx != 0 {
+            let max_row = max_idx + i;
+            p.swap(i, max_row);
+            swap_rows(a.ncols(), a_ptr.add(i), a_ptr.add(max_row), lda);
+        }
+
+        let inv_pivot = A::one() / *a.uget((i, i));
+        let mut row_j = a_ptr.offset(i as isize + lda * (i as isize));
+        for j in 1..(a.nrows() - i) as isize {
+            row_j = row_j.offset(1);
+            *row_j *= inv_pivot;
+            let ratio = *row_j;
+            let mut row_i = a_ptr.offset(i as isize + lda * (i as isize));
+            for _ in i + 1..a.ncols() {
+                row_i = row_i.offset(lda);
+                let elem = ratio * *row_i;
+                *row_i.offset(j) -= elem;
             }
         }
     }
@@ -110,7 +132,7 @@ mod test {
     }
 
     #[test]
-    fn square() {
+    fn square_row_major() {
         let mut a = arr2(&[
             [1_f64, 2_f64, 3_f64, 1_f64, 2_f64],
             [2_f64, 2_f64, 1_f64, 3_f64, 3_f64],
@@ -118,6 +140,25 @@ mod test {
             [2_f64, 3_f64, 3_f64, 1_f64, 1_f64],
             [1_f64, 3_f64, 1_f64, 3_f64, 1_f64],
         ]);
+        let p = super::getrf(a.view_mut()).expect("valid input");
+        assert_eq!(p, vec![2, 4, 0, 3, 1]);
+        assert_relative_eq!(a[(0, 0)], 3.);
+        assert_relative_eq!(a[(1, 0)], 0.3333333333333333);
+        assert_relative_eq!(a[(2, 0)], 0.3333333333333333);
+        assert_relative_eq!(a[(3, 0)], 0.6666666666666666);
+        assert_relative_eq!(a[(4, 0)], 0.6666666666666666);
+    }
+
+    #[test]
+    fn square_col_major() {
+        let mut a = arr2(&[
+            [1_f64, 2_f64, 3_f64, 2_f64, 1_f64],
+            [2_f64, 2_f64, 1_f64, 3_f64, 3_f64],
+            [3_f64, 1_f64, 2_f64, 3_f64, 1_f64],
+            [1_f64, 3_f64, 2_f64, 1_f64, 3_f64],
+            [2_f64, 3_f64, 1_f64, 1_f64, 1_f64],
+        ]);
+        a.swap_axes(0, 1);
         let p = super::getrf(a.view_mut()).expect("valid input");
         assert_eq!(p, vec![2, 4, 0, 3, 1]);
         assert_relative_eq!(a[(0, 0)], 3.);
