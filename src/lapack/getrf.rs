@@ -37,11 +37,10 @@ unsafe fn getrf_row_major<A: Scalar>(
         if max_idx != 0 {
             let max_row = max_idx + i;
             p.swap(i, max_row);
-            swap_rows(
-                a.ncols(),
+            ptr::swap_nonoverlapping(
                 a_ptr.offset(i as isize * lda),
                 a_ptr.offset(max_row as isize * lda),
-                1,
+                a.ncols(),
             );
         }
 
@@ -141,17 +140,13 @@ unsafe fn getrf_general<A: Scalar>(
 }
 
 unsafe fn swap_rows<A>(mut n: usize, mut row1: *mut A, mut row2: *mut A, stride: isize) {
-    if stride == 1 {
-        ptr::swap_nonoverlapping(row1, row2, n);
-    } else {
-        while n > 0 {
-            let mut tmp = ptr::read(row1);
-            tmp = ptr::replace(row2, tmp);
-            ptr::write(row1, tmp);
-            row1 = row1.offset(stride);
-            row2 = row2.offset(stride);
-            n -= 1;
-        }
+    while n > 0 {
+        let mut tmp = ptr::read(row1);
+        tmp = ptr::replace(row2, tmp);
+        ptr::write(row1, tmp);
+        row1 = row1.offset(stride);
+        row2 = row2.offset(stride);
+        n -= 1;
     }
 }
 
