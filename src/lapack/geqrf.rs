@@ -1,5 +1,5 @@
-use crate::Scalar;
-use ndarray::{Array2, ArrayBase, Data, DataMut, Ix1, Ix2};
+use crate::{blas, Scalar};
+use ndarray::{Array2, ArrayBase, DataMut, Ix2};
 
 /// Returns `R` matrix, and modify `a` to `Q` matrix
 ///
@@ -20,7 +20,7 @@ where
     if a.ncols() < 1 {
         return r;
     }
-    let len = euclidean(&a.column(0));
+    let len = blas::nrm2(&a.column(0));
     r.row_mut(0)[0] = len;
     for ai in a.column_mut(0) {
         *ai /= len;
@@ -41,31 +41,16 @@ where
             }
             r[(i, j)] = rij;
         }
-        let len = euclidean(&a.column(j));
+        let len = blas::nrm2(&a.column(j));
         a.column_mut(j).mapv_inplace(|val| val / len);
         r[(j, j)] = len;
     }
     r
 }
 
-fn euclidean<A, S>(v: &ArrayBase<S, Ix1>) -> A
-where
-    A: Scalar + std::iter::Sum,
-    S: Data<Elem = A>,
-{
-    let len_sq: A = v.iter().map(|vi| *vi * *vi).sum();
-    len_sq.sqrt()
-}
-
 #[cfg(test)]
 mod test {
-    use ndarray::{arr1, arr2};
-
-    #[test]
-    fn euclidean() {
-        let a = arr1(&[3_f64, 4_f64]);
-        assert_eq!(5_f64, super::euclidean(&a));
-    }
+    use ndarray::arr2;
 
     #[test]
     fn geqrf_3() {
