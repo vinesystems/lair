@@ -14,7 +14,7 @@ edition = "2018"
 exclude = ["./github"]
 
 [dependencies]
-cauchy = "0.2"
+cauchy = "0.3"
 ndarray = "0.13"
 thiserror = "1"
 
