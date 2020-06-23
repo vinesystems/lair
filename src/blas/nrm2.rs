@@ -1,12 +1,15 @@
 use crate::Scalar;
 use ndarray::{ArrayBase, Data, Ix1};
 
-pub(crate) fn nrm2<A, S>(x: &ArrayBase<S, Ix1>) -> A
+pub(crate) fn nrm2<A, S>(x: &ArrayBase<S, Ix1>) -> A::Real
 where
     A: Scalar,
     S: Data<Elem = A>,
 {
-    x.iter().map(|v| *v * *v).sum::<A>().sqrt()
+    x.iter()
+        .map(|v| v.re() * v.re() + v.im() * v.im())
+        .sum::<A::Real>()
+        .sqrt()
 }
 
 #[cfg(test)]

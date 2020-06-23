@@ -165,7 +165,7 @@ mod test {
     fn empty() {
         let mut a: Array2<f32> = ArrayBase::eye(0);
         let p = super::getrf(a.view_mut()).expect("valid input");
-        assert_eq!(p, vec![]);
+        assert_eq!(p, Vec::<usize>::new());
     }
 
     #[test]

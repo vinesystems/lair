@@ -9,7 +9,7 @@ use rand_isaac::isaac64::Isaac64Rng;
 fn geqrf_100(c: &mut Criterion) {
     let mut rng = Isaac64Rng::seed_from_u64(0);
     let a = Array::random_using((100, 100), Uniform::new(0., 10.), &mut rng);
-    c.bench_function("geqrf (Gram-Schmidt)", |bencher| {
+    c.bench_function("geqrf", |bencher| {
         bencher.iter(|| {
             let a = a.clone();
             QRFactorized::from(a);
