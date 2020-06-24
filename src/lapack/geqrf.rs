@@ -2,16 +2,7 @@ use crate::{lapack, Real, Scalar};
 use ndarray::{s, Array1, ArrayBase, DataMut, Ix2};
 use std::cmp;
 
-/// Returns `R` matrix, and modify `a` to `Q` matrix
-///
-/// # Arguments
-///
-/// * `a` - A full column rank matrix
-///
-/// # Remarks
-///
-/// This function does QR decomposition using Gram-Schmidt method
-/// a (Q): m x n; R: n x n;
+/// Computes the QR factorization of a matrix.
 pub fn geqrf<A, S>(a: &mut ArrayBase<S, Ix2>) -> Array1<A>
 where
     A: Scalar,
@@ -27,7 +18,7 @@ where
         if i < a.ncols() {
             a[(i, i)] = A::one();
             let v = a.column(i).slice(s![i..]).to_owned();
-            lapack::larf::left(&v, t, &mut a.slice_mut(s![i.., i + 1..]));
+            lapack::larf::left(&v, t.conj(), &mut a.slice_mut(s![i.., i + 1..]));
             a[(i, i)] = A::from_real(beta);
         }
     }
@@ -36,18 +27,32 @@ where
 
 #[cfg(test)]
 mod test {
-    use approx::AbsDiffEq;
+    use approx::{assert_abs_diff_eq, AbsDiffEq};
     use ndarray::{arr1, arr2};
+    use num_complex::Complex64;
 
     #[test]
-    fn square() {
+    fn square_real_smallest() {
+        let a = arr2(&[[2_f64]]);
+        let mut qr = a.clone();
+        assert_eq!(qr.shape(), &[1, 1]);
+        let tau = super::geqrf(&mut qr);
+        assert_eq!(tau.shape(), &[1]);
+        assert!(qr.abs_diff_eq(&arr2(&[[2_f64]]), 1e-8));
+        assert!(tau.abs_diff_eq(&arr1(&[0.]), 1e-8));
+    }
+
+    #[test]
+    fn square_real() {
         let a = arr2(&[
             [1_f64, 2_f64, 4_f64],
             [0_f64, 0_f64, 5_f64],
             [0_f64, 3_f64, 6_f64],
         ]);
         let mut qr = a.clone();
+        assert_eq!(qr.shape(), &[3, 3]);
         let tau = super::geqrf(&mut qr);
+        assert_eq!(tau.shape(), &[3]);
         assert!(qr.abs_diff_eq(
             &arr2(&[
                 [1_f64, 2_f64, 4_f64],
@@ -57,6 +62,30 @@ mod test {
             1e-8
         ));
         assert!(tau.abs_diff_eq(&arr1(&[0., 1., 0.]), 1e-8));
+    }
+
+    #[test]
+    fn square_complex() {
+        let a = arr2(&[
+            [Complex64::new(1., 1.), Complex64::new(2., -1.)],
+            [Complex64::new(3., 1.), Complex64::new(4., -1.)],
+        ]);
+        let mut qr = a.clone();
+        assert_eq!(qr.shape(), &[2, 2]);
+        let tau = super::geqrf(&mut qr);
+        assert_eq!(tau.shape(), &[2]);
+        assert_abs_diff_eq!(qr[(0, 0)].re, -3.46410162, epsilon = 1e-6);
+        assert_abs_diff_eq!(qr[(0, 0)].im, 0., epsilon = 1e-6);
+        assert_abs_diff_eq!(qr[(0, 1)].re, -3.46410162, epsilon = 1e-6);
+        assert_abs_diff_eq!(qr[(0, 1)].im, 2.88675135, epsilon = 1e-6);
+        assert_abs_diff_eq!(qr[(1, 0)].re, 0.68769902, epsilon = 1e-6);
+        assert_abs_diff_eq!(qr[(1, 0)].im, 0.0699583, epsilon = 1e-6);
+        assert_abs_diff_eq!(qr[(1, 1)].re, 1.29099445, epsilon = 1e-6);
+        assert_abs_diff_eq!(qr[(1, 1)].im, 0., epsilon = 1e-6);
+        assert_abs_diff_eq!(tau[0].re, 1.28867513, epsilon = 1e-6);
+        assert_abs_diff_eq!(tau[0].im, 0.28867513, epsilon = 1e-6);
+        assert_abs_diff_eq!(tau[1].re, 1.02290316, epsilon = 1e-6);
+        assert_abs_diff_eq!(tau[1].im, -0.99973769, epsilon = 1e-6);
     }
 
     #[test]

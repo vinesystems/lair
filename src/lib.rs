@@ -42,7 +42,7 @@ impl Real for f64 {
 
     #[inline]
     fn eps() -> Self {
-        5.960_464_477_539_063e-8
+        1.110_223_024_625_156_5e-16
     }
 
     #[inline]
@@ -64,7 +64,7 @@ impl Real for f32 {
 
     #[inline]
     fn eps() -> Self {
-        1.110_223e-16
+        5.960_464_5e-8
     }
 
     #[inline]

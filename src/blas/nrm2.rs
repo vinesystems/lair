@@ -14,12 +14,21 @@ where
 
 #[cfg(test)]
 mod test {
+    use approx::assert_abs_diff_eq;
     use ndarray::arr1;
+    use num_complex::Complex64;
 
     #[test]
-    fn nrm2() {
+    fn real() {
         let x = arr1(&[3., 4.]);
         let norm = super::nrm2(&x);
         assert_eq!(norm, 5.);
+    }
+
+    #[test]
+    fn complex() {
+        let x = arr1(&[Complex64::new(1., 2.), Complex64::new(3., 4.)]);
+        let norm = super::nrm2(&x);
+        assert_abs_diff_eq!(norm, 5.477225575051661, epsilon = 1e-8);
     }
 }

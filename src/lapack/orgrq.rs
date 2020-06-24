@@ -21,12 +21,10 @@ where
     for i in 0..tau.len() {
         let row = a.nrows() - tau.len() + i;
         q[(row, row + a.ncols() - a.nrows())] = A::one();
-        dbg!(&q);
         let v = q
             .row(row)
             .slice(s![..=row + a.ncols() - a.nrows()])
             .to_owned();
-        dbg!(&v);
         lapack::larf::right(
             &v,
             tau[i],

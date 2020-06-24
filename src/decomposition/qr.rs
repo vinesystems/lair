@@ -159,15 +159,14 @@ mod test {
     #[test]
     fn tall() {
         let a = arr2(&[
-            [1_f32, 2_f32, 3_f32],
-            [2_f32, 2_f32, 1_f32],
-            [3_f32, 1_f32, 2_f32],
-            [2_f32, 3_f32, 3_f32],
+            [1_f64, 2_f64, 3_f64],
+            [2_f64, 2_f64, 1_f64],
+            [3_f64, 1_f64, 2_f64],
+            [2_f64, 3_f64, 3_f64],
         ]);
         let qr = super::QRFactorized::from(a);
         let q = qr.q();
         assert_eq!(q.shape(), &[4, 4]);
-        dbg!(&q);
         assert!(q.abs_diff_eq(
             &arr2(&[
                 [-0.23570226, 0.49746834, -0.62737462, -0.55079106],
@@ -178,7 +177,6 @@ mod test {
             1e-6
         ));
         let r = qr.r();
-        dbg!(&r);
         assert_eq!(r.shape(), &[4, 3]);
         assert!(r.abs_diff_eq(
             &arr2(&[

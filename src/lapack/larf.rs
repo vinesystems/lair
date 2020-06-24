@@ -1,5 +1,5 @@
 use crate::{blas, lapack, Scalar};
-use ndarray::{s, ArrayBase, Axis, Data, DataMut, Ix1, Ix2};
+use ndarray::{s, ArrayBase, Data, DataMut, Ix1, Ix2};
 
 /// Applies an elementary reflector to a matrix.
 ///
@@ -26,14 +26,12 @@ where
     } else {
         return;
     };
-    let mut w = c
-        .slice(s![0..=last_v, 0..=last_c])
-        .t()
-        .dot(&v.slice(s![0..=last_v]));
-    blas::scal(tau, &mut w);
-    let tau_w = w.insert_axis(Axis(0));
-    let mut c_view = c.slice_mut(s![0..=last_v, 0..=last_c]);
-    c_view -= &v.view().insert_axis(Axis(1)).dot(&tau_w);
+    let w = blas::gemv_transpose(
+        A::one(),
+        &c.slice(s![0..=last_v, 0..=last_c]),
+        &v.slice(s![0..=last_v]),
+    );
+    blas::gerc(-tau, v, &w, &mut c.slice_mut(s![0..=last_v, 0..=last_c]));
 }
 
 /// Applies an elementary reflector to a matrix.
@@ -62,33 +60,94 @@ where
     } else {
         return;
     };
-    let mut w = c
-        .slice(s![0..=last_r, 0..=last_v])
-        .dot(&v.slice(s![0..=last_v]));
-    blas::scal(tau, &mut w);
-    let tau_w = w.insert_axis(Axis(1));
-    let mut c_view = c.slice_mut(s![0..=last_r, 0..=last_v]);
-    c_view -= &tau_w.dot(&v.view().insert_axis(Axis(0)));
+    let w = blas::gemv(
+        A::one(),
+        &c.slice(s![0..=last_r, 0..=last_v]),
+        &v.slice(s![0..=last_v]),
+    );
+    blas::gerc(-tau, &w, v, &mut c.slice_mut(s![0..=last_r, 0..=last_v]));
 }
 
 #[cfg(test)]
 mod test {
-    use approx::AbsDiffEq;
+    use approx::{assert_abs_diff_eq, AbsDiffEq};
     use ndarray::{arr1, arr2};
+    use num_complex::Complex64;
 
     #[test]
-    fn left() {
+    fn left_real() {
         let v = arr1(&[1., 2., 3.]);
         let mut c = arr2(&[[1., 2.], [3., 4.], [5., 6.]]);
         super::left(&v, 2., &mut c);
-        assert!(c.abs_diff_eq(&arr2(&[[-43., -54.], [-85., -108.], [-127., -162.]]), 1e-6));
+        assert!(c.abs_diff_eq(&arr2(&[[-43., -54.], [-85., -108.], [-127., -162.]]), 1e-8));
     }
 
     #[test]
-    fn right() {
+    fn left_complex() {
+        let v = arr1(&[
+            Complex64::new(1., 3.),
+            Complex64::new(2., 2.),
+            Complex64::new(3., 1.),
+        ]);
+        let mut c = arr2(&[
+            [Complex64::new(1., 2.), Complex64::new(2., 1.)],
+            [Complex64::new(3., 4.), Complex64::new(4., 3.)],
+            [Complex64::new(5., 6.), Complex64::new(6., 5.)],
+        ]);
+        super::left(&v, Complex64::new(2., 1.), &mut c);
+        assert_abs_diff_eq!(c[(0, 0)].re, 141.);
+        assert_abs_diff_eq!(c[(0, 0)].im, -278.);
+        assert_abs_diff_eq!(c[(0, 1)].re, 58.);
+        assert_abs_diff_eq!(c[(0, 1)].im, -291.);
+        assert_abs_diff_eq!(c[(1, 0)].re, 3.);
+        assert_abs_diff_eq!(c[(1, 0)].im, -276.);
+        assert_abs_diff_eq!(c[(1, 1)].re, -68.);
+        assert_abs_diff_eq!(c[(1, 1)].im, -253.);
+        assert_abs_diff_eq!(c[(2, 0)].re, -135.);
+        assert_abs_diff_eq!(c[(2, 0)].im, -274.);
+        assert_abs_diff_eq!(c[(2, 1)].re, -194.);
+        assert_abs_diff_eq!(c[(2, 1)].im, -215.);
+    }
+
+    #[test]
+    fn right_real() {
         let v = arr1(&[1., 2., 3.]);
         let mut c = arr2(&[[1., 2., 3.], [4., 5., 6.]]);
         super::right(&v, 2., &mut c);
-        assert!(c.abs_diff_eq(&arr2(&[[-27., -54., -81.], [-60., -123., -186.]]), 1e-6));
+        assert!(c.abs_diff_eq(&arr2(&[[-27., -54., -81.], [-60., -123., -186.]]), 1e-8));
+    }
+
+    #[test]
+    fn right_complex() {
+        let v = arr1(&[
+            Complex64::new(1., 3.),
+            Complex64::new(2., 2.),
+            Complex64::new(3., 1.),
+        ]);
+        let mut c = arr2(&[
+            [
+                Complex64::new(1., 2.),
+                Complex64::new(2., 1.),
+                Complex64::new(3., 4.),
+            ],
+            [
+                Complex64::new(4., 3.),
+                Complex64::new(5., 6.),
+                Complex64::new(6., 5.),
+            ],
+        ]);
+        super::right(&v, Complex64::new(2., 1.), &mut c);
+        assert_abs_diff_eq!(c[(0, 0)].re, -139.);
+        assert_abs_diff_eq!(c[(0, 0)].im, -118.);
+        assert_abs_diff_eq!(c[(0, 1)].re, -62.);
+        assert_abs_diff_eq!(c[(0, 1)].im, -151.);
+        assert_abs_diff_eq!(c[(0, 2)].re, 15.);
+        assert_abs_diff_eq!(c[(0, 2)].im, -180.);
+        assert_abs_diff_eq!(c[(1, 0)].re, -316.);
+        assert_abs_diff_eq!(c[(1, 0)].im, -257.);
+        assert_abs_diff_eq!(c[(1, 1)].re, -147.);
+        assert_abs_diff_eq!(c[(1, 1)].im, -330.);
+        assert_abs_diff_eq!(c[(1, 2)].re, 22.);
+        assert_abs_diff_eq!(c[(1, 2)].im, -407.);
     }
 }
