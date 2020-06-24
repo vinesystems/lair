@@ -1,7 +1,7 @@
 //! Matrix functions and special matrices.
 
-use crate::InvalidInput;
-use ndarray::{Array2, ArrayBase, NdFloat};
+use crate::{InvalidInput, Scalar};
+use ndarray::{Array2, ArrayBase};
 
 /// Constructs a circulant matrix.
 ///
@@ -16,7 +16,7 @@ use ndarray::{Array2, ArrayBase, NdFloat};
 /// ```
 pub fn circulant<A>(a: &[A]) -> Array2<A>
 where
-    A: NdFloat,
+    A: Copy,
 {
     unsafe {
         let mut x: Array2<A> = ArrayBase::uninitialized((a.len(), a.len()));
@@ -50,7 +50,7 @@ where
 /// ```
 pub fn companion<A>(a: &[A]) -> Result<Array2<A>, InvalidInput>
 where
-    A: NdFloat,
+    A: Scalar,
 {
     if a.len() < 2 {
         return Err(InvalidInput::Shape(format!(
@@ -78,9 +78,18 @@ where
 #[cfg(test)]
 mod test {
     use ndarray::aview2;
+    use num_complex::{Complex32, Complex64};
 
     #[test]
     fn circulant() {
+        let a = Vec::<f32>::new();
+        let c = super::circulant(&a);
+        assert_eq!(c.shape(), [0, 0]);
+
+        let a = vec![Complex32::new(1., 2.)];
+        let c = super::circulant(&a);
+        assert_eq!(c, aview2(&[[Complex32::new(1., 2.)]]));
+
         let a = vec![1., 2., 4.];
         let c = super::circulant(&a);
         assert_eq!(c, aview2(&[[1., 4., 2.], [2., 1., 4.], [4., 2., 1.]]));
@@ -88,6 +97,23 @@ mod test {
 
     #[test]
     fn companion() {
+        let a = Vec::<f32>::new();
+        assert!(super::companion(&a).is_err());
+
+        let a = vec![Complex64::new(1., 2.)];
+        assert!(super::companion(&a).is_err());
+
+        let a = vec![
+            Complex32::new(0., 0.),
+            Complex32::new(1., 1.),
+            Complex32::new(2., 2.),
+        ];
+        assert!(super::companion(&a).is_err());
+
+        let a = vec![Complex32::new(1., 2.), Complex32::new(3., 4.)];
+        let c = super::companion(&a).expect("valid input");
+        assert_eq!(c, aview2(&[[Complex32::new(-2.2, 0.4)]]));
+
         let a = vec![2., -4., 8., -10.];
         let c = super::companion(&a).expect("valid input");
         assert_eq!(

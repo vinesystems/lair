@@ -24,6 +24,7 @@ approx = "0.3"
 criterion = "0.3"
 ndarray = { version = "0.13", features = ["approx"] }
 ndarray-rand = "0.11"
+num-complex = "0.3"
 rand_isaac = "0.2"
 
 [[bench]]
