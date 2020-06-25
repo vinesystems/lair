@@ -1,7 +1,7 @@
 //! Matrix equation solvers.
 
 use crate::decomposition::LUFactorized;
-use crate::{InvalidInput, Scalar};
+use crate::{InvalidInput, Real, Scalar};
 use ndarray::{Array1, ArrayBase, Data, Ix1, Ix2};
 use std::convert::TryFrom;
 
@@ -35,6 +35,7 @@ pub fn solve<A, SA, SB>(
 ) -> Result<Array1<A>, InvalidInput>
 where
     A: Scalar,
+    A::Real: Real,
     SA: Data<Elem = A>,
     SB: Data<Elem = A>,
 {

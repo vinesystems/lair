@@ -1,14 +1,15 @@
-use crate::{blas, Scalar};
+use crate::{blas, lapack, Real, Scalar};
 use ndarray::{s, ArrayViewMut2, Axis};
 use std::cmp;
 use std::ptr;
 
 #[derive(Debug)]
-pub(crate) struct Singular();
+pub(crate) struct Singular(usize);
 
 pub(crate) fn getrf<A>(a: ArrayViewMut2<A>) -> Result<Vec<usize>, Singular>
 where
     A: Scalar,
+    A::Real: Real,
 {
     let row_stride = a.stride_of(Axis(0));
     let col_stride = a.stride_of(Axis(1));
@@ -21,6 +22,19 @@ where
     }
 }
 
+#[allow(dead_code)]
+pub(crate) fn getrf_recursive<A>(a: ArrayViewMut2<A>) -> Result<Vec<usize>, Singular>
+where
+    A: Scalar,
+    A::Real: Real,
+{
+    let mut pivots = vec![0; a.nrows()];
+    unsafe {
+        recursive_inner(a, &mut pivots)?;
+    }
+    Ok(pivots)
+}
+
 #[allow(clippy::cast_possible_wrap)] // The number of elements in the matrix does not exceed `isize::MAX`.
 unsafe fn getrf_row_major<A: Scalar>(
     mut a: ArrayViewMut2<A>,
@@ -31,7 +45,7 @@ unsafe fn getrf_row_major<A: Scalar>(
     for i in 0..cmp::min(a.nrows(), a.ncols()) {
         let (max_idx, max_val) = blas::iamax(&a.slice(s![i.., i]));
         if max_val == A::zero().re() {
-            return Err(Singular());
+            return Err(Singular(max_idx));
         }
 
         if max_idx != 0 {
@@ -71,7 +85,7 @@ unsafe fn getrf_col_major<A: Scalar>(
     for i in 0..cmp::min(a.nrows(), a.ncols()) {
         let (max_idx, max_val) = blas::iamax(&a.slice(s![i.., i]));
         if max_val == A::zero().re() {
-            return Err(Singular());
+            return Err(Singular(max_idx));
         }
 
         if max_idx != 0 {
@@ -97,6 +111,116 @@ unsafe fn getrf_col_major<A: Scalar>(
     Ok(p)
 }
 
+#[allow(clippy::cast_possible_wrap)]
+unsafe fn recursive_inner<A>(mut a: ArrayViewMut2<A>, pivots: &mut [usize]) -> Result<(), Singular>
+where
+    A: Scalar,
+    A::Real: Real,
+{
+    if a.nrows() == 0 || a.ncols() == 0 {
+        return Ok(());
+    }
+
+    if a.nrows() == 1 {
+        *pivots.get_unchecked_mut(0) = 0;
+        return if *a.uget((0, 0)) == A::zero() {
+            Err(Singular(0))
+        } else {
+            Ok(())
+        };
+    }
+
+    if a.ncols() == 1 {
+        let (max_idx, max_val) = blas::iamax(&a.slice(s![.., 0]));
+        *pivots.get_unchecked_mut(0) = max_idx;
+        if max_val == A::zero().re() {
+            return Err(Singular(0));
+        }
+
+        if max_idx != 0 {
+            a.swap((0, 0), (max_idx, 0));
+        }
+
+        if max_val >= A::Real::sfmin() {
+            blas::scal(
+                A::one() / *a.uget((0, 0)),
+                &mut a.column_mut(0).slice_mut(s![1..]),
+            );
+        } else {
+            let pivot = *a.uget((0, 0));
+            for a_elem in a.column_mut(0).iter_mut().skip(1) {
+                *a_elem /= pivot;
+            }
+        }
+
+        return Ok(());
+    }
+
+    let row_stride = a.stride_of(Axis(0));
+    let col_stride = a.stride_of(Axis(1));
+
+    let left_cols = cmp::min(a.nrows(), a.ncols()) / 2;
+    let right_cols = a.ncols() - left_cols;
+    let mut singular_row = match recursive_inner(a.slice_mut(s![.., ..left_cols]), pivots) {
+        Ok(_) => 0,
+        Err(Singular(row)) => row,
+    };
+
+    lapack::laswp(
+        right_cols,
+        a.as_mut_ptr().offset(col_stride * left_cols as isize),
+        row_stride,
+        col_stride,
+        0,
+        &pivots[0..left_cols],
+    );
+    blas::trsm(
+        a.as_ptr(),
+        row_stride,
+        col_stride,
+        a.slice_mut(s![..left_cols, left_cols..]),
+    );
+    blas::gemm(
+        a.nrows() - left_cols,
+        right_cols,
+        left_cols,
+        a.as_ptr().offset(left_cols as isize * row_stride),
+        a.as_ptr().offset(left_cols as isize * col_stride),
+        a.as_mut_ptr()
+            .offset(left_cols as isize * row_stride + left_cols as isize * col_stride),
+        row_stride,
+        col_stride,
+    );
+    match recursive_inner(
+        a.slice_mut(s![left_cols.., left_cols..]),
+        &mut pivots[left_cols..],
+    ) {
+        Ok(_) => {}
+        Err(Singular(row)) => {
+            if singular_row == 0 {
+                singular_row = left_cols + row;
+            }
+        }
+    }
+    for p in pivots[left_cols..cmp::min(a.nrows(), a.ncols())].iter_mut() {
+        *p += left_cols;
+    }
+    lapack::laswp(
+        left_cols,
+        a.as_mut_ptr(),
+        row_stride,
+        col_stride,
+        left_cols,
+        &pivots[..cmp::min(a.nrows(), a.ncols())],
+    );
+
+    if singular_row == 0 {
+        Ok(())
+    } else {
+        Err(Singular(singular_row))
+    }
+}
+
 #[allow(clippy::cast_possible_wrap)] // The number of elements in the matrix does not exceed `isize::MAX`.
 unsafe fn getrf_general<A: Scalar>(
     mut a: ArrayViewMut2<A>,
@@ -108,7 +232,7 @@ unsafe fn getrf_general<A: Scalar>(
     for i in 0..cmp::min(a.nrows(), a.ncols()) {
         let (max_idx, max_val) = blas::iamax(&a.slice(s![i.., i]));
         if max_val == A::zero().re() {
-            return Err(Singular());
+            return Err(Singular(max_idx));
         }
 
         if max_idx != 0 {
@@ -152,7 +276,7 @@ unsafe fn swap_rows<A>(mut n: usize, mut row1: *mut A, mut row2: *mut A, stride:
 
 #[cfg(test)]
 mod test {
-    use approx::{assert_relative_eq, relative_eq};
+    use approx::{assert_relative_eq, relative_eq, AbsDiffEq};
     use ndarray::{arr2, Array2, ArrayBase, Axis};
 
     #[test]
@@ -169,11 +293,49 @@ mod test {
     }
 
     #[test]
+    fn recursive_empty() {
+        let mut a: Array2<f32> = ArrayBase::eye(0);
+        let p = super::getrf_recursive(a.view_mut()).expect("valid input");
+        assert_eq!(p, Vec::<usize>::new());
+    }
+
+    #[test]
     fn smallest() {
         let mut a = arr2(&[[3_f64]]);
         let p = super::getrf(a.view_mut()).expect("valid input");
         assert_eq!(p, vec![0]);
         assert_eq!(a, arr2(&[[3.]]))
+    }
+
+    #[test]
+    fn recursive_smallest() {
+        let mut a = arr2(&[[3_f64]]);
+        let p = super::getrf_recursive(a.view_mut()).expect("valid input");
+        assert_eq!(p, vec![0]);
+        assert_eq!(a, arr2(&[[3.]]))
+    }
+
+    #[test]
+    fn recursive_square() {
+        let mut a = arr2(&[
+            [1_f64, 2_f64, 3_f64, 1_f64, 2_f64],
+            [2_f64, 2_f64, 1_f64, 3_f64, 3_f64],
+            [3_f64, 1_f64, 2_f64, 2_f64, 1_f64],
+            [2_f64, 3_f64, 3_f64, 1_f64, 1_f64],
+            [1_f64, 3_f64, 1_f64, 3_f64, 1_f64],
+        ]);
+        let p = super::getrf_recursive(a.view_mut()).expect("valid input");
+        assert_eq!(p, vec![2, 4, 2, 3, 4]);
+        assert!(a.abs_diff_eq(
+            &arr2(&[
+                [3., 1., 2., 2., 1.],
+                [0.33333333, 2.66666667, 0.33333333, 2.33333333, 0.66666667],
+                [0.33333333, 0.625, 2.125, -1.125, 1.25],
+                [0.66666667, 0.875, 0.64705882, -1.64705882, -1.05882353],
+                [0.66666667, 0.5, -0.23529412, -0.14285714, 2.14285714],
+            ]),
+            1e-6
+        ));
     }
 
     #[test]

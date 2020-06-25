@@ -1,6 +1,6 @@
 //! LU decomposition.
 
-use crate::{lapack, InvalidInput, Scalar};
+use crate::{lapack, InvalidInput, Real, Scalar};
 use ndarray::{Array1, Array2, ArrayBase, Data, DataMut, Ix1, Ix2};
 use std::cmp::min;
 use std::convert::TryFrom;
@@ -89,6 +89,7 @@ where
 impl<A, S> TryFrom<ArrayBase<S, Ix2>> for LUFactorized<A, S>
 where
     A: Scalar,
+    A::Real: Real,
     S: DataMut<Elem = A>,
 {
     type Error = Singular;
