@@ -1,4 +1,4 @@
-use crate::Scalar;
+use crate::{lapack, Scalar};
 use ndarray::{Array1, ArrayBase, Axis, Data, Ix1, Ix2};
 
 /// Solves `a * x = b`.
@@ -22,9 +22,9 @@ where
     assert_eq!(p.len(), b.len());
     assert!(a.ncols() >= p.len());
     unsafe {
-        let mut x: Array1<A> = ArrayBase::uninitialized(p.len());
-        for (i, (row, idx)) in a.lanes(Axis(1)).into_iter().zip(p.iter()).enumerate() {
-            *x.uget_mut(i) = *b.uget(*idx);
+        let mut x = b.to_owned();
+        lapack::laswp(1, x.as_mut_ptr(), x.stride_of(Axis(0)), 1, 0, p);
+        for (i, row) in a.lanes(Axis(1)).into_iter().enumerate() {
             for (k, a_elem) in row.iter().take(i).enumerate() {
                 let prod = *a_elem * *x.uget(k);
                 *x.uget_mut(i) -= prod;
@@ -51,7 +51,7 @@ mod test {
         let x = {
             let mut a = arr2(&[[1_f64, 2_f64], [3_f64, 4_f64]]);
             let p = crate::lapack::getrf(a.view_mut()).expect("valid input");
-            assert_eq!(p, vec![1, 0]);
+            assert_eq!(p, vec![1, 1]);
             let b = arr1(&[3_f64, 7_f64]);
             super::getrs(&a, &p, &b)
         };

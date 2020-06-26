@@ -1,16 +1,15 @@
-use crate::Scalar;
 use std::ptr;
 
 #[allow(clippy::cast_possible_wrap)]
-pub unsafe fn laswp<A>(
+pub unsafe fn laswp<T>(
     ncols: usize,
-    a: *mut A,
+    a: *mut T,
     row_stride: isize,
     col_stride: isize,
     begin: usize,
     piv: &[usize],
 ) where
-    A: Scalar,
+    T: Copy,
 {
     for (i, &p) in piv.iter().enumerate().skip(begin) {
         if i == p {

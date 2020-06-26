@@ -1,4 +1,4 @@
-use crate::Scalar;
+use crate::{blas, Scalar};
 use ndarray::{Array1, ArrayBase, Axis, Data, Ix1, Ix2};
 
 pub fn gemv<A, SA, SX>(alpha: A, a: &ArrayBase<SA, Ix2>, x: &ArrayBase<SX, Ix1>) -> Array1<A>
@@ -19,6 +19,31 @@ where
                     .sum()
         })
         .collect()
+}
+
+#[allow(
+    clippy::cast_possible_wrap,
+    clippy::many_single_char_names,
+    clippy::similar_names,
+    clippy::too_many_arguments
+)]
+pub(crate) unsafe fn gemv_sub<T>(
+    m: usize,
+    n: usize,
+    a: *const T,
+    row_stride: isize,
+    col_stride: isize,
+    x: *const T,
+    incx: isize,
+    y: *mut T,
+    incy: isize,
+) where
+    T: Scalar,
+{
+    for i in 0..m {
+        *y.offset(i as isize * incy) -=
+            blas::dot(n, a.offset(i as isize * row_stride), col_stride, x, incx);
+    }
 }
 
 #[allow(clippy::module_name_repetitions)]

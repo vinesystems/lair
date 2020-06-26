@@ -24,8 +24,13 @@ where
 {
     /// Returns the permutation matrix *P* of LU decomposition.
     pub fn p(&self) -> Array2<A> {
+        let permutation = {
+            let mut permutation = (0..self.lu.nrows()).collect::<Vec<_>>();
+            unsafe { lapack::laswp(1, permutation.as_mut_ptr(), 1, 1, 0, &self.pivots) };
+            permutation
+        };
         let mut p = Array2::zeros((self.lu.nrows(), self.lu.nrows()));
-        for (i, pivot) in self.pivots.iter().enumerate() {
+        for (i, pivot) in permutation.iter().enumerate() {
             p[(*pivot, i)] = A::one();
         }
         p
