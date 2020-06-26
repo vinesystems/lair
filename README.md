@@ -9,10 +9,6 @@ matrix representation.
 [![Documentation](https://docs.rs/lair/badge.svg)](https://docs.rs/lair)
 [![Coverage Status](https://codecov.io/gh/vinesystems/lair/branch/master/graphs/badge.svg)](https://codecov.io/gh/vinesystems/lair)
 
-## Requirements
-
-* Rust ≥ 1.37
-
 ## Features
 
 Lair is still in an early stage, and provides only a limited set of functions,
@@ -21,6 +17,10 @@ including the followings:
 * LU and QR decompositions
 * An equation solver for a system of linear scalar equations
 * Matrix builders for special matrices such as circulant and companion matrices
+
+## Minimum Supported Rust Version
+
+This crate is guaranteed to compile on Rust 1.43 and later.
 
 ## License
 

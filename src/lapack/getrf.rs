@@ -318,8 +318,9 @@ unsafe fn swap_rows<A>(mut n: usize, mut row1: *mut A, mut row2: *mut A, stride:
 
 #[cfg(test)]
 mod test {
-    use approx::AbsDiffEq;
+    use approx::{assert_abs_diff_eq, AbsDiffEq};
     use ndarray::{arr2, Array2, ArrayBase, Axis};
+    use num_complex::Complex64;
 
     #[test]
     fn singular() {
@@ -454,6 +455,24 @@ mod test {
             ]),
             1e-6
         ));
+    }
+
+    #[test]
+    fn square_complex() {
+        let mut a = arr2(&[
+            [Complex64::new(1., 1.), Complex64::new(2., -1.)],
+            [Complex64::new(3., 1.), Complex64::new(4., -1.)],
+        ]);
+        let p = super::getrf(a.view_mut()).expect("valid input");
+        assert_eq!(p, &[1, 1]);
+        assert_abs_diff_eq!(a[(0, 0)].re, 3., epsilon = 1e-6);
+        assert_abs_diff_eq!(a[(0, 0)].im, 1., epsilon = 1e-6);
+        assert_abs_diff_eq!(a[(0, 1)].re, 4., epsilon = 1e-6);
+        assert_abs_diff_eq!(a[(0, 1)].im, -1., epsilon = 1e-6);
+        assert_abs_diff_eq!(a[(1, 0)].re, 0.4, epsilon = 1e-6);
+        assert_abs_diff_eq!(a[(1, 0)].im, 0.2, epsilon = 1e-6);
+        assert_abs_diff_eq!(a[(1, 1)].re, 0.2, epsilon = 1e-6);
+        assert_abs_diff_eq!(a[(1, 1)].im, -1.4, epsilon = 1e-6);
     }
 
     #[test]

@@ -9,7 +9,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- QR decomposition works for a complex matrix.
+- Decompositions work for complex matrices.
 - `circulant` and `companion` can build complex matrices.
 
 ## [0.1.1] - 2020-06-23
