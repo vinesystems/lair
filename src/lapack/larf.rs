@@ -1,5 +1,5 @@
 use crate::{blas, lapack, Scalar};
-use ndarray::{s, ArrayBase, Data, DataMut, Ix1, Ix2};
+use ndarray::{s, ArrayBase, Axis, Data, DataMut, Ix1, Ix2};
 
 /// Applies an elementary reflector to a matrix.
 ///
@@ -31,7 +31,20 @@ where
         &c.slice(s![0..=last_v, 0..=last_c]),
         &v.slice(s![0..=last_v]),
     );
-    blas::gerc(-tau, v, &w, &mut c.slice_mut(s![0..=last_v, 0..=last_c]));
+    unsafe {
+        blas::gerc(
+            last_v + 1,
+            last_c + 1,
+            -tau,
+            v.as_ptr(),
+            v.stride_of(Axis(0)),
+            w.as_ptr(),
+            w.stride_of(Axis(0)),
+            c.slice_mut(s![0..=last_v, 0..=last_c]).as_mut_ptr(),
+            c.stride_of(Axis(0)),
+            c.stride_of(Axis(1)),
+        )
+    };
 }
 
 /// Applies an elementary reflector to a matrix.
@@ -65,7 +78,20 @@ where
         &c.slice(s![0..=last_r, 0..=last_v]),
         &v.slice(s![0..=last_v]),
     );
-    blas::gerc(-tau, &w, v, &mut c.slice_mut(s![0..=last_r, 0..=last_v]));
+    unsafe {
+        blas::gerc(
+            last_r + 1,
+            last_v + 1,
+            -tau,
+            w.as_ptr(),
+            w.stride_of(Axis(0)),
+            v.as_ptr(),
+            v.stride_of(Axis(0)),
+            c.slice_mut(s![0..=last_r, 0..=last_v]).as_mut_ptr(),
+            c.stride_of(Axis(0)),
+            c.stride_of(Axis(1)),
+        )
+    };
 }
 
 #[cfg(test)]

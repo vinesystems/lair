@@ -1,28 +1,42 @@
 use crate::Scalar;
-use ndarray::{ArrayBase, Axis, Data, DataMut, Ix1, Ix2};
 
-pub fn gerc<A, SX, SY, SA>(
-    alpha: A,
-    x: &ArrayBase<SX, Ix1>,
-    y: &ArrayBase<SY, Ix1>,
-    a: &mut ArrayBase<SA, Ix2>,
+#[allow(
+    clippy::cast_possible_wrap,
+    clippy::similar_names,
+    clippy::too_many_arguments
+)]
+pub unsafe fn gerc<T>(
+    nrows: usize,
+    ncols: usize,
+    alpha: T,
+    x: *const T,
+    incx: isize,
+    y: *const T,
+    incy: isize,
+    a: *mut T,
+    row_stride: isize,
+    col_stride: isize,
 ) where
-    A: Scalar,
-    SX: Data<Elem = A>,
-    SY: Data<Elem = A>,
-    SA: DataMut<Elem = A>,
+    T: Scalar,
 {
-    for (&x_elem, mut a_row) in x.iter().zip(a.lanes_mut(Axis(1)).into_iter()) {
-        for (&y_elem, a_elem) in y.iter().zip(a_row.iter_mut()) {
-            *a_elem += alpha * x_elem * y_elem.conj();
+    let mut xp = x;
+    for i in 0..nrows {
+        let mut ap = a.offset(row_stride * i as isize);
+        let mut yp = y;
+        let factor = alpha * *xp;
+        for _ in 0..ncols {
+            *ap += factor * (*yp).conj();
+            yp = yp.offset(incy);
+            ap = ap.offset(col_stride);
         }
+        xp = xp.offset(incx);
     }
 }
 
 #[cfg(test)]
 mod test {
     use approx::assert_abs_diff_eq;
-    use ndarray::{arr1, arr2};
+    use ndarray::{arr1, arr2, Axis};
     use num_complex::Complex32;
 
     #[test]
@@ -38,7 +52,20 @@ mod test {
             Complex32::new(3., 1.),
         ]);
         let y = arr1(&[Complex32::new(-1., -2.), Complex32::new(-3., -4.)]);
-        super::gerc(Complex32::new(1., -1.), &x, &y, &mut a);
+        unsafe {
+            super::gerc(
+                a.nrows(),
+                a.ncols(),
+                Complex32::new(1., -1.),
+                x.as_ptr(),
+                1,
+                y.as_ptr(),
+                1,
+                a.as_mut_ptr(),
+                a.stride_of(Axis(0)),
+                a.stride_of(Axis(1)),
+            )
+        };
         assert_abs_diff_eq!(a[(0, 0)].re, -7.);
         assert_abs_diff_eq!(a[(0, 0)].im, 8.);
         assert_abs_diff_eq!(a[(0, 1)].re, -18.);
