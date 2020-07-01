@@ -9,6 +9,7 @@ use std::ops::Mul;
 ///   stride `inc_x`.
 /// * `y` is the beginning address of an array of at least `n` elements with
 ///   stride `inc_y`.
+/// * The `n` elements of `x` and `y` must have been initialized.
 /// * `(n - 1) * inc_x` and `(n - 1) * inc_y` are between `isize::MIN` and
 ///   `isize::MAX`, inclusive.
 #[allow(clippy::cast_possible_wrap)]

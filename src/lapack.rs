@@ -7,6 +7,7 @@ mod ilal;
 pub(crate) mod larf;
 mod larfg;
 mod lartg;
+mod las2;
 pub(crate) mod lascl;
 mod laswp;
 mod orgrq;

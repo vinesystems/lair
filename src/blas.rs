@@ -1,3 +1,4 @@
+mod copy;
 mod dot;
 mod gemm;
 mod gemv;
