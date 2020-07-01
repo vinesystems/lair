@@ -1,11 +1,11 @@
-use crate::Scalar;
+use crate::{Float, Scalar, Zero};
 
 #[allow(clippy::cast_possible_wrap)]
 pub(crate) unsafe fn iamax<A>(n: usize, x: *const A, incx: isize) -> (usize, A::Real)
 where
     A: Scalar,
 {
-    let mut max_val = A::zero().re();
+    let mut max_val = A::Real::zero();
     let mut max_idx = 0;
     for i in 0..n {
         let elem = x.offset(incx * i as isize);

@@ -1,4 +1,4 @@
-use crate::Scalar;
+use crate::{Float, Scalar};
 use ndarray::{ArrayBase, Data, Ix1};
 
 pub(crate) fn nrm2<A, S>(x: &ArrayBase<S, Ix1>) -> A::Real

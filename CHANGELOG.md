@@ -9,25 +9,33 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- Decompositions work for complex matrices.
-- `circulant` and `companion` can build complex matrices.
+* Removed dependency on cauchy.  `cauchy::Scalar` has been replaced with a
+  simpler implementation.
+
+## [0.2.0]
+
+### Changed
+
+* Decompositions work for complex matrices.
+* `circulant` and `companion` can build complex matrices.
 
 ## [0.1.1] - 2020-06-23
 
 ### Added
 
-- LU decomposition.
-- QR decomposition.
-- Support for complex numbers.
+* LU decomposition.
+* QR decomposition.
+* Support for complex numbers.
 
 ## [0.1.0] - 2020-06-11
 
 ### Added
 
-- An equation solver for a system of linear scalar equations.
-- A circulent matrix builder.
-- A companion matrix builder.
+* An equation solver for a system of linear scalar equations.
+* A circulent matrix builder.
+* A companion matrix builder.
 
-[Unreleased]: https://github.com/vinesystems/lair/compare/0.1.1...master
+[Unreleased]: https://github.com/vinesystems/lair/compare/0.2.0...master
+[0.2.0]: https://github.com/vinesystems/lair/compare/0.1.1...0.2.0
 [0.1.1]: https://github.com/vinesystems/lair/compare/0.1.0...0.1.1
 [0.1.0]: https://github.com/vinesystems/lair/tree/0.1.0

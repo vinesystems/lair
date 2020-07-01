@@ -3,6 +3,7 @@
 use crate::{blas, lapack, Real, Scalar};
 use ndarray::{s, Array1, Array2, ArrayBase, Data, DataMut, Ix2};
 use std::fmt;
+use std::ops::{Div, MulAssign};
 
 /// QR decomposition factors.
 #[derive(Debug)]
@@ -69,7 +70,7 @@ where
 
 impl<A, S> From<ArrayBase<S, Ix2>> for QRFactorized<A, S>
 where
-    A: Scalar + fmt::Debug,
+    A: Scalar + Div<<A as Scalar>::Real, Output = A> + MulAssign<<A as Scalar>::Real>,
     A::Real: Real,
     S: DataMut<Elem = A>,
 {

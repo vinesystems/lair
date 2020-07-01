@@ -13,5 +13,5 @@ pub(crate) use gemv::{gemv, gemv_sub, gemv_transpose};
 pub(crate) use gerc::gerc;
 pub(crate) use iamax::iamax;
 pub(crate) use nrm2::nrm2;
-pub(crate) use scal::{rscal, scal};
+pub(crate) use scal::scal;
 pub(crate) use trsm::trsm;

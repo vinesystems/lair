@@ -2,17 +2,17 @@ use crate::Scalar;
 
 #[allow(clippy::too_many_arguments)]
 #[allow(clippy::cast_possible_wrap)]
-pub unsafe fn gemm<A>(
+pub unsafe fn gemm<T>(
     nrows: usize,
     ncols: usize,
     k: usize,
-    a: *const A,
-    b: *const A,
-    c: *mut A,
+    a: *const T,
+    b: *const T,
+    c: *mut T,
     row_stride: isize,
     col_stride: isize,
 ) where
-    A: Scalar,
+    T: Scalar,
 {
     for p in 0..nrows as isize {
         for q in 0..ncols as isize {

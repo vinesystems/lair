@@ -1,10 +1,11 @@
-use crate::{blas, lapack, Real, Scalar};
+use crate::{blas, lapack, Float, Real, Scalar};
 use ndarray::{ArrayBase, DataMut, Ix1};
+use std::ops::{Div, MulAssign};
 
 /// Generates an elementary reflector (Householder matrix).
 pub fn larfg<A, S>(mut alpha: A, mut x: ArrayBase<S, Ix1>) -> (A::Real, ArrayBase<S, Ix1>, A)
 where
-    A: Scalar,
+    A: Scalar + Div<<A as Scalar>::Real, Output = A> + MulAssign<<A as Scalar>::Real>,
     A::Real: Real,
     S: DataMut<Elem = A>,
 {
@@ -20,18 +21,18 @@ where
         let safe_min_recip = safe_min.recip();
         loop {
             knt += 1;
-            blas::rscal(safe_min_recip, &mut x);
+            blas::scal(safe_min_recip, &mut x);
             beta *= safe_min_recip;
-            alpha = alpha.mul_real(safe_min_recip);
+            alpha *= safe_min_recip;
             if beta.abs() >= safe_min || knt >= 20 {
                 break;
             }
         }
         x_norm = blas::nrm2(&x);
-        beta = -(alpha.square() + x_norm.square()).copysign(alpha.re());
+        beta = -(alpha.norm_sqr() + x_norm * x_norm).copysign(alpha.re());
     }
-    let tau = (A::from_real(beta) - alpha).div_real(beta);
-    alpha = A::one() / (alpha - A::from_real(beta));
+    let tau = (beta.into() - alpha) / beta;
+    alpha = A::one() / (alpha - beta.into());
     blas::scal(alpha, &mut x);
 
     beta *= safe_min.powi(knt);

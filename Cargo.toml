@@ -14,8 +14,8 @@ edition = "2018"
 exclude = ["./github"]
 
 [dependencies]
-cauchy = "0.3"
 ndarray = "0.13"
+num-complex = "0.3"
 num-traits = "0.2"
 thiserror = "1"
 
@@ -24,7 +24,6 @@ approx = "0.3"
 criterion = "0.3"
 ndarray = { version = "0.13", features = ["approx"] }
 ndarray-rand = "0.11"
-num-complex = "0.3"
 rand_isaac = "0.2"
 
 [[bench]]

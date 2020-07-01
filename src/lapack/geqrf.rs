@@ -1,11 +1,12 @@
 use crate::{lapack, Real, Scalar};
 use ndarray::{s, Array1, ArrayBase, DataMut, Ix2};
 use std::cmp;
+use std::ops::{Div, MulAssign};
 
 /// Computes the QR factorization of a matrix.
 pub fn geqrf<A, S>(a: &mut ArrayBase<S, Ix2>) -> Array1<A>
 where
-    A: Scalar,
+    A: Scalar + Div<<A as Scalar>::Real, Output = A> + MulAssign<<A as Scalar>::Real>,
     A::Real: Real,
     S: DataMut<Elem = A>,
 {
@@ -19,7 +20,7 @@ where
             a[(i, i)] = A::one();
             let v = a.column(i).slice(s![i..]).to_owned();
             lapack::larf::left(&v, t.conj(), &mut a.slice_mut(s![i.., i + 1..]));
-            a[(i, i)] = A::from_real(beta);
+            a[(i, i)] = beta.into();
         }
     }
     tau
