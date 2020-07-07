@@ -9,6 +9,7 @@ mod larfg;
 mod lartg;
 mod las2;
 pub(crate) mod lascl;
+mod lasq;
 mod laswp;
 mod orgrq;
 
