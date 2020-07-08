@@ -7,7 +7,141 @@ pub(crate) enum PingPong {
     Pong,
 }
 
+/// Computes one dqds transform in poing-pong form.
+///
+/// # Panics
+///
+/// Panics if `n0 - i0 <= 1`.
+#[allow(dead_code)]
+#[allow(clippy::cast_possible_wrap, clippy::too_many_lines)]
+pub(crate) unsafe fn lasq5<T: Real>(
+    i0: usize,
+    n0: usize,
+    z: *mut T,
+    pp: PingPong,
+    mut tau: T,
+    sigma: T,
+    eps: T,
+) -> (T, T, T, T, T, T) {
+    assert!(n0 - i0 <= 1);
+    let pong = if let PingPong::Pong = pp { 1 } else { 0 };
+    let d_thresh = eps * (sigma + tau);
+    if tau < d_thresh / (T::one() + T::one()) {
+        tau = T::zero();
+    }
+
+    let mut j4 = 4 * i0 as isize + pong - 3;
+    let mut e_min = *z.offset(j4 + 4);
+    let mut d = *z.offset(j4) - tau;
+    let mut d_min = d;
+    let d_min_2;
+    let d_n;
+    let d_nm1;
+    let d_nm2;
+    #[allow(clippy::collapsible_if)]
+    if tau == T::zero() {
+        if let PingPong::Ping = pp {
+            for j4 in (4 * i0 as isize..=4 * (n0 as isize - 3)).step_by(4) {
+                *z.offset(j4 - 2) = d + *z.offset(j4 - 1);
+                let tmp = *z.offset(j4 + 1) / *z.offset(j4 - 2);
+                d = d * tmp - tau;
+                if d < d_thresh {
+                    d = T::zero();
+                }
+                if d < d_min {
+                    d_min = d;
+                }
+                *z.offset(j4) = *z.offset(j4 - 1) * tmp;
+                let e = *z.offset(j4);
+                if e < e_min {
+                    e_min = e;
+                }
+            }
+        } else {
+            for j4 in (4 * i0 as isize..=4 * (n0 as isize - 3)).step_by(4) {
+                *z.offset(j4 - 3) = d + *z.offset(j4);
+                let tmp = *z.offset(j4 + 2) / *z.offset(j4 - 3);
+                d = d * tmp - tau;
+                if d < d_thresh {
+                    d = T::zero();
+                }
+                if d < d_min {
+                    d_min = d;
+                }
+                *z.offset(j4 - 1) = *z.offset(j4) * tmp;
+                let e = *z.offset(j4 - 1);
+                if e < e_min {
+                    e_min = e;
+                }
+            }
+        }
+    } else {
+        if let PingPong::Ping = pp {
+            for j4 in (4 * i0 as isize..=4 * (n0 as isize - 3)).step_by(4) {
+                *z.offset(j4 - 2) = d + *z.offset(j4 - 1);
+                let tmp = *z.offset(j4 + 1) / *z.offset(j4 - 2);
+                d = d * tmp - tau;
+                if d < d_min {
+                    d_min = d;
+                }
+                *z.offset(j4) = *z.offset(j4 - 1) * tmp;
+                let e = *z.offset(j4);
+                if e < e_min {
+                    e_min = e;
+                }
+            }
+        } else {
+            for j4 in (4 * i0 as isize..=4 * (n0 as isize - 3)).step_by(4) {
+                *z.offset(j4 - 3) = d + *z.offset(j4);
+                let tmp = *z.offset(j4 + 2) / *z.offset(j4 - 3);
+                d = d * tmp - tau;
+                if d < d_min {
+                    d_min = d;
+                }
+                *z.offset(j4 - 1) = *z.offset(j4) * tmp;
+                let e = *z.offset(j4 - 1);
+                if e < e_min {
+                    e_min = e;
+                }
+            }
+        }
+    }
+
+    d_nm2 = d;
+    d_min_2 = d_min;
+    j4 = 4 * (n0 as isize - 2) - pong;
+    let mut j4_p2 = j4 + 2 * pong - 1;
+    *z.offset(j4 - 2) = d_nm2 + *z.offset(j4_p2);
+    *z.offset(j4) = *z.offset(j4_p2 + 2) * (*z.offset(j4_p2) / *z.offset(j4 - 2));
+    d_nm1 = *z.offset(j4_p2 + 2) * (d_nm2 / *z.offset(j4 - 2)) - tau;
+    if d_nm1 < d_min {
+        d_min = d_nm1;
+    }
+
+    let d_min_1 = d_min;
+    j4 += 4;
+    j4_p2 = j4 + 2 * pong - 1;
+    *z.offset(j4 - 2) = d_nm1 + *z.offset(j4_p2);
+    *z.offset(j4) = *z.offset(j4_p2 + 2) * (*z.offset(j4_p2) / *z.offset(j4 - 2));
+    d_n = *z.offset(j4_p2 + 2) * (d_nm1 / *z.offset(j4 - 2)) - tau;
+    if d_n < d_min {
+        d_min = d_n;
+    }
+
+    *z.offset(j4 + 2) = d_n;
+    if let PingPong::Ping = pp {
+        *z.offset(4 * n0 as isize) = e_min;
+    } else {
+        *z.offset(4 * n0 as isize - 1) = e_min;
+    }
+    (d_min, d_min_1, d_min_2, d_n, d_nm1, d_nm2)
+}
+
 /// Computes one dqd transform in ping-pong form.
+///
+/// # Panics
+///
+/// Panics if `n0 - i0 <= 1`.
 #[allow(dead_code)]
 #[allow(clippy::cast_possible_wrap, clippy::too_many_lines)]
 pub(crate) unsafe fn lasq6<T: Real>(
@@ -16,6 +150,8 @@ pub(crate) unsafe fn lasq6<T: Real>(
     z: *mut T,
     pp: PingPong,
 ) -> (T, T, T, T, T, T) {
+    assert!(n0 - i0 <= 1);
+
     let mut j4 = if let PingPong::Ping = pp {
         4 * i0 as isize - 3
     } else {
