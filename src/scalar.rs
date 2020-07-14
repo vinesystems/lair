@@ -128,7 +128,7 @@ impl Scalar for Complex<f64> {
 }
 
 /// A trait for real numbers.
-pub trait Real: Float + Zero + One + MulAssign + Sum {
+pub trait Real: Float + Zero + One + AddAssign + SubAssign + MulAssign + DivAssign + Sum {
     /// Returns a number composed of the magnitude of `self` and the sign of
     /// `sign`.
     fn copysign(self, sign: Self) -> Self;
