@@ -148,12 +148,12 @@ impl Real for f32 {
 
     #[inline]
     fn eps() -> Self {
-        5.960_464_5e-8
+        Self::EPSILON * 0.5
     }
 
     #[inline]
     fn sfmin() -> Self {
-        1.175_494_4e-38
+        Self::MIN_POSITIVE
     }
 }
 
@@ -165,11 +165,11 @@ impl Real for f64 {
 
     #[inline]
     fn eps() -> Self {
-        1.110_223_024_625_156_5e-16
+        Self::EPSILON * 0.5
     }
 
     #[inline]
     fn sfmin() -> Self {
-        2.225_073_858_507_201_4e-_308
+        Self::MIN_POSITIVE
     }
 }
