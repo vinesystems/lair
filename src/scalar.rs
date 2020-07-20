@@ -134,10 +134,18 @@ pub trait Real: Float + Zero + One + AddAssign + SubAssign + MulAssign + DivAssi
     fn copysign(self, sign: Self) -> Self;
 
     /// Relative machine precision.
-    fn eps() -> Self;
+    #[inline]
+    #[must_use]
+    fn eps() -> Self {
+        Self::epsilon() / (Self::one() + Self::one())
+    }
 
     /// Safe minimum, such that its reciprocal does not overflow.
-    fn sfmin() -> Self;
+    #[inline]
+    #[must_use]
+    fn sfmin() -> Self {
+        Self::min_positive_value()
+    }
 }
 
 impl Real for f32 {
@@ -145,31 +153,11 @@ impl Real for f32 {
     fn copysign(self, sign: Self) -> Self {
         self.copysign(sign)
     }
-
-    #[inline]
-    fn eps() -> Self {
-        Self::EPSILON * 0.5
-    }
-
-    #[inline]
-    fn sfmin() -> Self {
-        Self::MIN_POSITIVE
-    }
 }
 
 impl Real for f64 {
     #[inline]
     fn copysign(self, sign: Self) -> Self {
         self.copysign(sign)
-    }
-
-    #[inline]
-    fn eps() -> Self {
-        Self::EPSILON * 0.5
-    }
-
-    #[inline]
-    fn sfmin() -> Self {
-        Self::MIN_POSITIVE
     }
 }
