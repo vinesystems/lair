@@ -3,7 +3,6 @@
 use crate::{lapack, InvalidInput, Real, Scalar};
 use ndarray::{Array1, Array2, ArrayBase, Data, DataMut, Ix1, Ix2};
 use std::cmp::min;
-use std::convert::TryFrom;
 use std::fmt;
 
 /// LU decomposition factors.
@@ -15,6 +14,7 @@ where
 {
     lu: ArrayBase<S, Ix2>,
     pivots: Vec<usize>,
+    singular: Option<usize>,
 }
 
 impl<A, S> LUFactorized<A, S>
@@ -69,6 +69,11 @@ where
         u
     }
 
+    /// Returns `true` if the matrix is singular.
+    pub fn is_singular(&self) -> bool {
+        self.singular.is_some()
+    }
+
     /// Solves the system of equations `P * L * U * x = b` for `x`.
     ///
     /// # Errors
@@ -91,34 +96,27 @@ where
     }
 }
 
-impl<A, S> TryFrom<ArrayBase<S, Ix2>> for LUFactorized<A, S>
+impl<A, S> From<ArrayBase<S, Ix2>> for LUFactorized<A, S>
 where
     A: Scalar,
     A::Real: Real,
     S: DataMut<Elem = A>,
 {
-    type Error = Singular;
-
     /// Converts a matrix into the LU-factorized form, *P* * *L* * *U*.
-    fn try_from(mut a: ArrayBase<S, Ix2>) -> Result<Self, Self::Error> {
-        let pivots = match lapack::getrf(a.view_mut()) {
-            Ok(ipiv) => ipiv,
-            Err(_) => return Err(Singular),
-        };
-        Ok(LUFactorized { lu: a, pivots })
+    fn from(mut a: ArrayBase<S, Ix2>) -> Self {
+        let (pivots, singular) = lapack::getrf(a.view_mut());
+        LUFactorized {
+            lu: a,
+            pivots,
+            singular,
+        }
     }
 }
-
-/// Returned as an error when the input matrix is singular while expected
-/// non-sigular.
-#[derive(Debug)]
-pub struct Singular;
 
 #[cfg(test)]
 mod test {
     use approx::assert_relative_eq;
     use ndarray::arr2;
-    use std::convert::TryFrom;
 
     #[test]
     fn square() {
@@ -127,7 +125,7 @@ mod test {
             [2_f32, 2_f32, 1_f32],
             [3_f32, 1_f32, 2_f32],
         ]);
-        let lu = super::LUFactorized::try_from(a).expect("non-singular");
+        let lu = super::LUFactorized::from(a);
         let p = lu.p();
         assert_eq!(p[(0, 1)], 1.);
         assert_eq!(p[(1, 2)], 1.);
@@ -149,7 +147,7 @@ mod test {
             [2_f32, 2_f32, 1_f32, 3_f32],
             [3_f32, 1_f32, 2_f32, 2_f32],
         ]);
-        let lu = super::LUFactorized::try_from(a).expect("non-singular");
+        let lu = super::LUFactorized::from(a);
         let p = lu.p();
         assert_eq!(p.shape(), &[3, 3]);
         assert_eq!(p[(0, 1)], 1.);
@@ -175,7 +173,7 @@ mod test {
             [3_f32, 1_f32, 2_f32],
             [2_f32, 3_f32, 3_f32],
         ]);
-        let lu = super::LUFactorized::try_from(a).expect("non-singular");
+        let lu = super::LUFactorized::from(a);
         let p = lu.p();
         assert_eq!(p.shape(), &[4, 4]);
         assert_eq!(p[(0, 3)], 1.);

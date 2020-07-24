@@ -5,7 +5,6 @@ use ndarray_rand::rand::SeedableRng;
 use ndarray_rand::rand_distr::Uniform;
 use ndarray_rand::RandomExt;
 use rand_isaac::isaac64::Isaac64Rng;
-use std::convert::TryFrom;
 
 fn getrf_100(c: &mut Criterion) {
     let mut group = c.benchmark_group("lu");
@@ -19,14 +18,14 @@ fn getrf_100(c: &mut Criterion) {
     group.bench_function("row-major", |bencher| {
         bencher.iter(|| {
             let a = a_row_major.clone();
-            LUFactorized::try_from(a).expect("non-singular");
+            LUFactorized::from(a);
         })
     });
     group.bench_function("col-major", |bencher| {
         bencher.iter(|| {
             let mut a = a_col_major.clone();
             a.swap_axes(0, 1);
-            LUFactorized::try_from(a).expect("non-singular");
+            LUFactorized::from(a);
         })
     });
 }

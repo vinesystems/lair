@@ -50,7 +50,7 @@ mod test {
     fn square_2x2() {
         let x = {
             let mut a = arr2(&[[1_f64, 2_f64], [3_f64, 4_f64]]);
-            let p = crate::lapack::getrf(a.view_mut()).expect("valid input");
+            let (p, _) = crate::lapack::getrf(a.view_mut());
             assert_eq!(p, vec![1, 1]);
             let b = arr1(&[3_f64, 7_f64]);
             super::getrs(&a, &p, &b)
@@ -69,7 +69,7 @@ mod test {
                 [2_f64, 3_f64, 3_f64, 1_f64, 1_f64],
                 [1_f64, 3_f64, 1_f64, 3_f64, 1_f64],
             ]);
-            let p = crate::lapack::getrf(a.view_mut()).expect("valid input");
+            let (p, _) = crate::lapack::getrf(a.view_mut());
             let b = arr1(&[9_f64, 11_f64, 9_f64, 10_f64, 9_f64]);
             super::getrs(&a, &p, &b)
         };

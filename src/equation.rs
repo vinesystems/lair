@@ -3,7 +3,6 @@
 use crate::decomposition::LUFactorized;
 use crate::{InvalidInput, Real, Scalar};
 use ndarray::{Array1, ArrayBase, Data, Ix1, Ix2};
-use std::convert::TryFrom;
 
 /// Solves a system of linear scalar equations.
 ///
@@ -51,7 +50,10 @@ where
             a.nrows()
         )));
     }
-    let factorized = LUFactorized::try_from(a.to_owned())
-        .map_err(|_| InvalidInput::Value("`a` is a singular matrix".to_string()))?;
-    factorized.solve(b)
+    let factorized = LUFactorized::from(a.to_owned());
+    if factorized.is_singular() {
+        Err(InvalidInput::Value("`a` is a singular matrix".to_string()))
+    } else {
+        factorized.solve(b)
+    }
 }

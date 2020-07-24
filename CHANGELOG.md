@@ -11,6 +11,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 * Removed dependency on cauchy.  `cauchy::Scalar` has been replaced with a
   simpler implementation.
+* LU factorization with a singular matrix does not return an error.
 
 ## [0.2.0]
 
