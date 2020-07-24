@@ -14,11 +14,7 @@ where
     unsafe {
         let dim_min = cmp::min(a.nrows(), a.ncols());
         let mut pivots = (0..dim_min).collect::<Vec<_>>();
-        let singular = if a.stride_of(Axis(1)) == 1 {
-            getrf_row_major(a, &mut pivots)
-        } else {
-            getrf_col_major(a, &mut pivots)
-        };
+        let singular = getrf_row_major(a, &mut pivots);
         (pivots, singular)
     }
 }
@@ -119,6 +115,7 @@ unsafe fn getrf_row_major<A: Scalar>(
 /// # Safety
 ///
 /// * `pivots.len()` must be greater than or equal to the smaller dimension of `a`.
+#[allow(dead_code)]
 #[allow(clippy::cast_possible_wrap)] // The number of elements in the matrix does not exceed `isize::MAX`.
 unsafe fn getrf_col_major<A: Scalar>(
     mut a: ArrayViewMut2<A>,

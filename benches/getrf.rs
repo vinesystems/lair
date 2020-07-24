@@ -23,8 +23,7 @@ fn getrf_100(c: &mut Criterion) {
     });
     group.bench_function("col-major", |bencher| {
         bencher.iter(|| {
-            let mut a = a_col_major.clone();
-            a.swap_axes(0, 1);
+            let a = a_col_major.clone();
             LUFactorized::from(a);
         })
     });
