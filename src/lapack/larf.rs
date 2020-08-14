@@ -26,11 +26,23 @@ where
     } else {
         return;
     };
-    let w = blas::gemv_transpose(
-        A::one(),
-        &c.slice(s![0..=last_v, 0..=last_c]),
-        &v.slice(s![0..=last_v]),
-    );
+    let w = unsafe {
+        let mut w = Array1::<A>::uninitialized(last_c + 1);
+        blas::gemv::conjtrans(
+            last_v + 1,
+            last_c + 1,
+            A::one(),
+            c.as_ptr(),
+            c.stride_of(Axis(0)),
+            c.stride_of(Axis(1)),
+            v.as_ptr(),
+            v.stride_of(Axis(0)),
+            A::zero(),
+            w.as_mut_ptr(),
+            1,
+        );
+        w
+    };
     unsafe {
         blas::gerc(
             last_v + 1,
@@ -75,7 +87,7 @@ where
     };
     let w = unsafe {
         let mut w = Array1::<A>::uninitialized(last_r + 1);
-        blas::gemv(
+        blas::gemv::notrans(
             last_r + 1,
             last_v + 1,
             A::one(),
