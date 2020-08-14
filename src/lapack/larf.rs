@@ -1,5 +1,5 @@
 use crate::{blas, lapack, Scalar};
-use ndarray::{s, ArrayBase, Axis, Data, DataMut, Ix1, Ix2};
+use ndarray::{s, Array1, ArrayBase, Axis, Data, DataMut, Ix1, Ix2};
 
 /// Applies an elementary reflector to a matrix.
 ///
@@ -73,11 +73,23 @@ where
     } else {
         return;
     };
-    let w = blas::gemv(
-        A::one(),
-        &c.slice(s![0..=last_r, 0..=last_v]),
-        &v.slice(s![0..=last_v]),
-    );
+    let w = unsafe {
+        let mut w = Array1::<A>::uninitialized(last_r + 1);
+        blas::gemv(
+            last_r + 1,
+            last_v + 1,
+            A::one(),
+            c.as_ptr(),
+            c.stride_of(Axis(0)),
+            c.stride_of(Axis(1)),
+            v.as_ptr(),
+            v.stride_of(Axis(0)),
+            A::zero(),
+            w.as_mut_ptr(),
+            1,
+        );
+        w
+    };
     unsafe {
         blas::gerc(
             last_r + 1,
