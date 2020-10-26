@@ -1,4 +1,5 @@
 use num_traits::Zero;
+use std::convert::TryFrom;
 use std::iter::Sum;
 use std::ops::{AddAssign, Mul};
 
@@ -18,7 +19,7 @@ pub unsafe fn dot<T>(n: usize, x: *const T, inc_x: isize, y: *const T, inc_y: is
 where
     T: Copy + AddAssign + Mul<Output = T> + Sum<<T as Mul>::Output> + Zero,
 {
-    debug_assert!(n <= isize::MAX as usize);
+    debug_assert!(isize::try_from(n).is_ok());
     debug_assert!((n as isize - 1).checked_mul(inc_x).is_some());
     debug_assert!((n as isize - 1).checked_mul(inc_y).is_some());
 
