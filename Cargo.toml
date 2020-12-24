@@ -23,7 +23,7 @@ thiserror = "1"
 approx = "0.3" # Update only when ndarray updates its dependency
 criterion = "0.3"
 ndarray = { version = "0.13", features = ["approx"] }
-ndarray-rand = "0.12"
+ndarray-rand = "0.13"
 rand_isaac = "0.3"
 
 [[bench]]
