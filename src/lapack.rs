@@ -4,6 +4,7 @@ mod geqrf;
 mod getrf;
 mod getrs;
 mod ilal;
+mod labrd;
 pub(crate) mod larf;
 mod larfg;
 mod lartg;
@@ -17,6 +18,7 @@ pub(crate) use geqrf::geqrf;
 pub(crate) use getrf::getrf;
 pub(crate) use getrs::getrs;
 pub(crate) use ilal::{ilalc, ilalr};
+pub(crate) use labrd::labrd;
 pub(crate) use larfg::larfg;
 pub(crate) use laswp::laswp;
 
