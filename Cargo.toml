@@ -1,6 +1,6 @@
 [package]
 name = "lair"
-version = "0.2.0"
+version = "0.3.0"
 description = "Linear algebra in Rust"
 readme = "README.md"
 documentation = "https://docs.rs/lair"
@@ -14,15 +14,15 @@ edition = "2018"
 exclude = ["./github"]
 
 [dependencies]
-ndarray = "0.13"
+ndarray = "0.14"
 num-complex = "0.3"
 num-traits = "0.2"
 thiserror = "1"
 
 [dev-dependencies]
-approx = "0.3" # Update only when ndarray updates its dependency
+approx = "0.4" # Update only when ndarray updates its dependency
 criterion = "0.3"
-ndarray = { version = "0.13", features = ["approx"] }
+ndarray = { version = "0.14", features = ["approx"] }
 ndarray-rand = "0.13"
 rand_isaac = "0.3"
 

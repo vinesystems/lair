@@ -5,10 +5,11 @@ file is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and
 this project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.0]
 
 ### Changed
 
+* Updated ndarray to 0.14.
 * Removed dependency on cauchy.  `cauchy::Scalar` has been replaced with a
   simpler implementation.
 * LU factorization with a singular matrix does not return an error.
@@ -36,7 +37,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 * A circulent matrix builder.
 * A companion matrix builder.
 
-[Unreleased]: https://github.com/vinesystems/lair/compare/0.2.0...master
+[0.3.0]: https://github.com/vinesystems/lair/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/vinesystems/lair/compare/0.1.1...0.2.0
 [0.1.1]: https://github.com/vinesystems/lair/compare/0.1.0...0.1.1
 [0.1.0]: https://github.com/vinesystems/lair/tree/0.1.0
