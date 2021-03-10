@@ -8,11 +8,7 @@ use ndarray::{Array1, ArrayBase, Axis, Data, Ix1, Ix2};
 /// Panics if the number of rows in `a` is different from the number of elements
 /// in `p` or the number of elements in `b`, or the number of columns in `a` is
 /// smaller than the number of elements in `p`.
-pub(crate) fn getrs<A, SA, SB>(
-    a: &ArrayBase<SA, Ix2>,
-    p: &[usize],
-    b: &ArrayBase<SB, Ix1>,
-) -> Array1<A>
+pub fn getrs<A, SA, SB>(a: &ArrayBase<SA, Ix2>, p: &[usize], b: &ArrayBase<SB, Ix1>) -> Array1<A>
 where
     A: Scalar,
     SA: Data<Elem = A>,

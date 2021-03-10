@@ -3,11 +3,11 @@
 //!
 //! [ndarray]: https://docs.rs/ndarray/
 
-pub(crate) mod blas;
+mod blas;
 pub mod decomposition;
 // TODO: pub mod eigen;
 pub mod equation;
-pub(crate) mod lapack;
+mod lapack;
 pub mod matrix;
 mod scalar;
 

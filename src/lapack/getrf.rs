@@ -6,7 +6,7 @@ use std::ptr;
 #[derive(Debug, PartialEq)]
 pub(crate) struct Singular(usize);
 
-pub(crate) fn getrf<A>(a: ArrayViewMut2<A>) -> (Vec<usize>, Option<usize>)
+pub fn getrf<A>(a: ArrayViewMut2<A>) -> (Vec<usize>, Option<usize>)
 where
     A: Scalar,
     A::Real: Real,
