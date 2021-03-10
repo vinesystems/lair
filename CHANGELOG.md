@@ -5,7 +5,7 @@ file is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and
 this project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0]
+## [0.3.0] - 2021-02-16
 
 ### Changed
 
@@ -14,7 +14,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
   simpler implementation.
 * LU factorization with a singular matrix does not return an error.
 
-## [0.2.0]
+## [0.2.0] - 2020-06-26
 
 ### Changed
 
