@@ -383,18 +383,45 @@ pub trait Real: Float + Zero + One + NumAssign + Sum {
     fn sfmin() -> Self {
         Self::min_positive_value()
     }
+
+    /// Base of the machine.
+    fn base() -> u32;
+
+    /// eps * base of the machine
+    fn prec() -> Self;
 }
 
 impl Real for f32 {
     #[inline]
+    fn base() -> u32 {
+        Self::RADIX
+    }
+
+    #[inline]
     fn copysign(self, sign: Self) -> Self {
         self.copysign(sign)
+    }
+
+    #[inline]
+    #[allow(clippy::cast_precision_loss)] // `RADIX` fits in `f32`'s mantissa
+    fn prec() -> Self {
+        Self::eps() * (Self::base() as Self)
     }
 }
 
 impl Real for f64 {
     #[inline]
+    fn base() -> u32 {
+        Self::RADIX
+    }
+
+    #[inline]
     fn copysign(self, sign: Self) -> Self {
         self.copysign(sign)
+    }
+
+    #[inline]
+    fn prec() -> Self {
+        Self::eps() * Self::from(Self::base())
     }
 }

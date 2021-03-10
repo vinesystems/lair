@@ -27,6 +27,8 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 * `Scalar::abs` returns the absolute value.
+* `Real::base` returns the base of the machine.
+* `Real::prec` returns the precision, `eps * base`.
 
 ### Changed
 
