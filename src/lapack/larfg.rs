@@ -29,7 +29,7 @@ where
             }
         }
         x_norm = blas::nrm2(&x);
-        beta = -(alpha.norm_sqr() + x_norm * x_norm).copysign(alpha.re());
+        beta = -(alpha.square() + x_norm * x_norm).copysign(alpha.re());
     }
     let tau = (beta.into() - alpha) / beta;
     alpha = A::one() / (alpha - beta.into());

@@ -11,6 +11,10 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 * `Scalar::abs` returns the absolute value.
 
+### Changed
+
+* `Scalar::norm_sqr` has been renaemd `Scalar::square`.
+
 ## [0.3.0] - 2021-02-16
 
 ### Changed

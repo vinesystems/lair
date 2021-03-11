@@ -29,7 +29,7 @@ pub trait Scalar:
     fn im(&self) -> Self::Real;
     fn conj(&self) -> Self;
     fn abs(&self) -> Self::Real;
-    fn norm_sqr(&self) -> Self::Real;
+    fn square(&self) -> Self::Real;
 }
 
 impl Scalar for f32 {
@@ -56,7 +56,7 @@ impl Scalar for f32 {
     }
 
     #[inline]
-    fn norm_sqr(&self) -> Self::Real {
+    fn square(&self) -> Self::Real {
         *self * *self
     }
 }
@@ -85,7 +85,7 @@ impl Scalar for f64 {
     }
 
     #[inline]
-    fn norm_sqr(&self) -> Self::Real {
+    fn square(&self) -> Self::Real {
         *self * *self
     }
 }
@@ -114,7 +114,7 @@ impl Scalar for Complex<f32> {
     }
 
     #[inline]
-    fn norm_sqr(&self) -> Self::Real {
+    fn square(&self) -> Self::Real {
         self.norm_sqr()
     }
 }
@@ -143,7 +143,7 @@ impl Scalar for Complex<f64> {
     }
 
     #[inline]
-    fn norm_sqr(&self) -> Self::Real {
+    fn square(&self) -> Self::Real {
         self.norm_sqr()
     }
 }
