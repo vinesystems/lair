@@ -119,7 +119,7 @@ where
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use approx::{assert_abs_diff_eq, AbsDiffEq};
     use ndarray::{arr1, arr2};
     use num_complex::Complex64;

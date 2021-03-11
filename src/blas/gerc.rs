@@ -34,7 +34,7 @@ pub unsafe fn gerc<T>(
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use approx::assert_abs_diff_eq;
     use ndarray::{arr1, arr2, Axis};
     use num_complex::Complex32;

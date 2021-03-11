@@ -13,7 +13,7 @@ where
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use approx::assert_abs_diff_eq;
     use ndarray::arr1;
     use num_complex::Complex64;

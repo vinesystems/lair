@@ -19,7 +19,7 @@ where
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     #[test]
     fn iamax() {
         let (idx, max) = unsafe {

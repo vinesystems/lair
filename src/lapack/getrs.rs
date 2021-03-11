@@ -38,7 +38,7 @@ where
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use approx::{assert_abs_diff_eq, assert_relative_eq};
     use ndarray::{arr1, arr2};
 

@@ -76,7 +76,7 @@ where
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use ndarray::aview2;
     use num_complex::{Complex32, Complex64};
 

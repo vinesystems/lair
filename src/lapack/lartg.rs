@@ -67,7 +67,7 @@ pub(crate) fn lartg<T: Real>(f: T, g: T) -> (T, T, T) {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use approx::assert_abs_diff_eq;
 
     #[test]

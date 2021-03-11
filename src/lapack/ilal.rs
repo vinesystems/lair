@@ -48,7 +48,7 @@ where
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use ndarray::{arr2, Array2};
 
     #[test]

@@ -356,7 +356,7 @@ unsafe fn swap_rows<A>(mut n: usize, mut row1: *mut A, mut row2: *mut A, stride:
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use approx::{assert_abs_diff_eq, AbsDiffEq};
     use ndarray::{arr2, Array2, ArrayBase, Axis};
     use num_complex::Complex64;
