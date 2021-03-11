@@ -4,6 +4,7 @@ mod geqrf;
 mod getrf;
 mod getrs;
 mod ilal;
+pub mod lange;
 pub mod larf;
 mod larfg;
 mod lartg;
