@@ -1,4 +1,4 @@
-use crate::{lapack, Real, Scalar};
+use crate::{lapack, Scalar};
 use ndarray::{s, Array1, ArrayBase, DataMut, Ix2};
 use std::cmp;
 use std::ops::{Div, MulAssign};
@@ -7,7 +7,6 @@ use std::ops::{Div, MulAssign};
 pub fn geqrf<A, S>(a: &mut ArrayBase<S, Ix2>) -> Array1<A>
 where
     A: Scalar + Div<<A as Scalar>::Real, Output = A> + MulAssign<<A as Scalar>::Real>,
-    A::Real: Real,
     S: DataMut<Elem = A>,
 {
     let min_dim = cmp::min(a.nrows(), a.ncols());

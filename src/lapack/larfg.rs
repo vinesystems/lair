@@ -6,7 +6,6 @@ use std::ops::{Div, MulAssign};
 pub fn larfg<A, S>(mut alpha: A, mut x: ArrayBase<S, Ix1>) -> (A::Real, ArrayBase<S, Ix1>, A)
 where
     A: Scalar + Div<<A as Scalar>::Real, Output = A> + MulAssign<<A as Scalar>::Real>,
-    A::Real: Real,
     S: DataMut<Elem = A>,
 {
     let mut x_norm = blas::nrm2(&x);
