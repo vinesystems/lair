@@ -10,6 +10,7 @@ mod larfg;
 mod lartg;
 mod las2;
 pub mod lascl;
+pub mod laset;
 mod lasq;
 mod laswp;
 mod orgrq;
