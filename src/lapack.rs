@@ -16,6 +16,7 @@ pub mod lascl;
 pub mod laset;
 mod lasq;
 mod laswp;
+mod orgqr;
 mod orgrq;
 
 pub use geqrf::geqrf;
