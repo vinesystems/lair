@@ -14,7 +14,7 @@ edition = "2018"
 exclude = ["./github"]
 
 [dependencies]
-ndarray = "0.14"
+ndarray = "0.15"
 num-complex = "0.4"
 num-traits = "0.2"
 thiserror = "1"
@@ -22,8 +22,8 @@ thiserror = "1"
 [dev-dependencies]
 approx = "0.4" # Update only when ndarray updates its dependency
 criterion = "0.3"
-ndarray = { version = "0.14", features = ["approx"] }
-ndarray-rand = "0.13"
+ndarray = { version = "0.15", features = ["approx"] }
+ndarray-rand = "0.14"
 rand_isaac = "0.3"
 
 [[bench]]

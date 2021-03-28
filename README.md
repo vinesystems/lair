@@ -20,7 +20,7 @@ including the followings:
 
 ## Minimum Supported Rust Version
 
-This crate is guaranteed to compile on Rust 1.43 and later.
+This crate is guaranteed to compile on Rust 1.49 and later.
 
 ## License
 

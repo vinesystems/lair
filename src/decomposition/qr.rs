@@ -83,7 +83,6 @@ where
 
 #[cfg(test)]
 mod tests {
-    use approx::AbsDiffEq;
     use ndarray::{arr1, arr2};
 
     #[test]

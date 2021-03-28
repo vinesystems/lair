@@ -1,7 +1,7 @@
 //! Matrix functions and special matrices.
 
 use crate::{InvalidInput, Scalar};
-use ndarray::{Array2, ArrayBase};
+use ndarray::Array2;
 
 /// Constructs a circulant matrix.
 ///
@@ -18,14 +18,14 @@ pub fn circulant<A>(a: &[A]) -> Array2<A>
 where
     A: Copy,
 {
+    let mut x = Array2::<A>::uninit((a.len(), a.len()));
     unsafe {
-        let mut x: Array2<A> = ArrayBase::uninitialized((a.len(), a.len()));
         for (i, a_elem) in a.iter().enumerate() {
             for j in 0..a.len() {
-                x[[(i + j) % a.len(), j]] = *a_elem;
+                *(x[[(i + j) % a.len(), j]].as_mut_ptr()) = *a_elem;
             }
         }
-        x
+        x.assume_init()
     }
 }
 

@@ -13,6 +13,8 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+* Requires Rust 1.49 or later.
+* Updated ndarray to 0.15.
 * `Scalar::norm_sqr` has been renaemd `Scalar::square`.
 
 ## [0.3.0] - 2021-02-16

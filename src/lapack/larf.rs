@@ -26,22 +26,24 @@ where
     } else {
         return;
     };
-    let w = unsafe {
-        let mut w = Array1::<A>::uninitialized(last_c + 1);
-        blas::gemv::conjtrans(
-            last_v + 1,
-            last_c + 1,
-            A::one(),
-            c.as_ptr(),
-            c.stride_of(Axis(0)),
-            c.stride_of(Axis(1)),
-            v.as_ptr(),
-            v.stride_of(Axis(0)),
-            A::zero(),
-            w.as_mut_ptr(),
-            1,
-        );
-        w
+    let w = {
+        let mut w = Array1::<A>::uninit(last_c + 1);
+        unsafe {
+            blas::gemv::conjtrans(
+                last_v + 1,
+                last_c + 1,
+                A::one(),
+                c.as_ptr(),
+                c.stride_of(Axis(0)),
+                c.stride_of(Axis(1)),
+                v.as_ptr(),
+                v.stride_of(Axis(0)),
+                A::zero(),
+                (*w.as_mut_ptr()).as_mut_ptr(),
+                1,
+            );
+            w.assume_init()
+        }
     };
     unsafe {
         blas::gerc(
@@ -85,22 +87,24 @@ where
     } else {
         return;
     };
-    let w = unsafe {
-        let mut w = Array1::<A>::uninitialized(last_r + 1);
-        blas::gemv::notrans(
-            last_r + 1,
-            last_v + 1,
-            A::one(),
-            c.as_ptr(),
-            c.stride_of(Axis(0)),
-            c.stride_of(Axis(1)),
-            v.as_ptr(),
-            v.stride_of(Axis(0)),
-            A::zero(),
-            w.as_mut_ptr(),
-            1,
-        );
-        w
+    let w = {
+        let mut w = Array1::<A>::uninit(last_r + 1);
+        unsafe {
+            blas::gemv::notrans(
+                last_r + 1,
+                last_v + 1,
+                A::one(),
+                c.as_ptr(),
+                c.stride_of(Axis(0)),
+                c.stride_of(Axis(1)),
+                v.as_ptr(),
+                v.stride_of(Axis(0)),
+                A::zero(),
+                (*w.as_mut_ptr()).as_mut_ptr(),
+                1,
+            );
+            w.assume_init()
+        }
     };
     unsafe {
         blas::gerc(
@@ -120,7 +124,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use approx::{assert_abs_diff_eq, AbsDiffEq};
+    use approx::assert_abs_diff_eq;
     use ndarray::{arr1, arr2};
     use num_complex::Complex64;
 
