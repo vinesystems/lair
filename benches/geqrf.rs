@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use lair::decomposition::QRFactorized;
+use lair::decomposition::qr;
 use ndarray::Array;
 use ndarray_rand::rand::SeedableRng;
 use ndarray_rand::rand_distr::Uniform;
@@ -12,7 +12,7 @@ fn geqrf_100(c: &mut Criterion) {
     c.bench_function("geqrf", |bencher| {
         bencher.iter(|| {
             let a = a.clone();
-            QRFactorized::from(a);
+            qr::Factorized::from(a);
         })
     });
 }

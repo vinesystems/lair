@@ -15,6 +15,9 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 * Requires Rust 1.49 or later.
 * Updated ndarray to 0.15.
+* Follows Rust naming conventions:
+  - `LUFactorized` is now `lu::Factorized`.
+  - `QRFactorized` is now `qr::Factorized`.
 * `Scalar::norm_sqr` has been renaemd `Scalar::square`.
 
 ## [0.3.0] - 2021-02-16

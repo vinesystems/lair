@@ -304,7 +304,7 @@ pub(crate) unsafe fn lasq5<T: Real>(
     let d_n;
     let d_nm1;
     let d_nm2;
-    #[allow(clippy::collapsible_if)]
+    #[allow(clippy::collapsible_else_if)]
     if tau == T::zero() {
         if let PingPong::Ping = pp {
             for j4 in (4 * i0 as isize..=4 * (n0 as isize - 3)).step_by(4) {

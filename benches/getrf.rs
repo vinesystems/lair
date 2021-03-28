@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use lair::decomposition::LUFactorized;
+use lair::decomposition::lu;
 use ndarray::Array;
 use ndarray_rand::rand::SeedableRng;
 use ndarray_rand::rand_distr::Uniform;
@@ -18,13 +18,13 @@ fn getrf_100(c: &mut Criterion) {
     group.bench_function("row-major", |bencher| {
         bencher.iter(|| {
             let a = a_row_major.clone();
-            LUFactorized::from(a);
+            lu::Factorized::from(a);
         })
     });
     group.bench_function("col-major", |bencher| {
         bencher.iter(|| {
             let a = a_col_major.clone();
-            LUFactorized::from(a);
+            lu::Factorized::from(a);
         })
     });
 }

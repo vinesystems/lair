@@ -7,7 +7,7 @@ use std::fmt;
 
 /// LU decomposition factors.
 #[derive(Debug)]
-pub struct LUFactorized<A, S>
+pub struct Factorized<A, S>
 where
     A: fmt::Debug,
     S: Data<Elem = A>,
@@ -17,7 +17,7 @@ where
     singular: Option<usize>,
 }
 
-impl<A, S> LUFactorized<A, S>
+impl<A, S> Factorized<A, S>
 where
     A: Scalar,
     S: Data<Elem = A>,
@@ -96,7 +96,7 @@ where
     }
 }
 
-impl<A, S> From<ArrayBase<S, Ix2>> for LUFactorized<A, S>
+impl<A, S> From<ArrayBase<S, Ix2>> for Factorized<A, S>
 where
     A: Scalar,
     A::Real: Real,
@@ -105,7 +105,7 @@ where
     /// Converts a matrix into the LU-factorized form, *P* * *L* * *U*.
     fn from(mut a: ArrayBase<S, Ix2>) -> Self {
         let (pivots, singular) = lapack::getrf(a.view_mut());
-        LUFactorized {
+        Factorized {
             lu: a,
             pivots,
             singular,
@@ -125,7 +125,7 @@ mod tests {
             [2_f32, 2_f32, 1_f32],
             [3_f32, 1_f32, 2_f32],
         ]);
-        let lu = super::LUFactorized::from(a);
+        let lu = super::Factorized::from(a);
         let p = lu.p();
         assert_eq!(p[(0, 1)], 1.);
         assert_eq!(p[(1, 2)], 1.);
@@ -147,7 +147,7 @@ mod tests {
             [2_f32, 2_f32, 1_f32, 3_f32],
             [3_f32, 1_f32, 2_f32, 2_f32],
         ]);
-        let lu = super::LUFactorized::from(a);
+        let lu = super::Factorized::from(a);
         let p = lu.p();
         assert_eq!(p.shape(), &[3, 3]);
         assert_eq!(p[(0, 1)], 1.);
@@ -173,7 +173,7 @@ mod tests {
             [3_f32, 1_f32, 2_f32],
             [2_f32, 3_f32, 3_f32],
         ]);
-        let lu = super::LUFactorized::from(a);
+        let lu = super::Factorized::from(a);
         let p = lu.p();
         assert_eq!(p.shape(), &[4, 4]);
         assert_eq!(p[(0, 3)], 1.);

@@ -7,7 +7,7 @@ use std::ops::{Div, MulAssign};
 
 /// QR decomposition factors.
 #[derive(Debug)]
-pub struct QRFactorized<A, S>
+pub struct Factorized<A, S>
 where
     A: fmt::Debug,
     S: Data<Elem = A>,
@@ -16,7 +16,7 @@ where
     tau: Array1<A>,
 }
 
-impl<A, S> QRFactorized<A, S>
+impl<A, S> Factorized<A, S>
 where
     A: Scalar + fmt::Debug,
     S: Data<Elem = A>,
@@ -68,7 +68,7 @@ where
     }
 }
 
-impl<A, S> From<ArrayBase<S, Ix2>> for QRFactorized<A, S>
+impl<A, S> From<ArrayBase<S, Ix2>> for Factorized<A, S>
 where
     A: Scalar + Div<<A as Scalar>::Real, Output = A> + MulAssign<<A as Scalar>::Real>,
     A::Real: Real,
@@ -77,7 +77,7 @@ where
     /// Converts a matrix into the QR-factorized form, *Q* * *R*.
     fn from(mut a: ArrayBase<S, Ix2>) -> Self {
         let tau = lapack::geqrf(&mut a);
-        QRFactorized { qr: a, tau }
+        Factorized { qr: a, tau }
     }
 }
 
@@ -92,7 +92,7 @@ mod tests {
             [2_f64, 2_f64, 1_f64],
             [3_f64, 1_f64, 2_f64],
         ]);
-        let qr = super::QRFactorized::from(a);
+        let qr = super::Factorized::from(a);
         assert!(qr.qr.abs_diff_eq(
             &arr2(&[
                 [-3.74165739, -2.40535118, -2.93987366],
@@ -133,7 +133,7 @@ mod tests {
             [2_f32, 2_f32, 1_f32, 3_f32],
             [3_f32, 1_f32, 2_f32, 2_f32],
         ]);
-        let qr = super::QRFactorized::from(a);
+        let qr = super::Factorized::from(a);
         let q = qr.q();
         assert_eq!(q.shape(), &[3, 3]);
         assert!(q.abs_diff_eq(
@@ -164,7 +164,7 @@ mod tests {
             [3_f64, 1_f64, 2_f64],
             [2_f64, 3_f64, 3_f64],
         ]);
-        let qr = super::QRFactorized::from(a);
+        let qr = super::Factorized::from(a);
         let q = qr.q();
         assert_eq!(q.shape(), &[4, 4]);
         assert!(q.abs_diff_eq(
