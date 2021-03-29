@@ -119,59 +119,55 @@ unsafe fn getrf_row_major<A: Scalar>(
 /// # Safety
 ///
 /// * `pivots.len()` must be greater than or equal to the smaller dimension of `a`.
+/// * Every element of `pivots` must be a valid row index for `a`.
 #[allow(clippy::cast_possible_wrap)] // The number of elements in the matrix does not exceed `isize::MAX`.
 #[allow(clippy::too_many_lines)]
-unsafe fn getrf_col_major<A: Scalar>(
-    mut a: ArrayViewMut2<A>,
-    pivots: &mut [usize],
-) -> Option<usize> {
+unsafe fn getrf_col_major<A>(mut a: ArrayViewMut2<A>, pivots: &mut [usize]) -> Option<usize>
+where
+    A: Scalar,
+{
     let mut singular_row = None;
     let row_stride = a.stride_of(Axis(0));
     let col_stride = a.stride_of(Axis(1));
+    let nrows = a.nrows();
     let a_ptr = a.as_mut_ptr();
-    let mut right_ptr = a_ptr;
     for ul in 0..a.ncols() {
-        let n_upper_rows = cmp::min(ul, a.nrows());
+        let (left, mut right) = a.view_mut().split_at(Axis(1), ul);
+        let mut col = right.column_mut(0);
+        let n_upper_rows = cmp::min(ul, nrows);
         for i in 0..n_upper_rows {
             let ip = *pivots.get_unchecked(i);
             if ip != i {
-                ptr::swap(
-                    right_ptr.offset(i as isize * row_stride),
-                    right_ptr.offset(ip as isize * row_stride),
-                );
+                col.uswap(i, ip);
             }
         }
 
         for i in 1..n_upper_rows {
-            *right_ptr.offset(i as isize * row_stride) -= blas::dot(
-                i,
-                a_ptr.offset(i as isize * row_stride),
-                col_stride,
-                right_ptr,
-                row_stride,
-            );
+            let row = left.row(i);
+            let sum = blas::dot(&row, &col, i);
+            *col.uget_mut(i) -= sum;
         }
 
-        if ul < a.nrows() {
+        if ul < nrows {
             if row_stride == 1 {
                 blas::gemv::notrans(
-                    a.nrows() - ul,
+                    nrows - ul,
                     ul,
                     -A::one(),
                     a_ptr.add(ul),
                     1,
                     col_stride,
-                    right_ptr,
+                    col.as_ptr(),
                     1,
                     A::one(),
-                    right_ptr.add(ul),
+                    col.as_mut_ptr().add(ul),
                     1,
                 );
 
-                let (max_row, _) = blas::iamax(a.nrows() - ul, right_ptr.add(ul), 1);
+                let (max_row, _) = blas::iamax(nrows - ul, col.as_ptr().add(ul), 1);
                 let pivot_row = ul + max_row;
                 *pivots.get_unchecked_mut(ul) = pivot_row;
-                let pivot = *right_ptr.add(pivot_row);
+                let pivot = *col.as_ptr().add(pivot_row);
                 if pivot == A::zero() {
                     singular_row = Some(ul);
                 } else {
@@ -179,35 +175,35 @@ unsafe fn getrf_col_major<A: Scalar>(
                     if pivot_row != ul {
                         swap_rows(ul + 1, a_ptr.add(ul), a_ptr.add(pivot_row), col_stride);
                     }
-                    if ul + 1 < a.nrows() {
-                        for row in ul + 1..a.nrows() {
-                            *right_ptr.add(row) *= pivot_recip;
+                    if ul + 1 < nrows {
+                        for row in ul + 1..nrows {
+                            *col.as_mut_ptr().add(row) *= pivot_recip;
                         }
                     }
                 }
             } else {
                 blas::gemv::notrans(
-                    a.nrows() - ul,
+                    nrows - ul,
                     ul,
                     -A::one(),
                     a_ptr.offset(ul as isize * row_stride),
                     row_stride,
                     col_stride,
-                    right_ptr,
+                    col.as_ptr(),
                     row_stride,
                     A::one(),
-                    right_ptr.offset(ul as isize * row_stride),
+                    col.as_mut_ptr().offset(ul as isize * row_stride),
                     row_stride,
                 );
 
                 let (max_row, _) = blas::iamax(
-                    a.nrows() - ul,
-                    right_ptr.offset(ul as isize * row_stride),
+                    nrows - ul,
+                    col.as_ptr().offset(ul as isize * row_stride),
                     row_stride,
                 );
                 let pivot_row = ul + max_row;
                 *pivots.get_unchecked_mut(ul) = pivot_row;
-                let pivot = *right_ptr.offset(pivot_row as isize * row_stride);
+                let pivot = *col.as_ptr().offset(pivot_row as isize * row_stride);
                 if pivot == A::zero() {
                     singular_row = Some(ul);
                 } else {
@@ -220,15 +216,14 @@ unsafe fn getrf_col_major<A: Scalar>(
                             col_stride,
                         );
                     }
-                    if ul + 1 < a.nrows() {
-                        for row in ul + 1..a.nrows() {
-                            *right_ptr.offset(row as isize * row_stride) *= pivot_recip;
+                    if ul + 1 < nrows {
+                        for row in ul + 1..nrows {
+                            *col.as_mut_ptr().offset(row as isize * row_stride) *= pivot_recip;
                         }
                     }
                 }
             }
         }
-        right_ptr = right_ptr.offset(col_stride);
     }
 
     singular_row
