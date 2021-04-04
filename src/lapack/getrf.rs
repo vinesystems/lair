@@ -149,21 +149,15 @@ where
         }
 
         if ul < nrows {
+            let (upper_col, mut lower_col) = col.view_mut().split_at(Axis(0), ul);
+            blas::gemv::notrans(
+                -A::one(),
+                &left.slice(s![ul.., ..]),
+                &upper_col,
+                A::one(),
+                &mut lower_col,
+            );
             if row_stride == 1 {
-                blas::gemv::notrans(
-                    nrows - ul,
-                    ul,
-                    -A::one(),
-                    a_ptr.add(ul),
-                    1,
-                    col_stride,
-                    col.as_ptr(),
-                    1,
-                    A::one(),
-                    col.as_mut_ptr().add(ul),
-                    1,
-                );
-
                 let (max_row, _) = blas::iamax(nrows - ul, col.as_ptr().add(ul), 1);
                 let pivot_row = ul + max_row;
                 *pivots.get_unchecked_mut(ul) = pivot_row;
@@ -182,20 +176,6 @@ where
                     }
                 }
             } else {
-                blas::gemv::notrans(
-                    nrows - ul,
-                    ul,
-                    -A::one(),
-                    a_ptr.offset(ul as isize * row_stride),
-                    row_stride,
-                    col_stride,
-                    col.as_ptr(),
-                    row_stride,
-                    A::one(),
-                    col.as_mut_ptr().offset(ul as isize * row_stride),
-                    row_stride,
-                );
-
                 let (max_row, _) = blas::iamax(
                     nrows - ul,
                     col.as_ptr().offset(ul as isize * row_stride),

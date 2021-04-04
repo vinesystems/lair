@@ -87,25 +87,9 @@ where
     } else {
         return;
     };
-    let w = {
-        let mut w = Array1::<A>::uninit(last_r + 1);
-        unsafe {
-            blas::gemv::notrans(
-                last_r + 1,
-                last_v + 1,
-                A::one(),
-                c.as_ptr(),
-                c.stride_of(Axis(0)),
-                c.stride_of(Axis(1)),
-                v.as_ptr(),
-                v.stride_of(Axis(0)),
-                A::zero(),
-                (*w.as_mut_ptr()).as_mut_ptr(),
-                1,
-            );
-            w.assume_init()
-        }
-    };
+    let w = c
+        .slice(s![..=last_r, ..=last_v])
+        .dot(&v.slice(s![..=last_v]));
     unsafe {
         blas::gerc(
             last_r + 1,

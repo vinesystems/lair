@@ -1,3 +1,4 @@
+use ndarray::ScalarOperand;
 use num_complex::Complex;
 use num_traits::{Float, One, Zero};
 use std::fmt::{Debug, Display};
@@ -22,6 +23,7 @@ pub trait Scalar:
     + MulAssign
     + DivAssign
     + Sum
+    + ScalarOperand
 {
     type Real: Real + Into<Self>;
 
