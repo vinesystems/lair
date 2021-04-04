@@ -6,6 +6,7 @@ mod gerc;
 mod iamax;
 mod nrm2;
 mod scal;
+pub mod trmv;
 mod trsm;
 
 pub(crate) use dot::dot;
