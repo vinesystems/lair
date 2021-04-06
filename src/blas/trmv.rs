@@ -1,10 +1,12 @@
 use crate::Scalar;
 use ndarray::{ArrayBase, Axis, Data, DataMut, Ix1, Ix2};
 
+/// Performs `x` = `a` * `x` for an upper-triangular matrix `a` and a column
+/// vector `x`.
+///
 /// # Panics
 ///
 /// Panics if `a`'s number of columns is not equal to `x`'s number of elements.
-#[allow(dead_code)]
 pub fn upper_notrans<A, SA, SX>(a: &ArrayBase<SA, Ix2>, x: &mut ArrayBase<SX, Ix1>)
 where
     A: Scalar,

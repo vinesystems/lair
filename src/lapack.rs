@@ -8,6 +8,7 @@ pub mod lacpy;
 pub mod lange;
 pub mod larf;
 mod larfg;
+pub mod larft;
 mod lartg;
 mod las2;
 pub mod lascl;
