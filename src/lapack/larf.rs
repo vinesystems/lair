@@ -27,23 +27,16 @@ where
         return;
     };
     let w = {
-        let mut w = Array1::<A>::uninit(last_c + 1);
-        unsafe {
-            blas::gemv::conjtrans(
-                last_v + 1,
-                last_c + 1,
-                A::one(),
-                c.as_ptr(),
-                c.stride_of(Axis(0)),
-                c.stride_of(Axis(1)),
-                v.as_ptr(),
-                v.stride_of(Axis(0)),
-                A::zero(),
-                (*w.as_mut_ptr()).as_mut_ptr(),
-                1,
-            );
-            w.assume_init()
-        }
+        let w = Array1::<A>::uninit(last_c + 1);
+        let mut w = unsafe { w.assume_init() };
+        blas::gemv::conjtrans(
+            A::one(),
+            &c.slice(s![..=last_v, ..=last_c]),
+            v,
+            A::zero(),
+            &mut w,
+        );
+        w
     };
     unsafe {
         blas::gerc(
