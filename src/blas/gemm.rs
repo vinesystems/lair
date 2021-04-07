@@ -1,27 +1,19 @@
 use crate::Scalar;
+use ndarray::{ArrayBase, Data, DataMut, Ix2};
 
-#[allow(clippy::too_many_arguments)]
-#[allow(clippy::cast_possible_wrap)]
-pub unsafe fn gemm<T>(
-    nrows: usize,
-    ncols: usize,
-    k: usize,
-    a: *const T,
-    b: *const T,
-    c: *mut T,
-    row_stride: isize,
-    col_stride: isize,
+pub fn gemm<A, SA, SB, SC>(
+    a: &ArrayBase<SA, Ix2>,
+    b: &ArrayBase<SB, Ix2>,
+    c: &mut ArrayBase<SC, Ix2>,
 ) where
-    T: Scalar,
+    A: Scalar,
+    SA: Data<Elem = A>,
+    SB: Data<Elem = A>,
+    SC: DataMut<Elem = A>,
 {
-    for p in 0..nrows as isize {
-        for q in 0..ncols as isize {
-            *c.offset(p * row_stride + q * col_stride) -= (0..k as isize)
-                .map(|r| {
-                    *a.offset(p * row_stride + r * col_stride)
-                        * *b.offset(r * row_stride + q * col_stride)
-                })
-                .sum();
+    for (a_row, c_row) in a.rows().into_iter().zip(c.rows_mut()) {
+        for (b_col, c_elem) in b.columns().into_iter().zip(c_row.into_iter()) {
+            *c_elem -= a_row.dot(&b_col);
         }
     }
 }

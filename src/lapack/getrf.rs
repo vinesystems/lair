@@ -278,21 +278,13 @@ where
         col_stride,
         a.slice_mut(s![..left_cols, left_cols..]),
     );
-    blas::gemm(
-        a.nrows() - left_cols,
-        right_cols,
-        left_cols,
-        a.as_ptr().offset(left_cols as isize * row_stride),
-        a.as_ptr().offset(left_cols as isize * col_stride),
-        a.as_mut_ptr()
-            .offset(left_cols as isize * row_stride + left_cols as isize * col_stride),
-        row_stride,
-        col_stride,
-    );
-    match recursive_inner(
-        a.slice_mut(s![left_cols.., left_cols..]),
-        &mut pivots[left_cols..],
-    ) {
+    let a_ptr = a.as_mut_ptr();
+    let min_dim = cmp::min(a.nrows(), a.ncols());
+    let (upper, lower) = a.split_at(Axis(0), left_cols);
+    let upper_right = upper.slice(s![.., left_cols..]);
+    let (lower_left, mut lower_right) = lower.split_at(Axis(1), left_cols);
+    blas::gemm(&lower_left, &upper_right, &mut lower_right);
+    match recursive_inner(lower_right, &mut pivots[left_cols..]) {
         Ok(_) => {}
         Err(Singular(row)) => {
             if singular_row == 0 {
@@ -300,16 +292,16 @@ where
             }
         }
     }
-    for p in pivots[left_cols..cmp::min(a.nrows(), a.ncols())].iter_mut() {
+    for p in pivots[left_cols..min_dim].iter_mut() {
         *p += left_cols;
     }
     lapack::laswp(
         left_cols,
-        a.as_mut_ptr(),
+        a_ptr,
         row_stride,
         col_stride,
         left_cols,
-        &pivots[..cmp::min(a.nrows(), a.ncols())],
+        &pivots[..min_dim],
     );
 
     if singular_row == 0 {
