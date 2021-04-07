@@ -23,10 +23,25 @@ pub fn notrans<A, SA, SX, SY>(
         return;
     }
 
-    for (a_col, &x_elem) in a.lanes(Axis(0)).into_iter().zip(x.iter()) {
-        let alpha_x = alpha * x_elem;
-        for (&a_elem, y_elem) in a_col.into_iter().zip(y.iter_mut()) {
-            *y_elem += alpha_x * a_elem;
+    if a.stride_of(Axis(0)) == 1 && y.stride_of(Axis(0)) == 1 {
+        for (a_col, &x_elem) in a.lanes(Axis(0)).into_iter().zip(x.iter()) {
+            let alpha_x = alpha * x_elem;
+            unsafe {
+                let mut a_elem = a_col.as_ptr();
+                let mut y_elem = y.as_mut_ptr();
+                for _ in 0..a_col.len() {
+                    *y_elem += alpha_x * *a_elem;
+                    a_elem = a_elem.add(1);
+                    y_elem = y_elem.add(1);
+                }
+            }
+        }
+    } else {
+        for (a_col, &x_elem) in a.lanes(Axis(0)).into_iter().zip(x.iter()) {
+            let alpha_x = alpha * x_elem;
+            for (&a_elem, y_elem) in a_col.into_iter().zip(y.iter_mut()) {
+                *y_elem += alpha_x * a_elem;
+            }
         }
     }
 }
