@@ -3,6 +3,19 @@ name: CI
 on: [push, pull_request]
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Rust
+      uses: hecrj/setup-rust-action@v1
+      with:
+        rust-version: stable
+    - uses: actions/checkout@v2
+    - name: Check formatting
+      run: cargo fmt -- --check
+    - name: Clippy
+      run: cargo clippy -- -D warnings -W clippy::pedantic
+
   test:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -14,30 +27,23 @@ jobs:
       uses: hecrj/setup-rust-action@v1
       with:
         rust-version: ${{ matrix.rust }}
-    - uses: actions/checkout@master
-    - name: Install Tarpaulin
-      if: matrix.os == 'ubuntu-latest' && matrix.rust == 'stable'
-      run: cargo install cargo-tarpaulin
+    - uses: actions/checkout@v2
     - name: Build
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
-    - name: Generate coverage report
-      if: matrix.os == 'ubuntu-latest' && matrix.rust == 'stable'
-      run: cargo tarpaulin --out Xml
-    - name: Upload coverage to Codecov
-      if: matrix.os == 'ubuntu-latest' && matrix.rust == 'stable'
-      uses: codecov/codecov-action@v1.0.7
 
-  check:
+  coverage:
     runs-on: ubuntu-latest
     steps:
     - name: Install Rust
       uses: hecrj/setup-rust-action@v1
       with:
         rust-version: stable
-    - uses: actions/checkout@master
-    - name: Check formatting
-      run: cargo fmt -- --check
-    - name: Clippy
-      run: cargo clippy -- -D warnings -W clippy::pedantic
+    - uses: actions/checkout@v2
+    - name: Install Tarpaulin
+      run: cargo install cargo-tarpaulin
+    - name: Generate coverage report
+      run: cargo tarpaulin --out Xml
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
