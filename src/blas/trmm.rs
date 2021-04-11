@@ -10,7 +10,6 @@ use std::ops::MulAssign;
 ///
 /// Panics if `a` is not a square matrix, or `a`'s # of rows is different from
 /// `b`'s # of columns.
-#[allow(dead_code)]
 pub fn right_lower_notrans<A, SA, SB, const UNIT: bool>(
     a: &ArrayBase<SA, Ix2>,
     b: &mut ArrayBase<SB, Ix2>,
@@ -47,7 +46,6 @@ pub fn right_lower_notrans<A, SA, SB, const UNIT: bool>(
 ///
 /// Panics if `a` is not a square matrix, or `a`'s # of rows is different from
 /// `b`'s # of columns.
-#[allow(dead_code)]
 pub fn right_upper_conjtrans<A, SA, SB, const UNIT: bool>(
     a: &ArrayBase<SA, Ix2>,
     b: &mut ArrayBase<SB, Ix2>,

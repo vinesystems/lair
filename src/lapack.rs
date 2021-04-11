@@ -7,6 +7,7 @@ mod ilal;
 pub mod lacpy;
 pub mod lange;
 pub mod larf;
+pub mod larfb;
 mod larfg;
 pub mod larft;
 mod lartg;
