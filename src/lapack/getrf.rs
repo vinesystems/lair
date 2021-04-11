@@ -283,7 +283,14 @@ where
     let (upper, lower) = a.split_at(Axis(0), left_cols);
     let upper_right = upper.slice(s![.., left_cols..]);
     let (lower_left, mut lower_right) = lower.split_at(Axis(1), left_cols);
-    blas::gemm::<_, _, _, _, false>(&lower_left, &upper_right, &mut lower_right);
+    blas::gemm(
+        -A::one(),
+        &lower_left,
+        false,
+        &upper_right,
+        false,
+        &mut lower_right,
+    );
     match recursive_inner(lower_right, &mut pivots[left_cols..]) {
         Ok(_) => {}
         Err(Singular(row)) => {
