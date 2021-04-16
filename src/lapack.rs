@@ -1,6 +1,7 @@
 use crate::{Real, Scalar};
 use ndarray::{ArrayBase, DataMut, Dimension};
 
+mod gebrd;
 mod geqrf;
 mod getrf;
 mod getrs;
