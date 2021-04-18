@@ -8,13 +8,13 @@ use ndarray::{s, ArrayBase, Axis, Data, DataMut, Ix1, Ix2};
 /// Panics if `a` has more columns than rows, or has fewer columns than the
 /// number of elementary reflectors.
 #[allow(dead_code)]
-pub fn orgqr<A, SA, ST>(a: &mut ArrayBase<SA, Ix2>, tau: &ArrayBase<ST, Ix1>)
+pub fn ungqr<A, SA, ST>(a: &mut ArrayBase<SA, Ix2>, tau: &ArrayBase<ST, Ix1>)
 where
     A: Scalar,
     SA: DataMut<Elem = A>,
     ST: Data<Elem = A>,
 {
-    org2r(a, tau)
+    ung2r(a, tau)
 }
 
 /// Generates all or part of the orthogonal matrix Q from a QR factorization.
@@ -23,7 +23,7 @@ where
 ///
 /// Panics if `a` has more columns than rows, or has fewer columns than the
 /// number of elementary reflectors.
-fn org2r<A, SA, ST>(a: &mut ArrayBase<SA, Ix2>, tau: &ArrayBase<ST, Ix1>)
+fn ung2r<A, SA, ST>(a: &mut ArrayBase<SA, Ix2>, tau: &ArrayBase<ST, Ix1>)
 where
     A: Scalar,
     SA: DataMut<Elem = A>,
@@ -65,7 +65,7 @@ mod tests {
     fn org2r() {
         let mut a = arr2(&[[2., -2.], [-1., 4.], [3., 1.]]);
         let tau = arr1(&[5., 3.]);
-        super::org2r(&mut a, &tau);
+        super::ung2r(&mut a, &tau);
         assert_eq!(a, arr2(&[[-4., 35.], [5., -37.], [-15., 102.]]));
     }
 }

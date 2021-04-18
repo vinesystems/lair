@@ -59,7 +59,6 @@ where
 /// # Panics
 ///
 /// Panics if `v` is a zero vector, or `c` is a zero matrix.
-#[allow(dead_code)]
 pub fn right<A, SV, SC>(v: &ArrayBase<SV, Ix1>, tau: A, c: &mut ArrayBase<SC, Ix2>)
 where
     A: Scalar,

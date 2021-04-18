@@ -1,4 +1,5 @@
-use crate::Real;
+use crate::{Real, Scalar};
+use ndarray::{ArrayBase, DataMut, Dimension};
 
 mod geqrf;
 mod getrf;
@@ -16,8 +17,8 @@ pub mod lascl;
 pub mod laset;
 mod lasq;
 mod laswp;
-mod orgqr;
-mod orgrq;
+mod ungqr;
+mod ungrq;
 
 pub use geqrf::geqrf;
 pub use getrf::getrf;
@@ -25,6 +26,15 @@ pub use getrs::getrs;
 pub use ilal::{ilalc, ilalr};
 pub use larfg::larfg;
 pub use laswp::laswp;
+
+fn lacgv<A, S, D>(x: &mut ArrayBase<S, D>)
+where
+    A: Scalar,
+    S: DataMut<Elem = A>,
+    D: Dimension,
+{
+    x.iter_mut().for_each(|x| *x = x.conj());
+}
 
 #[allow(dead_code)]
 pub fn lapy2<A: Real>(x: A, y: A) -> A {
