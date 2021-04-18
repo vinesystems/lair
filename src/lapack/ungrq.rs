@@ -17,6 +17,9 @@ where
     SA: DataMut<Elem = A>,
     ST: Data<Elem = A>,
 {
+    assert!(a.ncols() >= a.nrows());
+    assert!(a.nrows() >= tau.len());
+
     let a_nrows = a.nrows();
     let a_ncols = a.ncols();
     if tau.len() < a_nrows {
@@ -29,7 +32,7 @@ where
             }
         }
     }
-    for i in 0..tau.len() {
+    for (i, &tau_i) in tau.iter().enumerate() {
         let (mut upper, mut lower) = a
             .slice_mut(s![
                 ..=a.nrows() - tau.len() + i,
@@ -40,12 +43,12 @@ where
         lapack::lacgv(&mut row);
         let width = row.len();
         row[width - 1] = A::one();
-        lapack::larf::right(&row, tau[i].conj(), &mut upper);
-        blas::scal(-tau[i], &mut row);
+        lapack::larf::right(&row, tau_i.conj(), &mut upper);
+        blas::scal(-tau_i, &mut row);
         lapack::lacgv(&mut row);
-        row[width - 1] = A::one() - tau[i].conj();
+        row[width - 1] = A::one() - tau_i.conj();
 
-        row.slice_mut(s![a_ncols - tau.len() + i + 1..])
+        a.slice_mut(s![i, a_ncols - tau.len() + i + 1..])
             .fill(A::zero());
     }
 }
