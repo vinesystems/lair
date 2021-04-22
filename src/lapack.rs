@@ -18,6 +18,7 @@ pub mod lascl;
 pub mod laset;
 mod lasq;
 mod laswp;
+mod ungbr;
 mod unglq;
 mod ungqr;
 mod ungrq;
@@ -28,6 +29,8 @@ pub use getrs::getrs;
 pub use ilal::{ilalc, ilalr};
 pub use larfg::larfg;
 pub use laswp::laswp;
+use unglq::unglq;
+use ungqr::ungqr;
 
 fn lacgv<A, S, D>(x: &mut ArrayBase<S, D>)
 where
