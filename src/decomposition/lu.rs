@@ -1,8 +1,8 @@
 //! LU decomposition.
 
 use crate::{lapack, InvalidInput, Real, Scalar};
-use ndarray::{Array1, Array2, ArrayBase, Data, DataMut, Ix1, Ix2};
-use std::cmp::min;
+use ndarray::{s, Array1, Array2, ArrayBase, Data, DataMut, Ix1, Ix2};
+use std::cmp;
 use std::fmt;
 
 /// LU decomposition factors.
@@ -38,7 +38,7 @@ where
 
     /// Returns *L* of LU decomposition.
     pub fn l(&self) -> Array2<A> {
-        let rank = min(self.lu.nrows(), self.lu.ncols());
+        let rank = cmp::min(self.lu.nrows(), self.lu.ncols());
         let mut l = Array2::zeros((self.lu.nrows(), rank));
         for i in 0..self.lu.nrows() {
             for j in 0..i {
@@ -56,7 +56,7 @@ where
 
     /// Returns *U* of LU decomposition.
     pub fn u(&self) -> Array2<A> {
-        let rank = min(self.lu.nrows(), self.lu.ncols());
+        let rank = cmp::min(self.lu.nrows(), self.lu.ncols());
         let mut u = Array2::zeros((rank, self.lu.ncols()));
         for i in 0..rank {
             for j in 0..i {
@@ -96,6 +96,61 @@ where
     }
 }
 
+impl<A, S> Factorized<A, S>
+where
+    A: Scalar,
+    S: DataMut<Elem = A>,
+{
+    /// Returns P * L of LU decomposition.
+    pub fn into_pl(mut self) -> ArrayBase<S, Ix2> {
+        if self.pivots.len() < self.lu.nrows() {
+            let next = self.pivots.len();
+            self.pivots.extend(next..self.lu.nrows());
+        }
+
+        for i in (0..self.pivots.len()).rev() {
+            let target = self.pivots[i];
+            if i == target {
+                continue;
+            }
+            self.pivots[i] = self.pivots[target];
+            self.pivots[target] = i;
+        }
+
+        let mut pl = self
+            .lu
+            .slice_mut(s![.., ..cmp::min(self.lu.nrows(), self.lu.ncols())]);
+        let mut dst = 0;
+        let mut i = dst;
+        loop {
+            let src = self.pivots[dst];
+            for k in 0..cmp::min(src, pl.ncols()) {
+                pl[[dst, k]] = pl[[src, k]];
+            }
+            if src < pl.ncols() {
+                pl[[dst, src]] = A::one();
+            }
+            for k in src + 1..pl.ncols() {
+                pl[[dst, k]] = A::zero();
+            }
+            self.pivots[dst] = self.pivots.len();
+            if self.pivots[src] == self.pivots.len() {
+                dst = i + 1;
+                while dst < self.pivots.len() && self.pivots[dst] == self.pivots.len() {
+                    dst += 1;
+                }
+                if dst == self.pivots.len() {
+                    break;
+                }
+                i = dst;
+            } else {
+                dst = src;
+            }
+        }
+        self.lu
+    }
+}
+
 impl<A, S> From<ArrayBase<S, Ix2>> for Factorized<A, S>
 where
     A: Scalar,
@@ -116,7 +171,8 @@ where
 #[cfg(test)]
 mod tests {
     use approx::assert_relative_eq;
-    use ndarray::arr2;
+    use ndarray::{arr2, s};
+    use std::cmp;
 
     #[test]
     fn square() {
@@ -191,5 +247,63 @@ mod tests {
         assert_relative_eq!(u[(0, 2)], 2., max_relative = 1e-6);
         assert_relative_eq!(u[(1, 2)], 1.66666666, max_relative = 1e-6);
         assert_relative_eq!(u[(2, 2)], -1.28571429, max_relative = 1e-6);
+    }
+
+    #[test]
+    fn lu_pl_identity_l() {
+        let p = [
+            [0_f32, 1_f32, 0_f32],
+            [0_f32, 0_f32, 1_f32],
+            [1_f32, 0_f32, 0_f32],
+        ];
+        let m = arr2(&p);
+        let k = cmp::min(m.nrows(), m.ncols());
+        let pl = super::Factorized::from(m).into_pl();
+        assert_eq!(pl.slice(s![.., ..k]), arr2(&p));
+    }
+
+    #[test]
+    fn lu_pl_singular() {
+        let m = arr2(&[[0_f32, 0_f32], [3_f32, 4_f32], [6_f32, 8_f32]]);
+        let k = cmp::min(m.nrows(), m.ncols());
+        let pl = super::Factorized::from(m).into_pl();
+        assert_eq!(
+            pl.slice(s![.., ..k]),
+            arr2(&[[0., 0.], [0.5, 1.], [1., 0.]])
+        );
+    }
+
+    #[test]
+    fn lu_pl_square() {
+        let m = arr2(&[
+            [0_f32, 1_f32, 2_f32],
+            [1_f32, 2_f32, 3_f32],
+            [2_f32, 3_f32, 4_f32],
+        ]);
+        let k = cmp::min(m.nrows(), m.ncols());
+        let pl = super::Factorized::from(m).into_pl();
+        assert_eq!(
+            pl.slice(s![.., ..k]),
+            arr2(&[[0., 1., 0.], [0.5, 0.5, 1.], [1., 0., 0.]])
+        );
+    }
+
+    #[test]
+    fn lu_pl_tall_l() {
+        let m = arr2(&[[0_f32, 1_f32], [1_f32, 2_f32], [2_f32, 3_f32]]);
+        let k = cmp::min(m.nrows(), m.ncols());
+        let pl = super::Factorized::from(m).into_pl();
+        assert_eq!(
+            pl.slice(s![.., ..k]),
+            arr2(&[[0., 1.], [0.5, 0.5], [1., 0.]])
+        );
+    }
+
+    #[test]
+    fn lu_pl_wide_u() {
+        let m = arr2(&[[0_f32, 1_f32, 2_f32], [1_f32, 2_f32, 3_f32]]);
+        let k = cmp::min(m.nrows(), m.ncols());
+        let pl = super::Factorized::from(m).into_pl();
+        assert_eq!(pl.slice(s![.., ..k]), arr2(&[[0., 1.], [1., 0.]]));
     }
 }

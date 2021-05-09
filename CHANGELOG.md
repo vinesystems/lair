@@ -7,6 +7,10 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+* `LuFactorized::into_pl` returns P * L of LU decomposition.
+
 ### Changed
 
 * Requires Rust 1.51 or later.
