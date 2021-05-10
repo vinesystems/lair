@@ -1,5 +1,6 @@
-use crate::{blas, lapack, Float, Real, Scalar};
+use crate::{blas, lapack, Real, Scalar};
 use ndarray::{ArrayBase, DataMut, Ix1};
+use num_traits::Float;
 use std::ops::{Div, MulAssign};
 
 /// Generates an elementary reflector (Householder matrix).

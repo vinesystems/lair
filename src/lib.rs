@@ -11,7 +11,6 @@ mod lapack;
 pub mod matrix;
 mod scalar;
 
-pub use num_traits::{Float, One, Zero};
 pub use scalar::{Real, Scalar};
 
 /// An error which can be returned when a function argument is invalid.

@@ -1,5 +1,6 @@
-use crate::{Float, One, Real, Scalar, Zero};
+use crate::{Real, Scalar};
 use ndarray::{ArrayBase, DataMut, Ix2};
+use num_traits::{Float, One, Zero};
 
 /// Multiplies a full matrix by a real scalar `c_to / c_from`.
 #[allow(dead_code)]

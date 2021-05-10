@@ -9,12 +9,18 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-* `LuFactorized::into_pl` returns P * L of LU decomposition.
+* A new `serialization` feature enables serialization/deserialization support
+  for `Scalar`.
 * `Scalar` has `sqrt`, `exp`, `ln` and trigonometry functions.
+* `LuFactorized::into_pl` returns P * L of LU decomposition.
 
 ### Changed
 
 * Requires Rust 1.51 or later.
+
+### Removed
+
+* No longer re-exports `Float`, `One`, and `Zero`; use num-traits instead.
 
 ## [0.4.0] - 2021-03-28
 

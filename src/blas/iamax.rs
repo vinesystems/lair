@@ -1,4 +1,5 @@
-use crate::{Float, Scalar, Zero};
+use crate::Scalar;
+use num_traits::{Float, Zero};
 
 #[allow(clippy::cast_possible_wrap)]
 pub(crate) unsafe fn iamax<A>(n: usize, x: *const A, incx: isize) -> (usize, A::Real)
