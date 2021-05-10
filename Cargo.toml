@@ -42,3 +42,6 @@ harness = false
 [[bench]]
 name = "getrs"
 harness = false
+
+[packages.metadata.docs.rs]
+all-features = true
