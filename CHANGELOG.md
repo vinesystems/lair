@@ -10,6 +10,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 * `LuFactorized::into_pl` returns P * L of LU decomposition.
+* `Scalar` has `sqrt`, `exp`, `ln` and trigonometry functions.
 
 ### Changed
 

@@ -3,7 +3,7 @@ use num_complex::Complex;
 use num_traits::{Float, FromPrimitive, NumAssign, One, Zero};
 use std::fmt::{Debug, Display, LowerExp, UpperExp};
 use std::iter::{Product, Sum};
-use std::ops::{AddAssign, DivAssign, MulAssign, Neg, SubAssign};
+use std::ops::Neg;
 
 /// A trait for real and complex numbers.
 pub trait Scalar:
@@ -20,13 +20,17 @@ pub trait Scalar:
     + Product
     + ScalarOperand
 {
-    type Real: Real + Into<Self>;
+    type Real: Real + Into<Self> + FromPrimitive;
 
     fn re(&self) -> Self::Real;
     fn im(&self) -> Self::Real;
     fn conj(&self) -> Self;
     fn abs(&self) -> Self::Real;
     fn square(&self) -> Self::Real;
+
+    fn sqrt(self) -> Self;
+    fn exp(self) -> Self;
+    fn ln(self) -> Self;
 
     fn sin(self) -> Self;
     fn cos(self) -> Self;
@@ -80,6 +84,21 @@ where
     #[inline]
     fn square(&self) -> Self::Real {
         *self * *self
+    }
+
+    #[inline]
+    fn sqrt(self) -> Self {
+        self.sqrt()
+    }
+
+    #[inline]
+    fn exp(self) -> Self {
+        self.exp()
+    }
+
+    #[inline]
+    fn ln(self) -> Self {
+        self.ln()
     }
 
     #[inline]
@@ -184,6 +203,21 @@ where
     }
 
     #[inline]
+    fn sqrt(self) -> Self {
+        self.sqrt()
+    }
+
+    #[inline]
+    fn exp(self) -> Self {
+        self.exp()
+    }
+
+    #[inline]
+    fn ln(self) -> Self {
+        self.ln()
+    }
+
+    #[inline]
     fn sin(self) -> Self {
         self.sin()
     }
@@ -245,7 +279,7 @@ where
 }
 
 /// A trait for real numbers.
-pub trait Real: Float + Zero + One + AddAssign + SubAssign + MulAssign + DivAssign + Sum {
+pub trait Real: Float + Zero + One + NumAssign + Sum {
     /// Returns a number composed of the magnitude of `self` and the sign of
     /// `sign`.
     fn copysign(self, sign: Self) -> Self;
