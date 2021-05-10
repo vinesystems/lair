@@ -13,10 +13,15 @@ authors = ["Min Kim <msk@dolbo.net>", "Min Shao <min.shao1988@gmail.com>"]
 edition = "2018"
 exclude = ["./github"]
 
+[features]
+default = []
+serialization = [ "serde", "num-complex/serde" ]
+
 [dependencies]
 ndarray = "0.15"
 num-complex = "0.4"
 num-traits = "0.2"
+serde = { version = "1", optional = true }
 thiserror = "1"
 
 [dev-dependencies]
