@@ -1,8 +1,11 @@
-use crate::Real;
+use num_traits::Float;
 
 /// Computes singular values of a 2x2 triangular matrix.
 #[allow(dead_code)]
-fn las2<T: Real>(f: T, g: T, h: T) -> (T, T) {
+fn las2<T>(f: T, g: T, h: T) -> (T, T)
+where
+    T: Float,
+{
     let f_abs = f.abs();
     let g_abs = g.abs();
     let h_abs = h.abs();

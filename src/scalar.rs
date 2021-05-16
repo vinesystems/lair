@@ -1,6 +1,6 @@
 use ndarray::ScalarOperand;
 use num_complex::Complex;
-use num_traits::{Float, FromPrimitive, NumAssign, One, Zero};
+use num_traits::{Float, FromPrimitive, NumAssign};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use std::fmt::{Debug, Display, LowerExp, UpperExp};
@@ -365,7 +365,7 @@ where
 }
 
 /// A trait for real numbers.
-pub trait Real: Float + Zero + One + NumAssign + Sum {
+pub trait Real: Float + NumAssign + Sum {
     /// Returns a number composed of the magnitude of `self` and the sign of
     /// `sign`.
     fn copysign(self, sign: Self) -> Self;
