@@ -17,7 +17,6 @@ pub type Bidiagonal<A> = (
     Array1<A>,
 );
 
-#[allow(dead_code)]
 pub fn tall<A, S>(a: &mut ArrayBase<S, Ix2>) -> Bidiagonal<A>
 where
     A: Scalar + Div<<A as Scalar>::Real, Output = A> + MulAssign<<A as Scalar>::Real>,

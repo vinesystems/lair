@@ -3,6 +3,7 @@ use ndarray::{ArrayBase, DataMut, Dimension};
 
 mod gebrd;
 mod geqrf;
+mod gesvd;
 mod getrf;
 mod getrs;
 mod ilal;

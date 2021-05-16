@@ -1,7 +1,6 @@
 use crate::{lapack, Scalar};
 use ndarray::{s, ArrayBase, Axis, Data, DataMut, Ix1, Ix2};
 
-#[allow(dead_code)]
 pub fn q_tall<A, SA, ST>(a: &mut ArrayBase<SA, Ix2>, tau: &ArrayBase<ST, Ix1>)
 where
     A: Scalar,
@@ -17,7 +16,6 @@ where
     lapack::ungqr(a, &tau);
 }
 
-#[allow(dead_code)]
 pub fn p_square<A, SA, ST>(a: &mut ArrayBase<SA, Ix2>, tau: &ArrayBase<ST, Ix1>)
 where
     A: Scalar,

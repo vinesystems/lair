@@ -3,8 +3,7 @@ use ndarray::{ArrayBase, DataMut, Ix2};
 use num_traits::{Float, One, Zero};
 
 /// Multiplies a full matrix by a real scalar `c_to / c_from`.
-#[allow(dead_code)]
-pub(crate) fn full<A, S>(c_from: A::Real, c_to: A::Real, a: &mut ArrayBase<S, Ix2>)
+pub fn full<A, S>(c_from: A::Real, c_to: A::Real, a: &mut ArrayBase<S, Ix2>)
 where
     A: Scalar,
     S: DataMut<Elem = A>,
