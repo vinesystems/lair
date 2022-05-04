@@ -14,7 +14,7 @@ where
     }
 
     a.into_iter()
-        .map(|v| v.abs())
+        .map(Scalar::abs)
         .fold(A::Real::neg_infinity(), |max, v| {
             match max.partial_cmp(&v) {
                 None => A::Real::nan(),
