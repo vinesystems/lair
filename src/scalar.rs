@@ -366,10 +366,6 @@ where
 
 /// A trait for real numbers.
 pub trait Real: Float + NumAssign + Sum {
-    /// Returns a number composed of the magnitude of `self` and the sign of
-    /// `sign`.
-    fn copysign(self, sign: Self) -> Self;
-
     /// Relative machine precision.
     #[inline]
     #[must_use]
@@ -385,16 +381,6 @@ pub trait Real: Float + NumAssign + Sum {
     }
 }
 
-impl Real for f32 {
-    #[inline]
-    fn copysign(self, sign: Self) -> Self {
-        self.copysign(sign)
-    }
-}
+impl Real for f32 {}
 
-impl Real for f64 {
-    #[inline]
-    fn copysign(self, sign: Self) -> Self {
-        self.copysign(sign)
-    }
-}
+impl Real for f64 {}
