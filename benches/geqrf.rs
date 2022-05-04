@@ -12,7 +12,7 @@ fn geqrf_100(c: &mut Criterion) {
     c.bench_function("geqrf", |bencher| {
         bencher.iter(|| {
             let a = a.clone();
-            qr::Factorized::from(a);
+            let _ = qr::Factorized::from(a);
         })
     });
 }

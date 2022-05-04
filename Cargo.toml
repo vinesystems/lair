@@ -25,9 +25,9 @@ serde = { version = "1", optional = true }
 thiserror = "1"
 
 [dev-dependencies]
-approx = "0.4" # Update only when ndarray updates its dependency
+approx = "0.5" # Update only when ndarray updates its dependency
 criterion = "0.3"
-ndarray = { version = "0.15", features = ["approx"] }
+ndarray = { version = "0.15.4", features = ["approx-0_5"] }
 ndarray-rand = "0.14"
 rand_isaac = "0.3"
 

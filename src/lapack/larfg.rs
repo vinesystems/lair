@@ -58,8 +58,12 @@ mod tests {
     fn larfg_real() {
         let x = arr1(&[2., 3., 2.]);
         let (beta, x, tau) = super::larfg(1., x);
-        assert_abs_diff_eq!(beta, -4.24264069, epsilon = 1e-6);
-        assert!(x.abs_diff_eq(&arr1(&[0.38148714, 0.57223071, 0.38148714]), 1e-6));
+        assert_abs_diff_eq!(beta, -4.24264069_f64, epsilon = 1e-6);
+        assert_abs_diff_eq!(
+            x,
+            arr1(&[0.38148714, 0.57223071, 0.38148714]),
+            epsilon = 1e-6
+        );
         assert_abs_diff_eq!(tau, 1.23570226, epsilon = 1e-6);
     }
 

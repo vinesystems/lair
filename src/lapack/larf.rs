@@ -109,7 +109,11 @@ mod tests {
         let v = arr1(&[1., 2., 3.]);
         let mut c = arr2(&[[1., 2.], [3., 4.], [5., 6.]]);
         super::left(&v, 2., &mut c);
-        assert!(c.abs_diff_eq(&arr2(&[[-43., -54.], [-85., -108.], [-127., -162.]]), 1e-8));
+        assert_abs_diff_eq!(
+            c,
+            arr2(&[[-43., -54.], [-85., -108.], [-127., -162.]]),
+            epsilon = 1e-8
+        );
     }
 
     #[test]
@@ -144,7 +148,11 @@ mod tests {
         let v = arr1(&[1., 2., 3.]);
         let mut c = arr2(&[[1., 2., 3.], [4., 5., 6.]]);
         super::right(&v, 2., &mut c);
-        assert!(c.abs_diff_eq(&arr2(&[[-27., -54., -81.], [-60., -123., -186.]]), 1e-8));
+        assert_abs_diff_eq!(
+            c,
+            arr2(&[[-27., -54., -81.], [-60., -123., -186.]]),
+            epsilon = 1e-8
+        );
     }
 
     #[test]

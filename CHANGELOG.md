@@ -7,6 +7,10 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.6.0] - 2022-05-04
 
+### Changed
+
+* Updated approx to 0.5.
+
 ### Removed
 
 * `Real::copysign` has been replaced with num-traits's `Float::copysign`.

@@ -38,8 +38,8 @@ mod tests {
         assert_eq!(qr.shape(), &[1, 1]);
         let tau = super::geqrf(&mut qr);
         assert_eq!(tau.shape(), &[1]);
-        assert!(qr.abs_diff_eq(&arr2(&[[2_f64]]), 1e-8));
-        assert!(tau.abs_diff_eq(&arr1(&[0.]), 1e-8));
+        assert_abs_diff_eq!(qr, arr2(&[[2_f64]]), epsilon = 1e-8);
+        assert_abs_diff_eq!(tau, arr1(&[0.]), epsilon = 1e-8);
     }
 
     #[test]
@@ -53,15 +53,16 @@ mod tests {
         assert_eq!(qr.shape(), &[3, 3]);
         let tau = super::geqrf(&mut qr);
         assert_eq!(tau.shape(), &[3]);
-        assert!(qr.abs_diff_eq(
-            &arr2(&[
+        assert_abs_diff_eq!(
+            qr,
+            arr2(&[
                 [1_f64, 2_f64, 4_f64],
                 [0_f64, -3_f64, -6_f64],
                 [0_f64, 1_f64, -5_f64],
             ]),
-            1e-8
-        ));
-        assert!(tau.abs_diff_eq(&arr1(&[0., 1., 0.]), 1e-8));
+            epsilon = 1e-8
+        );
+        assert_abs_diff_eq!(tau, arr1(&[0., 1., 0.]), epsilon = 1e-8);
     }
 
     #[test]
@@ -98,16 +99,21 @@ mod tests {
         ]);
         let mut qr = a.clone();
         let tau = super::geqrf(&mut qr);
-        assert!(qr.abs_diff_eq(
-            &arr2(&[
+        assert_abs_diff_eq!(
+            qr,
+            arr2(&[
                 [-4.24264069, -3.53553391, -4.00693843],
                 [0.38148714, 2.34520788, 2.06094026],
                 [0.57223071, 0.88223561, -1.64224532],
                 [0.38148714, -0.36153262, -0.34951992]
             ]),
-            1e-6
-        ));
-        assert!(tau.abs_diff_eq(&arr1(&[1.23570226, 1.04764396, 1.7822704]), 1e-6));
+            epsilon = 1e-6
+        );
+        assert_abs_diff_eq!(
+            tau,
+            arr1(&[1.23570226, 1.04764396, 1.7822704]),
+            epsilon = 1e-6
+        );
     }
 
     #[test]
@@ -119,14 +125,15 @@ mod tests {
         ]);
         let mut qr = a.clone();
         let tau = super::geqrf(&mut qr);
-        assert!(qr.abs_diff_eq(
-            &arr2(&[
+        assert_abs_diff_eq!(
+            qr,
+            arr2(&[
                 [-3.74165739, -2.40535118, -2.93987366, -3.47439614],
                 [0.42179344, -1.79284291, -1.6334791, -0.91634193],
                 [0.63269017, -0.9237749, -1.63978318, 1.04349839]
             ]),
-            1e-6
-        ));
-        assert!(tau.abs_diff_eq(&arr1(&[1.26726124, 1.07912113, 0.]), 1e-6));
+            epsilon = 1e-6
+        );
+        assert_abs_diff_eq!(tau, arr1(&[1.26726124, 1.07912113, 0.]), epsilon = 1e-6);
     }
 }

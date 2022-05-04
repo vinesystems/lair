@@ -83,6 +83,7 @@ where
 
 #[cfg(test)]
 mod tests {
+    use approx::assert_abs_diff_eq;
     use ndarray::{arr1, arr2};
 
     #[test]
@@ -93,37 +94,38 @@ mod tests {
             [3_f64, 1_f64, 2_f64],
         ]);
         let qr = super::Factorized::from(a);
-        assert!(qr.qr.abs_diff_eq(
-            &arr2(&[
+        assert_abs_diff_eq!(
+            qr.qr,
+            arr2(&[
                 [-3.74165739, -2.40535118, -2.93987366],
                 [0.42179344, -1.79284291, -1.6334791],
                 [0.63269017, -0.9237749, -1.63978318]
             ]),
-            1e-6
-        ));
-        assert!(qr
-            .tau
-            .abs_diff_eq(&arr1(&[1.26726124, 1.07912113, 0.]), 1e-6));
+            epsilon = 1e-6
+        );
+        assert_abs_diff_eq!(qr.tau, arr1(&[1.26726124, 1.07912113, 0.]), epsilon = 1e-6);
         let q = qr.q();
         assert_eq!(q.shape(), &[3, 3]);
-        assert!(q.abs_diff_eq(
-            &arr2(&[
+        assert_abs_diff_eq!(
+            q,
+            arr2(&[
                 [-0.26726124, -0.75697812, -0.59628479],
                 [-0.53452248, -0.39840954, 0.74535599],
                 [-0.80178373, 0.5179324, -0.2981424]
             ]),
-            1e-6
-        ));
+            epsilon = 1e-6
+        );
         let r = qr.r();
         assert_eq!(r.shape(), &[3, 3]);
-        assert!(r.abs_diff_eq(
-            &arr2(&[
+        assert_abs_diff_eq!(
+            r,
+            arr2(&[
                 [-3.74165739, -2.40535118, -2.93987366],
                 [0., -1.79284291, -1.6334791],
                 [0., 0., -1.63978318]
             ]),
-            1e-6
-        ));
+            epsilon = 1e-6
+        );
     }
 
     #[test]
@@ -136,24 +138,26 @@ mod tests {
         let qr = super::Factorized::from(a);
         let q = qr.q();
         assert_eq!(q.shape(), &[3, 3]);
-        assert!(q.abs_diff_eq(
-            &arr2(&[
+        assert_abs_diff_eq!(
+            q,
+            arr2(&[
                 [-0.26726124, -0.75697812, -0.59628479],
                 [-0.53452248, -0.39840954, 0.74535599],
                 [-0.80178373, 0.5179324, -0.2981424]
             ]),
-            1e-6
-        ));
+            epsilon = 1e-6
+        );
         let r = qr.r();
         assert_eq!(r.shape(), &[3, 4]);
-        assert!(r.abs_diff_eq(
-            &arr2(&[
+        assert_abs_diff_eq!(
+            r,
+            arr2(&[
                 [-3.74165739, -2.40535118, -2.93987366, -3.47439614],
                 [0., -1.79284291, -1.6334791, -0.91634193],
                 [0., 0., -1.63978318, 1.04349839]
             ]),
-            1e-6
-        ));
+            epsilon = 1e-6
+        );
     }
 
     #[test]
@@ -167,25 +171,27 @@ mod tests {
         let qr = super::Factorized::from(a);
         let q = qr.q();
         assert_eq!(q.shape(), &[4, 4]);
-        assert!(q.abs_diff_eq(
-            &arr2(&[
+        assert_abs_diff_eq!(
+            q,
+            arr2(&[
                 [-0.23570226, 0.49746834, -0.62737462, -0.55079106],
                 [-0.47140452, 0.14213381, 0.71963559, -0.48959205],
                 [-0.70710678, -0.63960215, -0.29523511, 0.06119901],
                 [-0.47140452, 0.56853524, 0.03690439, 0.67318907]
             ]),
-            1e-6
-        ));
+            epsilon = 1e-6
+        );
         let r = qr.r();
         assert_eq!(r.shape(), &[4, 3]);
-        assert!(r.abs_diff_eq(
-            &arr2(&[
+        assert_abs_diff_eq!(
+            r,
+            arr2(&[
                 [-4.24264069, -3.53553391, -4.00693843],
                 [0., 2.34520788, 2.06094026],
                 [0., 0., -1.64224532],
                 [0., 0., 0.]
             ]),
-            1e-6
-        ));
+            epsilon = 1e-6
+        );
     }
 }

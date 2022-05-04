@@ -18,13 +18,13 @@ fn getrf_100(c: &mut Criterion) {
     group.bench_function("row-major", |bencher| {
         bencher.iter(|| {
             let a = a_row_major.clone();
-            lu::Factorized::from(a);
+            let _ = lu::Factorized::from(a);
         })
     });
     group.bench_function("col-major", |bencher| {
         bencher.iter(|| {
             let a = a_col_major.clone();
-            lu::Factorized::from(a);
+            let _ = lu::Factorized::from(a);
         })
     });
 }

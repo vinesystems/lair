@@ -385,16 +385,17 @@ mod tests {
         ]);
         let p = super::getrf_recursive(a.view_mut()).expect("valid input");
         assert_eq!(p, vec![2, 4, 2, 3, 4]);
-        assert!(a.abs_diff_eq(
-            &arr2(&[
+        assert_abs_diff_eq!(
+            a,
+            arr2(&[
                 [3., 1., 2., 2., 1.],
                 [0.33333333, 2.66666667, 0.33333333, 2.33333333, 0.66666667],
                 [0.33333333, 0.625, 2.125, -1.125, 1.25],
                 [0.66666667, 0.875, 0.64705882, -1.64705882, -1.05882353],
                 [0.66666667, 0.5, -0.23529412, -0.14285714, 2.14285714],
             ]),
-            1e-6
-        ));
+            epsilon = 1e-6
+        );
     }
 
     #[test]
@@ -409,16 +410,17 @@ mod tests {
         let (pivots, singular) = super::getrf(a.view_mut());
         assert_eq!(pivots, vec![2, 4, 2, 3, 4]);
         assert!(singular.is_none());
-        assert!(a.abs_diff_eq(
-            &arr2(&[
+        assert_abs_diff_eq!(
+            a,
+            arr2(&[
                 [3., 1., 2., 2., 1.],
                 [0.33333333, 2.66666667, 0.33333333, 2.33333333, 0.66666667],
                 [0.33333333, 0.625, 2.125, -1.125, 1.25],
                 [0.66666667, 0.875, 0.64705882, -1.64705882, -1.05882353],
                 [0.66666667, 0.5, -0.23529412, -0.14285714, 2.14285714],
             ]),
-            1e-6
-        ));
+            epsilon = 1e-6
+        );
     }
 
     #[test]
@@ -435,16 +437,17 @@ mod tests {
         let (pivots, singular) = super::getrf(a.view_mut());
         assert_eq!(pivots, vec![2, 4, 2, 3, 4]);
         assert!(singular.is_none());
-        assert!(a.abs_diff_eq(
-            &arr2(&[
+        assert_abs_diff_eq!(
+            a,
+            arr2(&[
                 [3., 1., 2., 2., 1.],
                 [0.33333333, 2.66666667, 0.33333333, 2.33333333, 0.66666667],
                 [0.33333333, 0.625, 2.125, -1.125, 1.25],
                 [0.66666667, 0.875, 0.64705882, -1.64705882, -1.05882353],
                 [0.66666667, 0.5, -0.23529412, -0.14285714, 2.14285714],
             ]),
-            1e-6
-        ));
+            epsilon = 1e-6
+        );
     }
 
     #[test]
@@ -462,16 +465,17 @@ mod tests {
         let (pivots, singular) = super::getrf(a.view_mut());
         assert_eq!(pivots, vec![2, 4, 2, 3, 4]);
         assert!(singular.is_none());
-        assert!(a.abs_diff_eq(
-            &arr2(&[
+        assert_abs_diff_eq!(
+            a,
+            arr2(&[
                 [3., 1., 2., 2., 1.],
                 [0.33333333, 2.66666667, 0.33333333, 2.33333333, 0.66666667],
                 [0.33333333, 0.625, 2.125, -1.125, 1.25],
                 [0.66666667, 0.875, 0.64705882, -1.64705882, -1.05882353],
                 [0.66666667, 0.5, -0.23529412, -0.14285714, 2.14285714],
             ]),
-            1e-6
-        ));
+            epsilon = 1e-6
+        );
     }
 
     #[test]
@@ -508,9 +512,10 @@ mod tests {
         let (pivots, singular) = super::getrf(a.view_mut());
         assert_eq!(pivots, vec![2, 1]);
         assert!(singular.is_none());
-        assert!(a.abs_diff_eq(
-            &arr2(&[[2., 3.], [0.5, 1.5], [0.5, 0.3333333333333333]]),
-            1e-6
-        ));
+        assert_abs_diff_eq!(
+            a,
+            arr2(&[[2., 3.], [0.5, 1.5], [0.5, 0.3333333333333333]]),
+            epsilon = 1e-6
+        );
     }
 }

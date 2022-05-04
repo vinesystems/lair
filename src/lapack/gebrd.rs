@@ -86,6 +86,7 @@ where
 
 #[cfg(test)]
 mod tests {
+    use approx::assert_abs_diff_eq;
     use ndarray::{arr1, arr2};
 
     #[test]
@@ -98,8 +99,9 @@ mod tests {
             [1_f64, 3_f64, 1_f64, 3_f64],
         ]);
         let (d, e, tau_q, tau_p) = super::tall(&mut a);
-        assert!(a.abs_diff_eq(
-            &arr2(&[
+        assert_abs_diff_eq!(
+            a,
+            arr2(&[
                 [
                     -4.358898943540673,
                     7.152474728151237,
@@ -131,37 +133,41 @@ mod tests {
                     -0.9081340845417558
                 ]
             ]),
-            1e-12
-        ));
-        assert!(d.abs_diff_eq(
-            &arr1(&[
+            epsilon = 1e-12
+        );
+        assert_abs_diff_eq!(
+            d,
+            arr1(&[
                 -4.358898943540673,
                 -3.7204979859096694,
                 -0.836432765895214,
                 2.8284271247461903,
             ]),
-            1e-12
-        ));
-        assert!(e.abs_diff_eq(
-            &arr1(&[
+            epsilon = 1e-12
+        );
+        assert_abs_diff_eq!(
+            e,
+            arr1(&[
                 7.152474728151237,
                 1.1403421539769902,
                 0.0000000000000022881872238998206,
             ]),
-            1e-12
-        ));
-        assert!(tau_q.abs_diff_eq(
-            &arr1(&[
+            epsilon = 1e-12
+        );
+        assert_abs_diff_eq!(
+            tau_q,
+            arr1(&[
                 1.2294157338705618,
                 1.133885677079638,
                 1.0116370318963936,
                 1.0960660725096263,
             ]),
-            1e-12
-        ));
-        assert!(tau_p.abs_diff_eq(
-            &arr1(&[1.577350269189626, 1.7071067811865475, 0.0, 0.0,]),
-            1e-12
-        ));
+            epsilon = 1e-12
+        );
+        assert_abs_diff_eq!(
+            tau_p,
+            arr1(&[1.577350269189626, 1.7071067811865475, 0.0, 0.0,]),
+            epsilon = 1e-12
+        );
     }
 }
