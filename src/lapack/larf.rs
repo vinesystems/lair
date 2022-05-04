@@ -50,7 +50,7 @@ where
             c.slice_mut(s![0..=last_v, 0..=last_c]).as_mut_ptr(),
             c.stride_of(Axis(0)),
             c.stride_of(Axis(1)),
-        )
+        );
     };
 }
 
@@ -94,7 +94,7 @@ where
             c.slice_mut(s![0..=last_r, 0..=last_v]).as_mut_ptr(),
             c.stride_of(Axis(0)),
             c.stride_of(Axis(1)),
-        )
+        );
     };
 }
 

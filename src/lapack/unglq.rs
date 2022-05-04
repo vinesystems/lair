@@ -8,7 +8,7 @@ where
     SA: DataMut<Elem = A>,
     ST: Data<Elem = A>,
 {
-    ungl2(a, tau)
+    ungl2(a, tau);
 }
 
 fn ungl2<A, SA, ST>(a: &mut ArrayBase<SA, Ix2>, tau: &ArrayBase<ST, Ix1>)

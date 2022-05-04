@@ -14,7 +14,7 @@ where
     SA: DataMut<Elem = A>,
     ST: Data<Elem = A>,
 {
-    ung2r(a, tau)
+    ung2r(a, tau);
 }
 
 /// Generates all or part of the orthogonal matrix Q from a QR factorization.
