@@ -301,10 +301,6 @@ where
     let mut e_min = z[j4 + 3];
     let mut d = z[j4 - 1] - tau;
     let mut d_min = d;
-    let d_min_2;
-    let d_n;
-    let d_nm1;
-    let d_nm2;
     if tau == A::zero() {
         for j4 in (4 * i0..=4 * (n0 - 3)).step_by(4) {
             z[j4 - PP - 3] = d + z[j4 + PP - 2];
@@ -338,13 +334,13 @@ where
         }
     }
 
-    d_nm2 = d;
-    d_min_2 = d_min;
+    let d_nm2 = d;
+    let d_min_2 = d_min;
     j4 = 4 * (n0 - 2) - PP;
     let mut j4_p2 = j4 + 2 * PP - 1;
     z[j4 - 3] = d_nm2 + z[j4_p2 - 1];
     z[j4 - 1] = z[j4_p2 + 1] * (z[j4_p2 - 1] / z[j4 - 3]);
-    d_nm1 = z[j4_p2 + 1] * (d_nm2 / z[j4 - 3]) - tau;
+    let d_nm1 = z[j4_p2 + 1] * (d_nm2 / z[j4 - 3]) - tau;
     if d_nm1 < d_min {
         d_min = d_nm1;
     }
@@ -354,7 +350,7 @@ where
     j4_p2 = j4 + 2 * PP - 1;
     z[j4 - 3] = d_nm1 + z[j4_p2 - 1];
     z[j4 - 1] = z[j4_p2 + 1] * (z[j4_p2 - 1] / z[j4 - 3]);
-    d_n = z[j4_p2 + 1] * (d_nm1 / z[j4 - 3]) - tau;
+    let d_n = z[j4_p2 + 1] * (d_nm1 / z[j4 - 3]) - tau;
     if d_n < d_min {
         d_min = d_n;
     }
