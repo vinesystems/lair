@@ -9,27 +9,47 @@ use std::ops::Neg;
 
 macro_rules! trait_scalar_body {
     () => {
+        #[must_use]
         fn re(&self) -> Self::Real;
+        #[must_use]
         fn im(&self) -> Self::Real;
+        #[must_use]
         fn conj(&self) -> Self;
+        #[must_use]
         fn abs(&self) -> Self::Real;
+        #[must_use]
         fn square(&self) -> Self::Real;
 
+        #[must_use]
         fn sqrt(self) -> Self;
+        #[must_use]
         fn exp(self) -> Self;
+        #[must_use]
         fn ln(self) -> Self;
 
+        #[must_use]
         fn sin(self) -> Self;
+        #[must_use]
         fn cos(self) -> Self;
+        #[must_use]
         fn tan(self) -> Self;
+        #[must_use]
         fn sinh(self) -> Self;
+        #[must_use]
         fn cosh(self) -> Self;
+        #[must_use]
         fn tanh(self) -> Self;
+        #[must_use]
         fn asin(self) -> Self;
+        #[must_use]
         fn acos(self) -> Self;
+        #[must_use]
         fn atan(self) -> Self;
+        #[must_use]
         fn asinh(self) -> Self;
+        #[must_use]
         fn acosh(self) -> Self;
+        #[must_use]
         fn atanh(self) -> Self;
     };
 }
