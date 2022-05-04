@@ -1,6 +1,6 @@
 [package]
 name = "lair"
-version = "0.5.0"
+version = "0.6.0"
 description = "Linear algebra in Rust"
 readme = "README.md"
 documentation = "https://docs.rs/lair"
