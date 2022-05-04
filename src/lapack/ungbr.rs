@@ -14,7 +14,7 @@ where
 
     assert!(a.nrows() >= a.ncols());
     assert!(a.ncols() >= tau.len());
-    lapack::ungqr(a, &tau);
+    lapack::ungqr(a, tau);
 }
 
 #[allow(dead_code)]
