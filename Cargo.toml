@@ -26,7 +26,7 @@ thiserror = "1"
 
 [dev-dependencies]
 approx = "0.5" # Update only when ndarray updates its dependency
-criterion = "0.3"
+criterion = "0.5"
 ndarray = { version = "0.15.4", features = ["approx-0_5"] }
 ndarray-rand = "0.14"
 rand_isaac = "0.3"
