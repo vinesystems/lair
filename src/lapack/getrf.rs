@@ -260,7 +260,7 @@ where
     let left_cols = cmp::min(a.nrows(), a.ncols()) / 2;
     let right_cols = a.ncols() - left_cols;
     let mut singular_row = match recursive_inner(a.slice_mut(s![.., ..left_cols]), pivots) {
-        Ok(_) => 0,
+        Ok(()) => 0,
         Err(Singular(row)) => row,
     };
 
@@ -292,7 +292,7 @@ where
         &mut lower_right,
     );
     match recursive_inner(lower_right, &mut pivots[left_cols..]) {
-        Ok(_) => {}
+        Ok(()) => {}
         Err(Singular(row)) => {
             if singular_row == 0 {
                 singular_row = left_cols + row;
