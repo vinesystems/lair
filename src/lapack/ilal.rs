@@ -16,12 +16,9 @@ where
         return Some(last_col);
     }
 
-    for col in (0..x.ncols()).rev() {
-        if x.column(col).iter().any(|&elem| elem != A::zero()) {
-            return Some(col);
-        }
-    }
-    None
+    (0..x.ncols())
+        .rev()
+        .find(|&col| x.column(col).iter().any(|&elem| elem != A::zero()))
 }
 
 /// Finds the last non-zero row in a matrix.
@@ -39,12 +36,9 @@ where
         return Some(last_row);
     }
 
-    for row in (0..x.nrows()).rev() {
-        if x.row(row).iter().any(|&elem| elem != A::zero()) {
-            return Some(row);
-        }
-    }
-    None
+    (0..x.nrows())
+        .rev()
+        .find(|&row| x.row(row).iter().any(|&elem| elem != A::zero()))
 }
 
 #[cfg(test)]
