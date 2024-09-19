@@ -119,10 +119,10 @@ mod tests {
             Complex32::new(0., 0.),
             &mut y,
         );
-        assert_abs_diff_eq!(y[(0)].re, -24.);
-        assert_abs_diff_eq!(y[(0)].im, 28.);
-        assert_abs_diff_eq!(y[(1)].re, -52.);
-        assert_abs_diff_eq!(y[(1)].im, 64.);
+        assert_abs_diff_eq!(y[0].re, -24.);
+        assert_abs_diff_eq!(y[0].im, 28.);
+        assert_abs_diff_eq!(y[1].re, -52.);
+        assert_abs_diff_eq!(y[1].im, 64.);
     }
 
     #[test]
@@ -145,9 +145,9 @@ mod tests {
             Complex32::new(0., 0.),
             &mut y,
         );
-        assert_abs_diff_eq!(y[(0)].re, 56.);
-        assert_abs_diff_eq!(y[(0)].im, 28.);
-        assert_abs_diff_eq!(y[(1)].re, 44.);
-        assert_abs_diff_eq!(y[(1)].im, 40.);
+        assert_abs_diff_eq!(y[0].re, 56.);
+        assert_abs_diff_eq!(y[0].im, 28.);
+        assert_abs_diff_eq!(y[1].re, 44.);
+        assert_abs_diff_eq!(y[1].im, 40.);
     }
 }
