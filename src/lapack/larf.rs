@@ -21,9 +21,7 @@ where
         .rev()
         .find(|(_, &elem)| elem != A::zero())
         .unwrap();
-    let last_c = if let Some(last_c) = lapack::ilalc(&c.slice(s![0..=last_v, ..])) {
-        last_c
-    } else {
+    let Some(last_c) = lapack::ilalc(&c.slice(s![0..=last_v, ..])) else {
         return;
     };
     let w = {
@@ -74,9 +72,7 @@ where
         .rev()
         .find(|(_, &elem)| elem != A::zero())
         .unwrap();
-    let last_r = if let Some(last_r) = lapack::ilalr(&c.slice(s![.., 0..=last_v])) {
-        last_r
-    } else {
+    let Some(last_r) = lapack::ilalr(&c.slice(s![.., 0..=last_v])) else {
         return;
     };
     let w = c
