@@ -18,10 +18,6 @@ including the followings:
 * An equation solver for a system of linear scalar equations
 * Matrix builders for special matrices such as circulant and companion matrices
 
-## Minimum Supported Rust Version
-
-This crate is guaranteed to compile on Rust 1.51 and later.
-
 ## License
 
 Copyright 2020-2022 Vine Systems

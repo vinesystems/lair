@@ -11,11 +11,12 @@ keywords = ["linear-algebra", "matrix", "decomposition"]
 categories = ["mathematics"]
 authors = ["Min Kim <msk@dolbo.net>", "Min Shao <min.shao1988@gmail.com>"]
 edition = "2018"
+rust-version = "1.65"
 exclude = ["./github"]
 
 [features]
 default = []
-serialization = [ "serde", "num-complex/serde" ]
+serialization = ["serde", "num-complex/serde"]
 
 [dependencies]
 ndarray = "0.15"
@@ -25,7 +26,7 @@ serde = { version = "1", optional = true }
 thiserror = "1"
 
 [dev-dependencies]
-approx = "0.5" # Update only when ndarray updates its dependency
+approx = "0.5"                                              # Update only when ndarray updates its dependency
 criterion = "0.3"
 ndarray = { version = "0.15.4", features = ["approx-0_5"] }
 ndarray-rand = "0.14"
