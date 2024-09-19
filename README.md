@@ -20,7 +20,7 @@ including the followings:
 
 ## License
 
-Copyright 2020-2022 Vine Systems
+Copyright 2020-2024 Vine Systems
 
 Licensed under [Apache License, Version 2.0][apache-license] (the "License");
 you may not use this crate except in compliance with the License.
