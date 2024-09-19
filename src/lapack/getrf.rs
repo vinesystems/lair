@@ -299,7 +299,7 @@ where
             }
         }
     }
-    for p in pivots[left_cols..min_dim].iter_mut() {
+    for p in &mut pivots[left_cols..min_dim] {
         *p += left_cols;
     }
     lapack::laswp(
