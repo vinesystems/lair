@@ -23,7 +23,7 @@ ndarray = "0.16"
 num-complex = "0.4"
 num-traits = "0.2.15"
 serde = { version = "1", optional = true }
-thiserror = "1"
+thiserror = "2"
 
 [dev-dependencies]
 approx = "0.5"                                        # Update only when ndarray updates its dependency
