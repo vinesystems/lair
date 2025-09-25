@@ -30,7 +30,7 @@ approx = "0.5"                                        # Update only when ndarray
 criterion = "0.3"                                     # 0.5 requires rustc 1.74 or newer
 ndarray = { version = "0.16", features = ["approx"] }
 ndarray-rand = "0.15"
-rand_isaac = "0.3"
+rand_isaac = "0.4"
 
 [[bench]]
 name = "geqrf"
