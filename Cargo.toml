@@ -19,7 +19,7 @@ default = []
 serialization = ["serde", "num-complex/serde"]
 
 [dependencies]
-ndarray = "0.16"
+ndarray = "0.17"
 num-complex = "0.4"
 num-traits = "0.2.15"
 serde = { version = "1", optional = true }
@@ -28,7 +28,7 @@ thiserror = "2"
 [dev-dependencies]
 approx = "0.5"                                        # Update only when ndarray updates its dependency
 criterion = "0.3"                                     # 0.5 requires rustc 1.74 or newer
-ndarray = { version = "0.16", features = ["approx"] }
+ndarray = { version = "0.17", features = ["approx"] }
 ndarray-rand = "0.15"
 rand_isaac = "0.3"
 
