@@ -7,9 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Install Rust
-      uses: hecrj/setup-rust-action@v1
+      uses: dtolnay/rust-toolchain@stable
       with:
-        rust-version: stable
+        components: clippy, rustfmt
     - uses: actions/checkout@v5
     - name: Check formatting
       run: cargo fmt -- --check
@@ -25,9 +25,7 @@ jobs:
         os: [ubuntu-latest, macOS-latest, windows-latest]
     steps:
     - name: Install Rust
-      uses: hecrj/setup-rust-action@v1
-      with:
-        rust-version: stable
+      uses: dtolnay/rust-toolchain@stable
     - uses: actions/checkout@v5
     - name: Build
       run: cargo build --verbose
@@ -38,9 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Install Rust
-      uses: hecrj/setup-rust-action@v1
-      with:
-        rust-version: 1.68.0
+      uses: dtolnay/rust-toolchain@1.68.0
     - uses: actions/checkout@v5
     - name: Check compilation
       run: cargo build --verbose
@@ -49,9 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Install Rust
-      uses: hecrj/setup-rust-action@v1
-      with:
-        rust-version: stable
+      uses: dtolnay/rust-toolchain@stable
     - uses: actions/checkout@v5
     - name: Install Tarpaulin
       run: cargo install cargo-tarpaulin
