@@ -23,17 +23,27 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
-        rust: [stable, 1.68.0]
     steps:
     - name: Install Rust
       uses: hecrj/setup-rust-action@v1
       with:
-        rust-version: ${{ matrix.rust }}
+        rust-version: stable
     - uses: actions/checkout@v5
     - name: Build
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
+
+  msrv:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Rust
+      uses: hecrj/setup-rust-action@v1
+      with:
+        rust-version: 1.68.0
+    - uses: actions/checkout@v5
+    - name: Check compilation
+      run: cargo build --verbose
 
   coverage:
     runs-on: ubuntu-latest
