@@ -1,6 +1,8 @@
-use crate::Scalar;
-use ndarray::{s, ArrayBase, Axis, Data, DataMut, Ix2};
 use std::cmp;
+
+use ndarray::{s, ArrayBase, Axis, Data, DataMut, Ix2};
+
+use crate::Scalar;
 
 #[allow(dead_code)]
 pub fn lower<A, SA, SB>(a: &ArrayBase<SA, Ix2>, b: &mut ArrayBase<SB, Ix2>)

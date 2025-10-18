@@ -1,7 +1,9 @@
-use crate::Scalar;
+use std::cmp::Ordering;
+
 use ndarray::{ArrayBase, Data, Ix2};
 use num_traits::{Float, Zero};
-use std::cmp::Ordering;
+
+use crate::Scalar;
 
 #[allow(dead_code)]
 pub fn maxabs<A, S>(a: &ArrayBase<S, Ix2>) -> A::Real

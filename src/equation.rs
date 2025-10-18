@@ -1,8 +1,9 @@
 //! Matrix equation solvers.
 
+use ndarray::{Array1, ArrayBase, Data, Ix1, Ix2};
+
 use crate::decomposition::lu;
 use crate::{InvalidInput, Real, Scalar};
-use ndarray::{Array1, ArrayBase, Data, Ix1, Ix2};
 
 /// Solves a system of linear scalar equations.
 ///

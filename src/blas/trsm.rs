@@ -1,5 +1,6 @@
-use crate::Scalar;
 use ndarray::ArrayViewMut2;
+
+use crate::Scalar;
 
 #[allow(clippy::cast_possible_wrap)]
 pub unsafe fn trsm<A>(a: *const A, row_stride: isize, col_stride: isize, mut b: ArrayViewMut2<A>)

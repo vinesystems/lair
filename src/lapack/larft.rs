@@ -1,6 +1,8 @@
-use crate::{blas, Scalar};
-use ndarray::{s, Array2, ArrayBase, Axis, Data, Ix1, Ix2};
 use std::cmp;
+
+use ndarray::{s, Array2, ArrayBase, Axis, Data, Ix1, Ix2};
+
+use crate::{blas, Scalar};
 
 /// Forms the triangular factor of a block reflector.
 #[allow(dead_code)]

@@ -1,5 +1,6 @@
-use crate::{blas, lapack, Scalar};
 use ndarray::{s, Array1, ArrayBase, Axis, Data, DataMut, Ix1, Ix2};
+
+use crate::{blas, lapack, Scalar};
 
 /// Applies an elementary reflector to a matrix.
 ///

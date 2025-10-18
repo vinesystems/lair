@@ -1,5 +1,6 @@
-use num_traits::Float;
 use std::ops::{AddAssign, MulAssign};
+
+use num_traits::Float;
 
 /// Computes an approximation to the smallest eigenvalue using values of d from
 /// the previous transform.

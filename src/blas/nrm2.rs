@@ -1,6 +1,7 @@
-use crate::Scalar;
 use ndarray::{ArrayBase, Data, Ix1};
 use num_traits::Float;
+
+use crate::Scalar;
 
 pub(crate) fn nrm2<A, S>(x: &ArrayBase<S, Ix1>) -> A::Real
 where

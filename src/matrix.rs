@@ -1,7 +1,8 @@
 //! Matrix functions and special matrices.
 
-use crate::{InvalidInput, Scalar};
 use ndarray::Array2;
+
+use crate::{InvalidInput, Scalar};
 
 /// Constructs a circulant matrix.
 ///

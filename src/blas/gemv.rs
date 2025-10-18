@@ -1,5 +1,6 @@
-use crate::Scalar;
 use ndarray::{ArrayBase, Axis, Data, DataMut, Ix1, Ix2};
+
+use crate::Scalar;
 
 /// Performs `y` = `alpha` * `a` * `x` + `beta` * `y`.
 pub fn notrans<A, SA, SX, SY>(

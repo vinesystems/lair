@@ -1,7 +1,9 @@
-use crate::{blas, lapack, Real, Scalar};
+use std::ops::{Div, MulAssign};
+
 use ndarray::{ArrayBase, DataMut, Ix1};
 use num_traits::Float;
-use std::ops::{Div, MulAssign};
+
+use crate::{blas, lapack, Real, Scalar};
 
 /// Generates an elementary reflector (Householder matrix).
 pub fn larfg<A, S>(mut alpha: A, mut x: ArrayBase<S, Ix1>) -> (A::Real, ArrayBase<S, Ix1>, A)

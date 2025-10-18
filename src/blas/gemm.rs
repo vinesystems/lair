@@ -1,5 +1,6 @@
-use crate::Scalar;
 use ndarray::{ArrayBase, Data, DataMut, Ix2};
+
+use crate::Scalar;
 
 /// Performs `c` += `alpha` * `a` * `b`.
 pub fn gemm<A, SA, SB, SC>(

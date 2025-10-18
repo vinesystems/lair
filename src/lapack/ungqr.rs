@@ -1,5 +1,6 @@
-use crate::{blas, lapack, Scalar};
 use ndarray::{s, ArrayBase, Axis, Data, DataMut, Ix1, Ix2};
+
+use crate::{blas, lapack, Scalar};
 
 /// Generates a matrix Q with orthonormal columns.
 ///
