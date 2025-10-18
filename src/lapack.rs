@@ -18,6 +18,7 @@ mod las2;
 pub mod lascl;
 pub mod laset;
 mod lasq;
+pub mod lasr;
 mod laswp;
 mod ungbr;
 mod unglq;
