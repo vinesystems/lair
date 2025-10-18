@@ -1,5 +1,6 @@
-use crate::Scalar;
 use ndarray::{ArrayBase, Axis, Data, DataMut, Ix1, Ix2};
+
+use crate::Scalar;
 
 /// Performs `x` = `a` * `x` for an upper-triangular matrix `a` and a column
 /// vector `x`.

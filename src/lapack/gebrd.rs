@@ -1,6 +1,8 @@
-use crate::{lapack, Scalar};
-use ndarray::{s, Array1, ArrayBase, Axis, DataMut, Ix2};
 use std::ops::{Div, MulAssign};
+
+use ndarray::{s, Array1, ArrayBase, Axis, DataMut, Ix2};
+
+use crate::{lapack, Scalar};
 
 /// An upper or lower bidiagonal matrix.
 ///

@@ -1,5 +1,6 @@
-use crate::{blas, Scalar};
 use ndarray::{Array2, ArrayBase, Axis, Data, DataMut, Ix2};
+
+use crate::{blas, Scalar};
 
 /// Applies a block reflector.
 ///

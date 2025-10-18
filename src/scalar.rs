@@ -1,11 +1,12 @@
+use std::fmt::{Debug, Display, LowerExp, UpperExp};
+use std::iter::{Product, Sum};
+use std::ops::Neg;
+
 use ndarray::ScalarOperand;
 use num_complex::Complex;
 use num_traits::{Float, FromPrimitive, NumAssign};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-use std::fmt::{Debug, Display, LowerExp, UpperExp};
-use std::iter::{Product, Sum};
-use std::ops::Neg;
 
 macro_rules! trait_scalar_body {
     () => {

@@ -1,5 +1,6 @@
-use ndarray::{ArrayBase, DataMut, Ix1};
 use std::ops::MulAssign;
+
+use ndarray::{ArrayBase, DataMut, Ix1};
 
 pub fn scal<TA, TX, S>(a: TA, x: &mut ArrayBase<S, Ix1>)
 where

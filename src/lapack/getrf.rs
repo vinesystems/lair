@@ -1,7 +1,9 @@
-use crate::{blas, lapack, Real, Scalar};
-use ndarray::{s, ArrayViewMut2, Axis};
 use std::cmp;
 use std::ptr;
+
+use ndarray::{s, ArrayViewMut2, Axis};
+
+use crate::{blas, lapack, Real, Scalar};
 
 #[derive(Debug, PartialEq)]
 pub(crate) struct Singular(usize);

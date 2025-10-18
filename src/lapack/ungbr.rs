@@ -1,5 +1,6 @@
-use crate::{lapack, Scalar};
 use ndarray::{s, ArrayBase, Axis, Data, DataMut, Ix1, Ix2};
+
+use crate::{lapack, Scalar};
 
 #[allow(dead_code)]
 pub fn q_tall<A, SA, ST>(a: &mut ArrayBase<SA, Ix2>, tau: &ArrayBase<ST, Ix1>)

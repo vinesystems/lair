@@ -1,8 +1,9 @@
-use ndarray::{ArrayBase, Axis, Data, Ix1};
-use num_traits::Zero;
 use std::convert::TryFrom;
 use std::iter::Sum;
 use std::ops::{AddAssign, Mul};
+
+use ndarray::{ArrayBase, Axis, Data, Ix1};
+use num_traits::Zero;
 
 /// Computes a dot product of two vectors.
 ///

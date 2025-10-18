@@ -1,7 +1,9 @@
-use crate::{lapack, Scalar};
-use ndarray::{s, Array1, ArrayBase, DataMut, Ix2};
 use std::cmp;
 use std::ops::{Div, MulAssign};
+
+use ndarray::{s, Array1, ArrayBase, DataMut, Ix2};
+
+use crate::{lapack, Scalar};
 
 /// Computes the QR factorization of a matrix.
 pub fn geqrf<A, S>(a: &mut ArrayBase<S, Ix2>) -> Array1<A>
@@ -128,12 +130,12 @@ mod tests {
         assert_abs_diff_eq!(
             qr,
             arr2(&[
-                [-3.74165739, -2.40535118, -2.93987366, -3.47439614],
-                [0.42179344, -1.79284291, -1.6334791, -0.91634193],
-                [0.63269017, -0.9237749, -1.63978318, 1.04349839]
+                [-3.741_657_5, -2.405_351_2, -2.939_873_7, -3.474_396_2],
+                [0.42179344, -1.792_842_9, -1.6334791, -0.916_341_9],
+                [0.632_690_2, -0.9237749, -1.639_783_1, 1.043_498_4]
             ]),
             epsilon = 1e-6
         );
-        assert_abs_diff_eq!(tau, arr1(&[1.26726124, 1.07912113, 0.]), epsilon = 1e-6);
+        assert_abs_diff_eq!(tau, arr1(&[1.267_261_3, 1.079_121_1, 0.]), epsilon = 1e-6);
     }
 }

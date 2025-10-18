@@ -1,9 +1,11 @@
 //! LU decomposition.
 
-use crate::{lapack, InvalidInput, Real, Scalar};
-use ndarray::{s, Array1, Array2, ArrayBase, Data, DataMut, Ix1, Ix2};
 use std::cmp;
 use std::fmt;
+
+use ndarray::{s, Array1, Array2, ArrayBase, Data, DataMut, Ix1, Ix2};
+
+use crate::{lapack, InvalidInput, Real, Scalar};
 
 /// LU decomposition factors.
 #[derive(Debug)]
@@ -170,9 +172,10 @@ where
 
 #[cfg(test)]
 mod tests {
+    use std::cmp;
+
     use approx::assert_relative_eq;
     use ndarray::{arr2, s};
-    use std::cmp;
 
     #[test]
     fn square() {
@@ -189,10 +192,10 @@ mod tests {
         let l = lu.l();
         assert_relative_eq!(l[(0, 0)], 1., max_relative = 1e-6);
         assert_relative_eq!(l[(1, 0)], 0.33333333, max_relative = 1e-6);
-        assert_relative_eq!(l[(2, 0)], 0.66666666, max_relative = 1e-6);
+        assert_relative_eq!(l[(2, 0)], 0.666_666_7, max_relative = 1e-6);
         let u = lu.u();
         assert_relative_eq!(u[(0, 2)], 2., max_relative = 1e-6);
-        assert_relative_eq!(u[(1, 2)], 2.33333333, max_relative = 1e-6);
+        assert_relative_eq!(u[(1, 2)], 2.333_333_3, max_relative = 1e-6);
         assert_relative_eq!(u[(2, 2)], -2.2, max_relative = 1e-6);
     }
 
@@ -213,11 +216,11 @@ mod tests {
         assert_eq!(l.shape(), &[3, 3]);
         assert_relative_eq!(l[(0, 0)], 1., max_relative = 1e-6);
         assert_relative_eq!(l[(1, 0)], 0.33333333, max_relative = 1e-6);
-        assert_relative_eq!(l[(2, 0)], 0.66666666, max_relative = 1e-6);
+        assert_relative_eq!(l[(2, 0)], 0.666_666_7, max_relative = 1e-6);
         let u = lu.u();
         assert_eq!(u.shape(), &[3, 4]);
         assert_relative_eq!(u[(0, 2)], 2., max_relative = 1e-6);
-        assert_relative_eq!(u[(1, 2)], 2.33333333, max_relative = 1e-6);
+        assert_relative_eq!(u[(1, 2)], 2.333_333_3, max_relative = 1e-6);
         assert_relative_eq!(u[(2, 2)], -2.2, max_relative = 1e-6);
     }
 
@@ -239,14 +242,14 @@ mod tests {
         let l = lu.l();
         assert_eq!(l.shape(), &[4, 3]);
         assert_relative_eq!(l[(0, 0)], 1., max_relative = 1e-6);
-        assert_relative_eq!(l[(1, 0)], 0.66666666, max_relative = 1e-6);
-        assert_relative_eq!(l[(2, 0)], 0.66666666, max_relative = 1e-6);
+        assert_relative_eq!(l[(1, 0)], 0.666_666_7, max_relative = 1e-6);
+        assert_relative_eq!(l[(2, 0)], 0.666_666_7, max_relative = 1e-6);
         assert_relative_eq!(l[(3, 0)], 0.33333333, max_relative = 1e-6);
         let u = lu.u();
         assert_eq!(u.shape(), &[3, 3]);
         assert_relative_eq!(u[(0, 2)], 2., max_relative = 1e-6);
-        assert_relative_eq!(u[(1, 2)], 1.66666666, max_relative = 1e-6);
-        assert_relative_eq!(u[(2, 2)], -1.28571429, max_relative = 1e-6);
+        assert_relative_eq!(u[(1, 2)], 1.666_666_6, max_relative = 1e-6);
+        assert_relative_eq!(u[(2, 2)], -1.285_714_3, max_relative = 1e-6);
     }
 
     #[test]

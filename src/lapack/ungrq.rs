@@ -1,5 +1,6 @@
-use crate::{blas, lapack, Scalar};
 use ndarray::{s, ArrayBase, Axis, Data, DataMut, Ix1, Ix2};
+
+use crate::{blas, lapack, Scalar};
 
 #[allow(dead_code)]
 pub fn ungrq<A, SA, ST>(a: &mut ArrayBase<SA, Ix2>, tau: &ArrayBase<ST, Ix1>)

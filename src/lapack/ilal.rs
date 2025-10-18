@@ -1,5 +1,6 @@
-use crate::Scalar;
 use ndarray::{ArrayBase, Data, Ix2};
+
+use crate::Scalar;
 
 /// Finds the last non-zero column in a matrix.
 pub fn ilalc<A, S>(x: &ArrayBase<S, Ix2>) -> Option<usize>

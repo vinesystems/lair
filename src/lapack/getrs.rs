@@ -1,5 +1,6 @@
-use crate::{lapack, Scalar};
 use ndarray::{Array1, ArrayBase, Axis, Data, Ix1, Ix2};
+
+use crate::{lapack, Scalar};
 
 /// Solves `a * x = b`.
 ///

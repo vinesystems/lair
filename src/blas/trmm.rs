@@ -1,6 +1,8 @@
-use crate::Scalar;
-use ndarray::{ArrayBase, Data, DataMut, Ix2};
 use std::ops::MulAssign;
+
+use ndarray::{ArrayBase, Data, DataMut, Ix2};
+
+use crate::Scalar;
 
 /// Computes `b` * `a` assuming `a` is a lower triangular matrix.
 ///
