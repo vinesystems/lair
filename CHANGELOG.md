@@ -10,6 +10,9 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 * Requires Rust 1.68 or later.
+* The `serialization` feature has been renamed to `serde` to follow common Rust
+  conventions. The `serialization` feature is still available as a deprecated
+  alias for backward compatibility.
 
 ## [0.7.0] - 2024-09-19
 

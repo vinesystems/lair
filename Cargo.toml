@@ -14,7 +14,8 @@ rust-version = "1.68"
 
 [features]
 default = []
-serialization = ["serde", "num-complex/serde"]
+serde = ["dep:serde", "num-complex/serde"]
+serialization = ["serde"]  # Deprecated: use "serde" instead
 
 [dependencies]
 ndarray = "0.16"
@@ -42,5 +43,5 @@ harness = false
 name = "getrs"
 harness = false
 
-[packages.metadata.docs.rs]
+[package.metadata.docs.rs]
 all-features = true
