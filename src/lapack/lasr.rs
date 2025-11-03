@@ -284,10 +284,11 @@ pub fn lasr<A, S>(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use approx::assert_abs_diff_eq;
     use ndarray::arr2;
     use num_complex::Complex64;
+
+    use super::*;
 
     #[test]
     fn left_variable_forward_real() {

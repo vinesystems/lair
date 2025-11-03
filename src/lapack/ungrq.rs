@@ -35,10 +35,7 @@ where
     }
     for (i, &tau_i) in tau.iter().enumerate() {
         let (mut upper, mut lower) = a
-            .slice_mut(s![
-                ..=a.nrows() - tau.len() + i,
-                ..=a.ncols() - tau.len() + i
-            ])
+            .slice_mut(s![..=a_nrows - tau.len() + i, ..=a_ncols - tau.len() + i])
             .split_at(Axis(0), a_nrows - tau.len() + i);
         let mut row = lower.row_mut(0);
         lapack::lacgv(&mut row);

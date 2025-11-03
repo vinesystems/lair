@@ -119,9 +119,9 @@ where
             self.pivots[target] = i;
         }
 
-        let mut pl = self
-            .lu
-            .slice_mut(s![.., ..cmp::min(self.lu.nrows(), self.lu.ncols())]);
+        let nrows = self.lu.nrows();
+        let ncols = self.lu.ncols();
+        let mut pl = self.lu.slice_mut(s![.., ..cmp::min(nrows, ncols)]);
         let mut dst = 0;
         let mut i = dst;
         loop {
