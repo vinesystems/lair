@@ -9,7 +9,7 @@ use rand_isaac::isaac64::Isaac64Rng;
 fn getrf_100(c: &mut Criterion) {
     let mut group = c.benchmark_group("lu");
     let mut rng = Isaac64Rng::seed_from_u64(0);
-    let a_row_major = Array::random_using((100, 100), Uniform::new(0., 10.), &mut rng);
+    let a_row_major = Array::random_using((100, 100), Uniform::new(0., 10.).unwrap(), &mut rng);
     let a_tmp = a_row_major.clone().reversed_axes();
     let a_col_major = a_tmp.as_standard_layout().reversed_axes();
     assert!(a_row_major.is_standard_layout());
