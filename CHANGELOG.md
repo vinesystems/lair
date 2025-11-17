@@ -5,10 +5,11 @@ file is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and
 this project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.8.0] - 2025-11-17
 
 ### Changed
 
+* Updated ndarray to 0.17.
 * Requires Rust 1.68 or later.
 * The `serialization` feature has been renamed to `serde` to follow common Rust
   conventions. The `serialization` feature is still available as a deprecated
@@ -95,6 +96,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 * A circulent matrix builder.
 * A companion matrix builder.
 
+[0.8.0]: https://github.com/vinesystems/lair/compare/0.7.0...0.8.0
 [0.7.0]: https://github.com/vinesystems/lair/compare/0.6.0...0.7.0
 [0.6.0]: https://github.com/vinesystems/lair/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/vinesystems/lair/compare/0.4.0...0.5.0
