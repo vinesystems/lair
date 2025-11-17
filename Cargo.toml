@@ -43,5 +43,8 @@ harness = false
 name = "getrs"
 harness = false
 
+[lints.clippy]
+pedantic = "warn"
+
 [package.metadata.docs.rs]
 all-features = true
