@@ -10,7 +10,7 @@ jobs:
       uses: dtolnay/rust-toolchain@stable
       with:
         components: clippy, rustfmt
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Check formatting
       run: cargo fmt -- --check
     - name: Clippy
@@ -26,7 +26,7 @@ jobs:
     steps:
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Build
       run: cargo build --verbose
     - name: Run tests
@@ -37,7 +37,7 @@ jobs:
     steps:
     - name: Install Rust
       uses: dtolnay/rust-toolchain@1.68.0
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Check compilation
       run: cargo build --verbose
 
@@ -46,7 +46,7 @@ jobs:
     steps:
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Install cargo-llvm-cov
       uses: taiki-e/install-action@v2
       with:
