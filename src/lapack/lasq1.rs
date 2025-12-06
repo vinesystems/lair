@@ -1,10 +1,9 @@
 use std::ops::{AddAssign, MulAssign};
 
-use num_traits::Float;
-
 use super::las2::las2;
 use super::lascl;
 use super::lasq2::lasq2;
+use crate::Real;
 
 /// Computes the singular values of a real N-by-N bidiagonal matrix with
 /// diagonal D and off-diagonal E. The singular values are computed to
@@ -37,7 +36,7 @@ use super::lasq2::lasq2;
 #[allow(clippy::many_single_char_names, clippy::similar_names)]
 pub(crate) fn lasq1<A>(d: &mut [A], e: &mut [A], work: &mut [A]) -> Result<(), isize>
 where
-    A: Float + AddAssign + MulAssign,
+    A: Real + AddAssign + MulAssign,
 {
     let n = d.len();
 
@@ -72,7 +71,7 @@ where
 
     // Early return if SIGMX is zero (matrix is already diagonal)
     if sigmx == zero {
-        sort_descending(d);
+        d.sort_unstable_by(|a, b| b.partial_cmp(a).unwrap());
         return Ok(());
     }
 
@@ -132,20 +131,6 @@ where
             Err(2)
         }
         Err(info) => Err(info),
-    }
-}
-
-/// Sorts a slice in descending order.
-fn sort_descending<A: Float>(arr: &mut [A]) {
-    // Insertion sort - efficient for small arrays typical in this context
-    for i in 1..arr.len() {
-        let key = arr[i];
-        let mut j = i;
-        while j > 0 && arr[j - 1] < key {
-            arr[j] = arr[j - 1];
-            j -= 1;
-        }
-        arr[j] = key;
     }
 }
 
@@ -224,41 +209,6 @@ mod tests {
         assert_abs_diff_eq!(d[1], 3.0, epsilon = 1e-10);
         assert_abs_diff_eq!(d[2], 2.0, epsilon = 1e-10);
         assert_abs_diff_eq!(d[3], 1.0, epsilon = 1e-10);
-    }
-
-    #[test]
-    fn test_sort_descending() {
-        let mut arr = [1.0f64, 4.0, 2.0, 3.0];
-        sort_descending(&mut arr);
-        assert_eq!(arr, [4.0, 3.0, 2.0, 1.0]);
-    }
-
-    #[test]
-    fn test_sort_descending_already_sorted() {
-        let mut arr = [4.0f64, 3.0, 2.0, 1.0];
-        sort_descending(&mut arr);
-        assert_eq!(arr, [4.0, 3.0, 2.0, 1.0]);
-    }
-
-    #[test]
-    fn test_sort_descending_reverse() {
-        let mut arr = [1.0f64, 2.0, 3.0, 4.0];
-        sort_descending(&mut arr);
-        assert_eq!(arr, [4.0, 3.0, 2.0, 1.0]);
-    }
-
-    #[test]
-    fn test_sort_descending_single() {
-        let mut arr = [5.0f64];
-        sort_descending(&mut arr);
-        assert_eq!(arr, [5.0]);
-    }
-
-    #[test]
-    fn test_sort_descending_empty() {
-        let mut arr: [f64; 0] = [];
-        sort_descending(&mut arr);
-        assert_eq!(arr, []);
     }
 
     #[test]

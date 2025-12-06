@@ -1,13 +1,22 @@
+use std::ops::MulAssign;
+
 use num_traits::Float;
 
 /// Multiplies a slice by a real scalar `c_to / c_from`, using iterative
 /// scaling to avoid overflow/underflow.
 ///
-/// This is the "general" (type 'G') case of LAPACK's DLASCL.
+/// This is the "general" (type 'G') case of LAPACK's xLASCL.
+///
+/// For complex arrays, the scaling factor `c_to / c_from` is real, and each
+/// complex element is multiplied by this real scalar.
 #[allow(dead_code)]
-pub(crate) fn general<A: Float>(c_from: A, c_to: A, a: &mut [A]) {
-    let small_num = A::min_positive_value();
-    let large_num = A::one() / small_num;
+pub(crate) fn general<A, R>(c_from: R, c_to: R, a: &mut [A])
+where
+    A: MulAssign<R>,
+    R: Float,
+{
+    let small_num = R::min_positive_value();
+    let large_num = R::one() / small_num;
 
     let mut cfromc = c_from;
     let mut ctoc = c_to;
@@ -24,7 +33,7 @@ pub(crate) fn general<A: Float>(c_from: A, c_to: A, a: &mut [A]) {
                 // ctoc is either 0 or inf. In both cases, ctoc itself serves as
                 // the correct multiplication factor.
                 (ctoc, true)
-            } else if cfrom_small.abs() > ctoc.abs() && ctoc != A::zero() {
+            } else if cfrom_small.abs() > ctoc.abs() && !ctoc.is_zero() {
                 // cfromc is large relative to ctoc: scale down iteratively
                 cfromc = cfrom_small;
                 (small_num, false)
@@ -39,7 +48,7 @@ pub(crate) fn general<A: Float>(c_from: A, c_to: A, a: &mut [A]) {
         };
 
         for v in a.iter_mut() {
-            *v = *v * mul;
+            *v *= mul;
         }
 
         if done {
@@ -51,6 +60,7 @@ pub(crate) fn general<A: Float>(c_from: A, c_to: A, a: &mut [A]) {
 #[cfg(test)]
 mod tests {
     use approx::assert_abs_diff_eq;
+    use num_complex::Complex64;
 
     #[test]
     fn general_simple() {
@@ -106,5 +116,50 @@ mod tests {
         let mut a = [3.0f32, 2.0];
         super::general(2.0f32, 6.0f32, &mut a);
         assert_eq!(a, [9.0, 6.0]);
+    }
+
+    #[test]
+    fn general_complex_simple() {
+        let mut a = [
+            Complex64::new(3.0, 1.0),
+            Complex64::new(2.0, -1.0),
+            Complex64::new(4.0, 2.0),
+        ];
+        super::general(2.0, 4.0, &mut a);
+        assert_eq!(a[0], Complex64::new(6.0, 2.0));
+        assert_eq!(a[1], Complex64::new(4.0, -2.0));
+        assert_eq!(a[2], Complex64::new(8.0, 4.0));
+    }
+
+    #[test]
+    fn general_complex_scale_down() {
+        let mut a = [Complex64::new(30.0, 10.0), Complex64::new(20.0, -20.0)];
+        super::general(10.0, 1.0, &mut a);
+        assert_eq!(a[0], Complex64::new(3.0, 1.0));
+        assert_eq!(a[1], Complex64::new(2.0, -2.0));
+    }
+
+    #[test]
+    fn general_complex_extreme_scale_up() {
+        let mut a = [Complex64::new(1.0, 1.0), Complex64::new(2.0, -1.0)];
+        let scale = (f64::EPSILON / f64::MIN_POSITIVE).sqrt();
+        super::general(1.0, scale, &mut a);
+        // Result should be finite
+        assert!(a[0].re.is_finite());
+        assert!(a[0].im.is_finite());
+        assert!(a[1].re.is_finite());
+        assert!(a[1].im.is_finite());
+        // And approximately correct
+        assert_abs_diff_eq!(a[0].re, scale, epsilon = scale * 1e-10);
+        assert_abs_diff_eq!(a[0].im, scale, epsilon = scale * 1e-10);
+        assert_abs_diff_eq!(a[1].re, 2.0 * scale, epsilon = scale * 1e-10);
+        assert_abs_diff_eq!(a[1].im, -scale, epsilon = scale * 1e-10);
+    }
+
+    #[test]
+    fn general_complex_empty() {
+        let mut a: [Complex64; 0] = [];
+        super::general(2.0, 4.0, &mut a);
+        // Should not panic
     }
 }
