@@ -132,7 +132,7 @@ where
         for k in 1..n {
             z[k] = z[2 * k];
         }
-        sort_descending(&mut z[..n]);
+        z[..n].sort_unstable_by(|a, b| b.partial_cmp(a).unwrap_or(std::cmp::Ordering::Equal));
         z[2 * n - 2] = d;
         return Ok(());
     }
@@ -416,7 +416,7 @@ where
     }
 
     // Sort and compute sum of eigenvalues.
-    sort_descending(&mut z[..n]);
+    z[..n].sort_unstable_by(|a, b| b.partial_cmp(a).unwrap_or(std::cmp::Ordering::Equal));
 
     e = zero;
     for k in (0..n).rev() {
@@ -433,21 +433,6 @@ where
         / A::from(iter).expect("valid conversion");
 
     Ok(())
-}
-
-/// Sorts a slice in descending order.
-fn sort_descending<A: Float>(arr: &mut [A]) {
-    // Simple insertion sort for now - LAPACK's DLASRT uses a sophisticated algorithm
-    // but for correctness, insertion sort suffices.
-    for i in 1..arr.len() {
-        let key = arr[i];
-        let mut j = i;
-        while j > 0 && arr[j - 1] < key {
-            arr[j] = arr[j - 1];
-            j -= 1;
-        }
-        arr[j] = key;
-    }
 }
 
 #[cfg(test)]
@@ -538,41 +523,6 @@ mod tests {
         // This may return Ok or Err(2) depending on convergence
         // The important thing is it doesn't panic
         let _ = result;
-    }
-
-    #[test]
-    fn test_sort_descending() {
-        let mut arr = [1.0f64, 4.0, 2.0, 3.0];
-        sort_descending(&mut arr);
-        assert_eq!(arr, [4.0, 3.0, 2.0, 1.0]);
-    }
-
-    #[test]
-    fn test_sort_descending_already_sorted() {
-        let mut arr = [4.0f64, 3.0, 2.0, 1.0];
-        sort_descending(&mut arr);
-        assert_eq!(arr, [4.0, 3.0, 2.0, 1.0]);
-    }
-
-    #[test]
-    fn test_sort_descending_reverse() {
-        let mut arr = [1.0f64, 2.0, 3.0, 4.0];
-        sort_descending(&mut arr);
-        assert_eq!(arr, [4.0, 3.0, 2.0, 1.0]);
-    }
-
-    #[test]
-    fn test_sort_descending_single() {
-        let mut arr = [5.0f64];
-        sort_descending(&mut arr);
-        assert_eq!(arr, [5.0]);
-    }
-
-    #[test]
-    fn test_sort_descending_empty() {
-        let mut arr: [f64; 0] = [];
-        sort_descending(&mut arr);
-        assert_eq!(arr, []);
     }
 
     #[test]
