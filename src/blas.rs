@@ -5,6 +5,7 @@ pub(crate) mod gemv;
 mod gerc;
 mod iamax;
 mod nrm2;
+mod rot;
 mod scal;
 pub mod trmm;
 pub mod trmv;
