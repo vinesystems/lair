@@ -2,6 +2,7 @@ use ndarray::{ArrayBase, DataMut, Dimension};
 
 use crate::{Real, Scalar};
 
+mod bdsqr;
 mod gebrd;
 mod geqrf;
 mod getrf;
