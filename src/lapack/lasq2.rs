@@ -237,7 +237,7 @@ where
         // E(N0) holds the value of SIGMA when submatrix in I0:N0
         // splits from the rest of the array, but is negated.
         let mut desig = zero;
-        let sigma = if n0 == n { zero } else { -z[4 * n0 - 2] };
+        let mut sigma = if n0 == n { zero } else { -z[4 * n0 - 2] };
         if sigma < zero {
             return Err(1);
         }
@@ -317,7 +317,7 @@ where
             n0 = result.0;
             pp = result.1;
             dmin = result.2;
-            let sigma_new = result.3;
+            sigma = result.3;
             desig = result.4;
             qmax = result.5;
             nfail = result.6;
@@ -331,7 +331,6 @@ where
             dn2 = result.14;
             g = result.15;
             tau = result.16;
-            let _ = sigma_new; // sigma is not updated in main loop based on Fortran logic
 
             pp = 1 - pp;
 
@@ -371,6 +370,8 @@ where
             // and place the new d's and e's in a qd array.
             // This might need to be done for several blocks.
             let mut i1 = i0;
+            #[allow(unused_assignments)]
+            let mut n1 = n0;
             loop {
                 let mut tempq = z[4 * i0 - 4];
                 z[4 * i0 - 4] += sigma;
@@ -385,9 +386,11 @@ where
                 if i1 <= 1 {
                     break;
                 }
+                n1 = i1 - 1;
                 while i1 >= 2 && z[4 * i1 - 6] >= zero {
                     i1 -= 1;
                 }
+                sigma = -z[4 * n1 - 2];
             }
 
             for k in 0..n {
@@ -597,5 +600,70 @@ mod tests {
         assert!(result.is_err());
         let err = result.unwrap_err();
         assert!(err < -200, "Error code should indicate negative data");
+    }
+
+    #[test]
+    fn test_convergence_simple_tridiagonal() {
+        // A well-conditioned 3x3 case should converge
+        // Input: qd array format [q1, e1, q2, e2, q3, 0, ...]
+        // These values represent a simple bidiagonal matrix and should converge
+        let mut z = vec![0.0f64; 16];
+        // Set up q's and e's for a well-conditioned matrix
+        z[0] = 4.0; // q1
+        z[1] = 0.1; // e1 (small off-diagonal)
+        z[2] = 3.0; // q2
+        z[3] = 0.1; // e2 (small off-diagonal)
+        z[4] = 2.0; // q3
+
+        let result = lasq2(3, &mut z);
+        assert!(
+            result.is_ok(),
+            "Well-conditioned matrix should converge, got {:?}",
+            result
+        );
+
+        // Check eigenvalues are positive and sorted
+        assert!(z[0] > 0.0, "First eigenvalue should be positive");
+        assert!(z[1] > 0.0, "Second eigenvalue should be positive");
+        assert!(z[2] > 0.0, "Third eigenvalue should be positive");
+        assert!(z[0] >= z[1], "Eigenvalues should be in descending order");
+        assert!(z[1] >= z[2], "Eigenvalues should be in descending order");
+    }
+
+    #[test]
+    fn test_convergence_larger_matrix() {
+        // A larger well-conditioned case
+        let n = 5;
+        let mut z = vec![0.0f64; 4 * n + 8];
+
+        // Set up a well-conditioned bidiagonal matrix
+        for i in 0..n {
+            z[2 * i] = (n - i) as f64 + 1.0; // q values: 6, 5, 4, 3, 2
+            if i < n - 1 {
+                z[2 * i + 1] = 0.05; // small off-diagonal
+            }
+        }
+
+        let result = lasq2(n, &mut z);
+        assert!(
+            result.is_ok(),
+            "Well-conditioned larger matrix should converge, got {:?}",
+            result
+        );
+
+        // Check eigenvalues are positive and sorted
+        for i in 0..n {
+            assert!(z[i] > 0.0, "Eigenvalue {} should be positive", i);
+            if i > 0 {
+                assert!(
+                    z[i - 1] >= z[i],
+                    "Eigenvalues should be in descending order: z[{}]={} < z[{}]={}",
+                    i - 1,
+                    z[i - 1],
+                    i,
+                    z[i]
+                );
+            }
+        }
     }
 }

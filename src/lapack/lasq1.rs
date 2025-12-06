@@ -280,21 +280,14 @@ mod tests {
         let mut e = [1.0f64, 1.0];
         let mut work = [0.0f64; 12];
         let result = lasq1(&mut d, &mut e, &mut work);
-        // Note: The underlying lasq2 algorithm may have issues for some inputs.
-        // This test verifies the function runs without panicking.
-        // TODO: Fix lasq2 to ensure correct results for all valid inputs.
-        match result {
-            Ok(()) | Err(2) | Err(3) => {
-                // Success, max iterations, or convergence failure are all acceptable
-                // as long as the function doesn't panic.
-            }
-            Err(code) if code < 0 => {
-                panic!("Unexpected negative error code (invalid input): {}", code);
-            }
-            Err(code) => {
-                panic!("Unexpected error code: {}", code);
-            }
-        }
+        assert!(result.is_ok(), "Expected convergence, got {:?}", result);
+
+        // Check singular values are positive and sorted
+        assert!(d[0] > 0.0);
+        assert!(d[1] > 0.0);
+        assert!(d[2] > 0.0);
+        assert!(d[0] >= d[1]);
+        assert!(d[1] >= d[2]);
     }
 
     #[test]
@@ -304,19 +297,13 @@ mod tests {
         let mut e = [0.1f64, 0.1, 0.1];
         let mut work = [0.0f64; 16];
         let result = lasq1(&mut d, &mut e, &mut work);
-        // Note: The underlying lasq2 algorithm may have issues for some inputs.
-        // This test verifies the function runs without panicking.
-        // TODO: Fix lasq2 to ensure correct results for all valid inputs.
-        match result {
-            Ok(()) | Err(2) | Err(3) => {
-                // Success, max iterations, or convergence failure are all acceptable
-                // as long as the function doesn't panic.
-            }
-            Err(code) if code < 0 => {
-                panic!("Unexpected negative error code (invalid input): {}", code);
-            }
-            Err(code) => {
-                panic!("Unexpected error code: {}", code);
+        assert!(result.is_ok(), "Expected convergence, got {:?}", result);
+
+        // Check singular values are positive and sorted
+        for i in 0..4 {
+            assert!(d[i] > 0.0, "Singular value {} should be positive", i);
+            if i > 0 {
+                assert!(d[i - 1] >= d[i], "Singular values should be sorted");
             }
         }
     }
