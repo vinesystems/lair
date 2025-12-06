@@ -356,7 +356,9 @@ mod tests {
         let d_n_1 = 1.0;
         let d_n_2 = 1.0;
 
-        let (tau, ttype, _) = lasq4_pp0(1, 5, &z, 5, d_min, d_min_1, d_min_2, d_n, d_n_1, d_n_2, 0.25, 0);
+        let (tau, ttype, _) = lasq4_pp0(
+            1, 5, &z, 5, d_min, d_min_1, d_min_2, d_n, d_n_1, d_n_2, 0.25, 0,
+        );
 
         assert_eq!(ttype, -2, "ttype should be -2 for case 2");
         assert!(tau > 0.0, "tau should be positive");
@@ -379,7 +381,9 @@ mod tests {
         let d_n_1 = 1.0;
         let d_n_2 = 1.0;
 
-        let (tau, ttype, _) = lasq4_pp0(1, 5, &z, 5, d_min, d_min_1, d_min_2, d_n, d_n_1, d_n_2, 0.25, 0);
+        let (tau, ttype, _) = lasq4_pp0(
+            1, 5, &z, 5, d_min, d_min_1, d_min_2, d_n, d_n_1, d_n_2, 0.25, 0,
+        );
 
         assert_eq!(ttype, -3, "ttype should be -3 for case 3");
         assert!(tau >= 0.0, "tau should be non-negative");
@@ -398,7 +402,7 @@ mod tests {
 
         let d_min = 1.0;
         let d_min_1 = 2.0; // != dn_1
-        let d_n = 1.0;     // == dmin
+        let d_n = 1.0; // == dmin
         let d_n_1 = 1.0;
 
         let (tau, ttype, _) = lasq4_pp0(1, 5, &z, 5, d_min, d_min_1, 1.0, d_n, d_n_1, 1.0, 0.25, 0);
@@ -421,10 +425,10 @@ mod tests {
         z[15] = 1.0; // z[np-5]
         z[17] = 2.0; // z[np-3]
         z[10] = 1.0; // z[nn-10]
-        z[8] = 2.0;  // z[nn-12]
+        z[8] = 2.0; // z[nn-12]
 
         let d_min = 1.0;
-        let d_n = 2.0;   // != dmin
+        let d_n = 2.0; // != dmin
         let d_n_1 = 1.0; // == dmin
 
         let (_tau, ttype, _) = lasq4_pp0(1, 5, &z, 5, d_min, 2.0, 1.0, d_n, d_n_1, 1.0, 0.25, 0);
@@ -442,13 +446,16 @@ mod tests {
 
         let d_min = 1.0;
         let d_min_1 = 2.0; // != d_n_1 to enter case 4
-        let d_n = 1.0;     // == d_min
-        let d_n_1 = 1.0;   // != d_min_1
+        let d_n = 1.0; // == d_min
+        let d_n_1 = 1.0; // != d_min_1
 
         let (tau, ttype, _) = lasq4_pp0(1, 5, &z, 5, d_min, d_min_1, 1.0, d_n, d_n_1, 1.0, 0.25, 0);
 
         assert_eq!(ttype, -4);
-        assert!((tau - d_min * 0.25).abs() < 1e-14, "Should return early with quarter*dmin");
+        assert!(
+            (tau - d_min * 0.25).abs() < 1e-14,
+            "Should return early with quarter*dmin"
+        );
     }
 
     // Case 5: n0_in == n0, dmin == dn2
@@ -546,12 +553,17 @@ mod tests {
 
         let d_min_1 = 1.0;
         let d_min_2 = 10.0; // Large for gap2 > 0
-        let d_n_1 = 1.0;    // == dmin1
-        let d_n_2 = 10.0;   // == dmin2
+        let d_n_1 = 1.0; // == dmin1
+        let d_n_2 = 10.0; // == dmin2
 
-        let (tau, ttype, _) = lasq4_pp0(1, 10, &z, 11, 0.5, d_min_1, d_min_2, 2.0, d_n_1, d_n_2, 0.25, 0);
+        let (tau, ttype, _) = lasq4_pp0(
+            1, 10, &z, 11, 0.5, d_min_1, d_min_2, 2.0, d_n_1, d_n_2, 0.25, 0,
+        );
 
-        assert!(ttype == -7 || ttype == -8, "ttype should be -7 or -8 for cases 7-8");
+        assert!(
+            ttype == -7 || ttype == -8,
+            "ttype should be -7 or -8 for cases 7-8"
+        );
         assert!(tau > 0.0, "tau should be positive");
     }
 
@@ -571,10 +583,15 @@ mod tests {
         let d_n_1 = 1.0;
         let d_n_2 = 1.0;
 
-        let (tau, ttype, _) = lasq4_pp0(1, 10, &z, 11, 0.5, d_min_1, d_min_2, 2.0, d_n_1, d_n_2, 0.25, 0);
+        let (tau, ttype, _) = lasq4_pp0(
+            1, 10, &z, 11, 0.5, d_min_1, d_min_2, 2.0, d_n_1, d_n_2, 0.25, 0,
+        );
 
         assert!(ttype == -7 || ttype == -8, "ttype should be -7 or -8");
-        assert!(tau >= d_min_1 / 3.0 - 1e-10, "tau should be at least third*dmin1");
+        assert!(
+            tau >= d_min_1 / 3.0 - 1e-10,
+            "tau should be at least third*dmin1"
+        );
     }
 
     // Case 9: n0_in == n0 + 1, but dmin1 != dn1 or dmin2 != dn2
@@ -582,13 +599,16 @@ mod tests {
     fn case_9_dmin1_equals_dn1() {
         let z = [2.0; 24];
         let d_min_1 = 1.0;
-        let d_n_1 = 1.0;   // == dmin1
-        let d_n_2 = 3.0;   // != dmin2
+        let d_n_1 = 1.0; // == dmin1
+        let d_n_2 = 3.0; // != dmin2
 
         let (tau, ttype, _) = lasq4_pp0(1, 5, &z, 6, 0.5, d_min_1, 2.0, 2.0, d_n_1, d_n_2, 0.25, 0);
 
         assert_eq!(ttype, -9);
-        assert!((tau - 0.5 * d_min_1).abs() < 1e-14, "tau = half*dmin1 when dmin1==dn1");
+        assert!(
+            (tau - 0.5 * d_min_1).abs() < 1e-14,
+            "tau = half*dmin1 when dmin1==dn1"
+        );
     }
 
     #[test]
@@ -613,10 +633,10 @@ mod tests {
             z[i] = 2.0;
         }
         // nn = 4*10 = 40
-        z[34] = 1.0;  // z[nn-6]
-        z[32] = 4.0;  // z[nn-8], need 2*z[34] < z[32]
-        z[30] = 1.0;  // z[nn-10]
-        z[28] = 2.0;  // z[nn-12]
+        z[34] = 1.0; // z[nn-6]
+        z[32] = 4.0; // z[nn-8], need 2*z[34] < z[32]
+        z[30] = 1.0; // z[nn-10]
+        z[28] = 2.0; // z[nn-12]
 
         let d_min_2 = 1.0;
         let d_n_2 = 1.0; // == dmin2
@@ -624,7 +644,10 @@ mod tests {
         let (tau, ttype, _) = lasq4_pp0(1, 10, &z, 12, 0.5, 1.0, d_min_2, 2.0, 2.0, d_n_2, 0.25, 0);
 
         assert_eq!(ttype, -10, "ttype should be -10 for case 10");
-        assert!(tau >= d_min_2 / 3.0 - 1e-10, "tau should be at least third*dmin2");
+        assert!(
+            tau >= d_min_2 / 3.0 - 1e-10,
+            "tau should be at least third*dmin2"
+        );
     }
 
     #[test]
@@ -674,8 +697,8 @@ mod tests {
 
         let d_min = 1.0;
         let d_min_1 = 2.0; // != d_n_1 to enter case 4
-        let d_n = 1.0;     // == d_min
-        let d_n_1 = 1.0;   // != d_min_1
+        let d_n = 1.0; // == d_min
+        let d_n_1 = 1.0; // != d_min_1
 
         let (tau, ttype, _) = lasq4_pp1(1, 5, &z, 5, d_min, d_min_1, 1.0, d_n, d_n_1, 1.0, 0.25, 0);
 
@@ -709,8 +732,8 @@ mod tests {
 
         let d_min = 1.0;
         let d_min_1 = 2.0; // != d_n_1 to enter case 4
-        let d_n = 1.0;     // == d_min
-        let d_n_1 = 1.0;   // != d_min_1
+        let d_n = 1.0; // == d_min
+        let d_n_1 = 1.0; // != d_min_1
 
         let (tau, ttype, _) = lasq4_pp0(1, 5, &z, 5, d_min, d_min_1, 1.0, d_n, d_n_1, 1.0, 0.25, 0);
 
@@ -728,15 +751,16 @@ mod tests {
             z[i] = 10.0;
         }
         // nn = 4*10 = 40
-        z[34] = 1.0;   // z[nn-6], small
+        z[34] = 1.0; // z[nn-6], small
         z[32] = 100.0; // z[nn-8], large
 
         let d_min = 1.0;
         let d_min_1 = 2.0; // != d_n_1 to enter case 4
-        let d_n = 1.0;     // == d_min
-        let d_n_1 = 1.0;   // != d_min_1
+        let d_n = 1.0; // == d_min
+        let d_n_1 = 1.0; // != d_min_1
 
-        let (_tau, ttype, _) = lasq4_pp0(1, 10, &z, 10, d_min, d_min_1, 1.0, d_n, d_n_1, 1.0, 0.25, 0);
+        let (_tau, ttype, _) =
+            lasq4_pp0(1, 10, &z, 10, d_min, d_min_1, 1.0, d_n, d_n_1, 1.0, 0.25, 0);
 
         assert_eq!(ttype, -4);
     }

@@ -38,7 +38,11 @@ use super::lasq6::lasq6;
 /// Updated values of `(n0, pp, d_min, sigma, desig, q_max, n_fail, iter, n_div,
 /// ttype, d_min_1, d_min_2, d_n, d_n_1, d_n_2, g, tau)`
 #[allow(dead_code)]
-#[allow(clippy::too_many_arguments, clippy::too_many_lines, clippy::type_complexity)]
+#[allow(
+    clippy::too_many_arguments,
+    clippy::too_many_lines,
+    clippy::type_complexity
+)]
 pub(crate) fn lasq3<A>(
     i0: usize,
     mut n0: usize,
@@ -181,9 +185,7 @@ where
     }
 
     // Reverse the qd-array if warranted
-    if (d_min <= zero || n0 < n0_in)
-        && cbias * z[4 * i0 + pp - 3 - 1] < z[4 * n0 + pp - 3 - 1]
-    {
+    if (d_min <= zero || n0 < n0_in) && cbias * z[4 * i0 + pp - 3 - 1] < z[4 * n0 + pp - 3 - 1] {
         let ipn4 = 4 * (i0 + n0);
         let mut j4 = 4 * i0;
         while j4 <= 2 * (i0 + n0 - 1) {
@@ -206,7 +208,9 @@ where
         z[4 * n0 - pp - 1] = z[4 * n0 - pp - 1]
             .min(z[4 * i0 - pp - 1])
             .min(z[4 * i0 - pp + 4 - 1]);
-        q_max = q_max.max(z[4 * i0 + pp - 3 - 1]).max(z[4 * i0 + pp + 1 - 1]);
+        q_max = q_max
+            .max(z[4 * i0 + pp - 3 - 1])
+            .max(z[4 * i0 + pp + 1 - 1]);
         d_min = -zero;
     }
 
@@ -388,8 +392,9 @@ mod tests {
     #[test]
     fn returns_immediately_when_n0_less_than_i0() {
         let mut z = [1.0; 20];
-        let (n0, pp, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _) =
-            call_lasq3(5, 3, &mut z, 0, 1.0, 0.0, 0.0, 1.0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.25, 0.0);
+        let (n0, pp, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _) = call_lasq3(
+            5, 3, &mut z, 0, 1.0, 0.0, 0.0, 1.0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.25, 0.0,
+        );
         assert_eq!(n0, 3);
         assert_eq!(pp, 0);
     }
@@ -400,8 +405,9 @@ mod tests {
         let mut z = [0.0; 20];
         z[0] = 4.0; // z[4*1 + 0 - 3 - 1] = z[0] for i0=n0=1, pp=0
 
-        let (n0, _, _, _sigma, _, _, _, _, _, _, _, _, _, _, _, _, _) =
-            call_lasq3(1, 1, &mut z, 0, 1.0, 0.0, 0.0, 1.0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.25, 0.0);
+        let (n0, _, _, _sigma, _, _, _, _, _, _, _, _, _, _, _, _, _) = call_lasq3(
+            1, 1, &mut z, 0, 1.0, 0.0, 0.0, 1.0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.25, 0.0,
+        );
 
         assert_eq!(n0, 0);
     }
@@ -413,12 +419,13 @@ mod tests {
         // Set up z array with positive values for 2 eigenvalue case
         // nn = 4*2 + 0 = 8
         // Need z[nn-3-1]=z[4], z[nn-5-1]=z[2], z[nn-7-1]=z[0]
-        z[0] = 4.0;  // z[nn-7-1]
-        z[2] = 0.5;  // z[nn-5-1]
-        z[4] = 2.0;  // z[nn-3-1]
+        z[0] = 4.0; // z[nn-7-1]
+        z[2] = 0.5; // z[nn-5-1]
+        z[4] = 2.0; // z[nn-3-1]
 
-        let (n0, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _) =
-            call_lasq3(1, 2, &mut z, 0, 1.0, 0.0, 0.0, 1.0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.25, 0.0);
+        let (n0, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _) = call_lasq3(
+            1, 2, &mut z, 0, 1.0, 0.0, 0.0, 1.0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.25, 0.0,
+        );
 
         assert_eq!(n0, 0);
     }
@@ -435,8 +442,9 @@ mod tests {
         // Check 4: z[nn-2*0-8-1] = z[31] > tol2 * z[nn-11-1] = z[28]
         let mut z = [1.0; 100]; // Initialize all to 1.0 to pass all checks
 
-        let (_, _, _, _, _, _, _, iter, n_div, _, _, _, _, _, _, _, _) =
-            call_lasq3(1, 10, &mut z, 0, 1.0, 0.0, 0.0, 4.0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.25, 0.0);
+        let (_, _, _, _, _, _, _, iter, n_div, _, _, _, _, _, _, _, _) = call_lasq3(
+            1, 10, &mut z, 0, 1.0, 0.0, 0.0, 4.0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.25, 0.0,
+        );
 
         // Should have done at least one iteration
         assert!(iter >= 1, "iter should be at least 1, got {}", iter);
@@ -453,8 +461,27 @@ mod tests {
         }
 
         let initial_sigma = 10.0;
-        let (_, _, _, sigma, desig, _, _, _, _, _, _, _, _, _, _, _, _) =
-            call_lasq3(1, 3, &mut z, 0, 0.1, initial_sigma, 0.0, 4.0, 0, 0, 0, 0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.25, 0.0);
+        let (_, _, _, sigma, desig, _, _, _, _, _, _, _, _, _, _, _, _) = call_lasq3(
+            1,
+            3,
+            &mut z,
+            0,
+            0.1,
+            initial_sigma,
+            0.0,
+            4.0,
+            0,
+            0,
+            0,
+            0,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.25,
+            0.0,
+        );
 
         // Sigma should be updated (may increase or stay same depending on tau)
         assert!(sigma.is_finite());
@@ -474,8 +501,9 @@ mod tests {
         let mut z = [1.0; 100]; // Initialize all to 1.0 to pass all checks
 
         // Start with pp=2 which should be reset to 0 at label 50
-        let (_, pp, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _) =
-            call_lasq3(1, 10, &mut z, 2, 1.0, 0.0, 0.0, 4.0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.25, 0.0);
+        let (_, pp, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _) = call_lasq3(
+            1, 10, &mut z, 2, 1.0, 0.0, 0.0, 4.0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.25, 0.0,
+        );
 
         assert!(pp <= 1, "pp should be 0 or 1, got {}", pp);
     }
@@ -489,8 +517,9 @@ mod tests {
             z[4 * i + 2] = 0.1;
         }
 
-        let (n0, _, d_min, _, _, _, _n_fail, _, _, _, _, _, _, _, _, _, _) =
-            call_lasq3(1, 5, &mut z, 0, -0.1, 0.0, 0.0, 4.0, 0, 0, 0, 0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.25, 0.0);
+        let (n0, _, d_min, _, _, _, _n_fail, _, _, _, _, _, _, _, _, _, _) = call_lasq3(
+            1, 5, &mut z, 0, -0.1, 0.0, 0.0, 4.0, 0, 0, 0, 0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.25, 0.0,
+        );
 
         // Should still complete
         assert!(n0 <= 5);
@@ -508,7 +537,8 @@ mod tests {
 
         let eps = f32::EPSILON;
         let (n0, _, d_min, sigma, _, _, _, _, _, _, _, _, _, _, _, _, _) = lasq3::<f32>(
-            1, 3, &mut z, 0, 0.1, 0.0, 0.0, 4.0, 0, 0, 0, 0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.25, 0.0, eps,
+            1, 3, &mut z, 0, 0.1, 0.0, 0.0, 4.0, 0, 0, 0, 0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.25, 0.0,
+            eps,
         );
 
         assert!(n0 <= 3);
@@ -525,8 +555,9 @@ mod tests {
             z[4 * i + 2] = 0.01; // Small off-diagonal elements
         }
 
-        let (n0, _, _, _, _, _, _, iter, _, _, _, _, _, _, _, _, _) =
-            call_lasq3(1, 10, &mut z, 0, 0.1, 0.0, 0.0, 4.0, 0, 0, 0, 0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.25, 0.0);
+        let (n0, _, _, _, _, _, _, iter, _, _, _, _, _, _, _, _, _) = call_lasq3(
+            1, 10, &mut z, 0, 0.1, 0.0, 0.0, 4.0, 0, 0, 0, 0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.25, 0.0,
+        );
 
         // Should deflate to completion
         assert!(n0 < 10 || iter > 0);
@@ -542,8 +573,9 @@ mod tests {
             z[4 * i + 2] = 0.5;
         }
 
-        let (_, _, _, _, _, _, n_fail, _, _, _, _, _, _, _, _, _, _) =
-            call_lasq3(1, 5, &mut z, 0, -0.5, 0.0, 0.0, 4.0, 0, 0, 0, 0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.25, 0.5);
+        let (_, _, _, _, _, _, n_fail, _, _, _, _, _, _, _, _, _, _) = call_lasq3(
+            1, 5, &mut z, 0, -0.5, 0.0, 0.0, 4.0, 0, 0, 0, 0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.25, 0.5,
+        );
 
         // May or may not fail depending on the exact values
         // n_fail is usize so always >= 0
@@ -559,8 +591,9 @@ mod tests {
             z[4 * i + 2] = 0.1;
         }
 
-        let (_, _, _, _, _, q_max, _, _, _, _, _, _, _, _, _, _, _) =
-            call_lasq3(1, 5, &mut z, 0, -0.1, 0.0, 0.0, 1.0, 0, 0, 0, 0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.25, 0.0);
+        let (_, _, _, _, _, q_max, _, _, _, _, _, _, _, _, _, _, _) = call_lasq3(
+            1, 5, &mut z, 0, -0.1, 0.0, 0.0, 1.0, 0, 0, 0, 0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.25, 0.0,
+        );
 
         // q_max should be updated if reversal happened
         assert!(q_max.is_finite());

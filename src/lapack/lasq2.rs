@@ -191,9 +191,7 @@ where
                 z[i4 - 2 * pp - 3] = d;
                 z[i4 - 2 * pp - 1] = zero;
                 d = z[i4];
-            } else if safmin * z[i4] < z[i4 - 2 * pp - 3]
-                && safmin * z[i4 - 2 * pp - 3] < z[i4]
-            {
+            } else if safmin * z[i4] < z[i4 - 2 * pp - 3] && safmin * z[i4 - 2 * pp - 3] < z[i4] {
                 let temp = z[i4] / z[i4 - 2 * pp - 3];
                 z[i4 - 2 * pp - 1] = z[i4 - 2] * temp;
                 d *= temp;
@@ -347,8 +345,7 @@ where
                 emin = z[4 * i0 - 2];
                 let mut oldemn = z[4 * i0 - 1];
                 for i4_check in (4 * i0..=4 * (n0 - 3)).step_by(4) {
-                    if z[i4_check - 1] <= tol2 * z[i4_check - 4]
-                        || z[i4_check - 2] <= tol2 * sigma
+                    if z[i4_check - 1] <= tol2 * z[i4_check - 4] || z[i4_check - 2] <= tol2 * sigma
                     {
                         z[i4_check - 2] = -sigma;
                         splt = i4_check / 4;
@@ -427,8 +424,8 @@ where
     z[2 * n] = trace;
     z[2 * n + 1] = e;
     z[2 * n + 2] = A::from(iter).expect("valid conversion");
-    z[2 * n + 3] = A::from(ndiv).expect("valid conversion")
-        / A::from(n * n).expect("valid conversion");
+    z[2 * n + 3] =
+        A::from(ndiv).expect("valid conversion") / A::from(n * n).expect("valid conversion");
     z[2 * n + 4] = hundred * A::from(nfail).expect("valid conversion")
         / A::from(iter).expect("valid conversion");
 
@@ -515,7 +512,9 @@ mod tests {
         // All off-diagonal elements are zero
         // z = [q1, e1=0, q2, e2=0, q3, e3=0, q4]
         // Need 4*n elements for rearrangement
-        let mut z = vec![4.0f64, 0.0, 3.0, 0.0, 2.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+        let mut z = vec![
+            4.0f64, 0.0, 3.0, 0.0, 2.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        ];
         let result = lasq2(4, &mut z);
         assert!(result.is_ok());
         // Check eigenvalues are sorted in descending order
@@ -529,7 +528,9 @@ mod tests {
         // A simple 3x3 case
         // z = [q1, e1, q2, e2, q3]
         // Need at least 4*n = 12 elements
-        let mut z = vec![4.0f64, 1.0, 3.0, 0.5, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+        let mut z = vec![
+            4.0f64, 1.0, 3.0, 0.5, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        ];
         let result = lasq2(3, &mut z);
         // This may return Ok or Err(2) depending on convergence
         // The important thing is it doesn't panic
@@ -589,7 +590,9 @@ mod tests {
     #[test]
     fn test_negative_data_detection() {
         // Test that negative values in the middle are detected
-        let mut z = vec![4.0f64, 1.0, -3.0, 0.5, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+        let mut z = vec![
+            4.0f64, 1.0, -3.0, 0.5, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        ];
         let result = lasq2(3, &mut z);
         assert!(result.is_err());
         let err = result.unwrap_err();

@@ -5,6 +5,54 @@ use num_traits::Float;
 use super::las2::las2;
 use super::lasq2::lasq2;
 
+/// Safely scales a slice by `c_to/c_from`, avoiding overflow/underflow.
+/// This is a simplified version of LAPACK's DLASCL for 1D arrays.
+#[allow(clippy::similar_names)]
+fn safe_scale<A: Float>(c_from: A, c_to: A, arr: &mut [A]) {
+    let zero = A::zero();
+    let one = A::one();
+    let sfmin = A::min_positive_value();
+    let big = one / sfmin;
+
+    let mut cfromc = c_from;
+    let mut ctoc = c_to;
+
+    loop {
+        let cfrom_small = cfromc * sfmin;
+        let (mul, done) = if cfrom_small == cfromc {
+            // cfromc is an inf. Multiply by a correctly signed zero for finite ctoc,
+            // or a NaN if ctoc is also inf.
+            (ctoc / cfromc, true)
+        } else {
+            let cto_big = ctoc / big;
+            if cto_big == ctoc {
+                // ctoc is either 0 or an inf. In both cases, ctoc itself serves as
+                // the correct multiplication factor.
+                (ctoc, true)
+            } else if cfrom_small.abs() > ctoc.abs() && ctoc != zero {
+                // cfromc is very large: scale down first
+                cfromc = cfrom_small;
+                (sfmin, false)
+            } else if cto_big.abs() > cfromc.abs() {
+                // ctoc is very large: scale up first
+                ctoc = cto_big;
+                (big, false)
+            } else {
+                // Normal case
+                (ctoc / cfromc, true)
+            }
+        };
+
+        for v in arr.iter_mut() {
+            *v = *v * mul;
+        }
+
+        if done {
+            break;
+        }
+    }
+}
+
 /// Computes the singular values of a real N-by-N bidiagonal matrix with
 /// diagonal D and off-diagonal E. The singular values are computed to
 /// high relative accuracy.
@@ -95,11 +143,8 @@ where
     }
 
     // DLASCL( 'G', 0, 0, SIGMX, SCALE, 2*N-1, 1, WORK, 2*N-1, IINFO )
-    // Scale WORK by SCALE/SIGMX
-    let scale_factor = scale / sigmx;
-    for w in work.iter_mut().take(2 * n - 1) {
-        *w *= scale_factor;
-    }
+    // Scale WORK by SCALE/SIGMX using safe scaling to avoid overflow
+    safe_scale(sigmx, scale, &mut work[..2 * n - 1]);
 
     // Compute the q's and e's by squaring
     for w in work.iter_mut().take(2 * n - 1) {
@@ -117,11 +162,8 @@ where
                 *d_val = work[i].sqrt();
             }
             // DLASCL( 'G', 0, 0, SCALE, SIGMX, N, 1, D, N, IINFO )
-            // Unscale D by SIGMX/SCALE
-            let unscale_factor = sigmx / scale;
-            for d_val in d.iter_mut().take(n) {
-                *d_val *= unscale_factor;
-            }
+            // Unscale D by SIGMX/SCALE using safe scaling
+            safe_scale(scale, sigmx, &mut d[..n]);
             Ok(())
         }
         Err(2) => {
@@ -131,12 +173,9 @@ where
                 d[i] = work[2 * i].sqrt();
                 e[i] = work[2 * i + 1].sqrt();
             }
-            // Unscale D and E
-            let unscale_factor = sigmx / scale;
-            for (d_val, e_val) in d.iter_mut().zip(e.iter_mut()).take(n) {
-                *d_val *= unscale_factor;
-                *e_val *= unscale_factor;
-            }
+            // Unscale D and E using safe scaling
+            safe_scale(scale, sigmx, &mut d[..n]);
+            safe_scale(scale, sigmx, &mut e[..n]);
             Err(2)
         }
         Err(info) => Err(info),
@@ -159,8 +198,9 @@ fn sort_descending<A: Float>(arr: &mut [A]) {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use approx::assert_abs_diff_eq;
+
+    use super::*;
 
     #[test]
     fn test_empty() {
@@ -286,11 +326,22 @@ mod tests {
         let mut d = [2.0f64, 3.0, 4.0];
         let mut e = [1.0f64, 1.0];
         let mut work = [0.0f64; 12];
-        // The underlying lasq2 algorithm may have convergence issues for some inputs.
-        // The test verifies the function doesn't panic and returns a valid result code.
-        let _result = lasq1(&mut d, &mut e, &mut work);
-        // We don't assert on the result because lasq2 convergence depends on
-        // numerical properties of the input that are not guaranteed.
+        let result = lasq1(&mut d, &mut e, &mut work);
+        // Note: The underlying lasq2 algorithm may have issues for some inputs.
+        // This test verifies the function runs without panicking.
+        // TODO: Fix lasq2 to ensure correct results for all valid inputs.
+        match result {
+            Ok(()) | Err(2) | Err(3) => {
+                // Success, max iterations, or convergence failure are all acceptable
+                // as long as the function doesn't panic.
+            }
+            Err(code) if code < 0 => {
+                panic!("Unexpected negative error code (invalid input): {}", code);
+            }
+            Err(code) => {
+                panic!("Unexpected error code: {}", code);
+            }
+        }
     }
 
     #[test]
@@ -299,10 +350,21 @@ mod tests {
         let mut d = [1.0f64, 1.0, 1.0, 1.0];
         let mut e = [0.1f64, 0.1, 0.1];
         let mut work = [0.0f64; 16];
-        // The underlying lasq2 algorithm may have convergence issues for some inputs.
-        // The test verifies the function doesn't panic and returns a valid result code.
-        let _result = lasq1(&mut d, &mut e, &mut work);
-        // We don't assert on the result because lasq2 convergence depends on
-        // numerical properties of the input that are not guaranteed.
+        let result = lasq1(&mut d, &mut e, &mut work);
+        // Note: The underlying lasq2 algorithm may have issues for some inputs.
+        // This test verifies the function runs without panicking.
+        // TODO: Fix lasq2 to ensure correct results for all valid inputs.
+        match result {
+            Ok(()) | Err(2) | Err(3) => {
+                // Success, max iterations, or convergence failure are all acceptable
+                // as long as the function doesn't panic.
+            }
+            Err(code) if code < 0 => {
+                panic!("Unexpected negative error code (invalid input): {}", code);
+            }
+            Err(code) => {
+                panic!("Unexpected error code: {}", code);
+            }
+        }
     }
 }
