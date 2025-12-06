@@ -447,7 +447,7 @@ where
 
                 // Update singular vectors
                 if ncvt > 0 {
-                    let len = m - ll;
+                    let len = m - 1 - ll;
                     lasr::<A, _>(
                         Side::Left,
                         Pivot::Variable,
@@ -458,7 +458,7 @@ where
                     );
                 }
                 if nru > 0 {
-                    let len = m - ll;
+                    let len = m - 1 - ll;
                     lasr::<A, _>(
                         Side::Right,
                         Pivot::Variable,
@@ -469,7 +469,7 @@ where
                     );
                 }
                 if ncc > 0 {
-                    let len = m - ll;
+                    let len = m - 1 - ll;
                     lasr::<A, _>(
                         Side::Left,
                         Pivot::Variable,
@@ -511,7 +511,7 @@ where
 
                 // Update singular vectors
                 if ncvt > 0 {
-                    let len = m - ll;
+                    let len = m - 1 - ll;
                     lasr::<A, _>(
                         Side::Left,
                         Pivot::Variable,
@@ -522,7 +522,7 @@ where
                     );
                 }
                 if nru > 0 {
-                    let len = m - ll;
+                    let len = m - 1 - ll;
                     lasr::<A, _>(
                         Side::Right,
                         Pivot::Variable,
@@ -533,7 +533,7 @@ where
                     );
                 }
                 if ncc > 0 {
-                    let len = m - ll;
+                    let len = m - 1 - ll;
                     lasr::<A, _>(
                         Side::Left,
                         Pivot::Variable,
@@ -582,7 +582,7 @@ where
 
                 // Update singular vectors
                 if ncvt > 0 {
-                    let len = m - ll;
+                    let len = m - 1 - ll;
                     lasr::<A, _>(
                         Side::Left,
                         Pivot::Variable,
@@ -593,7 +593,7 @@ where
                     );
                 }
                 if nru > 0 {
-                    let len = m - ll;
+                    let len = m - 1 - ll;
                     lasr::<A, _>(
                         Side::Right,
                         Pivot::Variable,
@@ -604,7 +604,7 @@ where
                     );
                 }
                 if ncc > 0 {
-                    let len = m - ll;
+                    let len = m - 1 - ll;
                     lasr::<A, _>(
                         Side::Left,
                         Pivot::Variable,
@@ -655,7 +655,7 @@ where
 
                 // Update singular vectors if desired
                 if ncvt > 0 {
-                    let len = m - ll;
+                    let len = m - 1 - ll;
                     lasr::<A, _>(
                         Side::Left,
                         Pivot::Variable,
@@ -666,7 +666,7 @@ where
                     );
                 }
                 if nru > 0 {
-                    let len = m - ll;
+                    let len = m - 1 - ll;
                     lasr::<A, _>(
                         Side::Right,
                         Pivot::Variable,
@@ -677,7 +677,7 @@ where
                     );
                 }
                 if ncc > 0 {
-                    let len = m - ll;
+                    let len = m - 1 - ll;
                     lasr::<A, _>(
                         Side::Left,
                         Pivot::Variable,

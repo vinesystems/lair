@@ -6,6 +6,7 @@ mod bdsqr;
 mod gebrd;
 mod gelqf;
 mod geqrf;
+mod gesvd;
 mod getrf;
 mod getrs;
 mod ilal;
