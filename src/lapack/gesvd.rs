@@ -184,14 +184,38 @@ where
             bdsqr::<A, _, _, _>(Uplo::Upper, s, &mut e_work, vt, u, &mut c_dummy, &mut work)
         } else if wantu {
             let mut vt_dummy: Array2<A> = Array2::zeros((minmn, 0));
-            bdsqr::<A, _, _, _>(Uplo::Upper, s, &mut e_work, &mut vt_dummy, u, &mut c_dummy, &mut work)
+            bdsqr::<A, _, _, _>(
+                Uplo::Upper,
+                s,
+                &mut e_work,
+                &mut vt_dummy,
+                u,
+                &mut c_dummy,
+                &mut work,
+            )
         } else if wantvt {
             let mut u_dummy: Array2<A> = Array2::zeros((0, minmn));
-            bdsqr::<A, _, _, _>(Uplo::Upper, s, &mut e_work, vt, &mut u_dummy, &mut c_dummy, &mut work)
+            bdsqr::<A, _, _, _>(
+                Uplo::Upper,
+                s,
+                &mut e_work,
+                vt,
+                &mut u_dummy,
+                &mut c_dummy,
+                &mut work,
+            )
         } else {
             let mut vt_dummy: Array2<A> = Array2::zeros((minmn, 0));
             let mut u_dummy: Array2<A> = Array2::zeros((0, minmn));
-            bdsqr::<A, _, _, _>(Uplo::Upper, s, &mut e_work, &mut vt_dummy, &mut u_dummy, &mut c_dummy, &mut work)
+            bdsqr::<A, _, _, _>(
+                Uplo::Upper,
+                s,
+                &mut e_work,
+                &mut vt_dummy,
+                &mut u_dummy,
+                &mut c_dummy,
+                &mut work,
+            )
         };
 
         result?;
@@ -316,18 +340,50 @@ where
             // For m < n case, we need VT to be properly sized for bdsqr
             // bdsqr expects VT to have m rows (size of bidiagonal matrix)
             let mut vt_small = vt.slice_mut(s![..m, ..]);
-            bdsqr::<A, _, _, _>(Uplo::Upper, s, &mut e_work, &mut vt_small, u, &mut c_dummy, &mut work)
+            bdsqr::<A, _, _, _>(
+                Uplo::Upper,
+                s,
+                &mut e_work,
+                &mut vt_small,
+                u,
+                &mut c_dummy,
+                &mut work,
+            )
         } else if wantu {
             let mut vt_dummy: Array2<A> = Array2::zeros((m, 0));
-            bdsqr::<A, _, _, _>(Uplo::Upper, s, &mut e_work, &mut vt_dummy, u, &mut c_dummy, &mut work)
+            bdsqr::<A, _, _, _>(
+                Uplo::Upper,
+                s,
+                &mut e_work,
+                &mut vt_dummy,
+                u,
+                &mut c_dummy,
+                &mut work,
+            )
         } else if wantvt {
             let mut u_dummy: Array2<A> = Array2::zeros((0, m));
             let mut vt_small = vt.slice_mut(s![..m, ..]);
-            bdsqr::<A, _, _, _>(Uplo::Upper, s, &mut e_work, &mut vt_small, &mut u_dummy, &mut c_dummy, &mut work)
+            bdsqr::<A, _, _, _>(
+                Uplo::Upper,
+                s,
+                &mut e_work,
+                &mut vt_small,
+                &mut u_dummy,
+                &mut c_dummy,
+                &mut work,
+            )
         } else {
             let mut vt_dummy: Array2<A> = Array2::zeros((m, 0));
             let mut u_dummy: Array2<A> = Array2::zeros((0, m));
-            bdsqr::<A, _, _, _>(Uplo::Upper, s, &mut e_work, &mut vt_dummy, &mut u_dummy, &mut c_dummy, &mut work)
+            bdsqr::<A, _, _, _>(
+                Uplo::Upper,
+                s,
+                &mut e_work,
+                &mut vt_dummy,
+                &mut u_dummy,
+                &mut c_dummy,
+                &mut work,
+            )
         };
 
         result?;

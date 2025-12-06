@@ -2,10 +2,12 @@ use ndarray::{ArrayBase, DataMut, Dimension};
 
 use crate::{Real, Scalar};
 
+mod bdsdc;
 mod bdsqr;
 mod gebrd;
 mod gelqf;
 mod geqrf;
+mod gesdd;
 mod gesvd;
 mod getrf;
 mod getrs;
