@@ -7,6 +7,7 @@ mod iamax;
 mod nrm2;
 mod rot;
 mod scal;
+mod swap;
 pub mod trmm;
 pub mod trmv;
 mod trsm;
