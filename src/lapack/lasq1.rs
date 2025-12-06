@@ -3,55 +3,8 @@ use std::ops::{AddAssign, MulAssign};
 use num_traits::Float;
 
 use super::las2::las2;
+use super::lascl;
 use super::lasq2::lasq2;
-
-/// Safely scales a slice by `c_to/c_from`, avoiding overflow/underflow.
-/// This is a simplified version of LAPACK's DLASCL for 1D arrays.
-#[allow(clippy::similar_names)]
-fn safe_scale<A: Float>(c_from: A, c_to: A, arr: &mut [A]) {
-    let zero = A::zero();
-    let one = A::one();
-    let sfmin = A::min_positive_value();
-    let big = one / sfmin;
-
-    let mut cfromc = c_from;
-    let mut ctoc = c_to;
-
-    loop {
-        let cfrom_small = cfromc * sfmin;
-        let (mul, done) = if cfrom_small == cfromc {
-            // cfromc is an inf. Multiply by a correctly signed zero for finite ctoc,
-            // or a NaN if ctoc is also inf.
-            (ctoc / cfromc, true)
-        } else {
-            let cto_big = ctoc / big;
-            if cto_big == ctoc {
-                // ctoc is either 0 or an inf. In both cases, ctoc itself serves as
-                // the correct multiplication factor.
-                (ctoc, true)
-            } else if cfrom_small.abs() > ctoc.abs() && ctoc != zero {
-                // cfromc is very large: scale down first
-                cfromc = cfrom_small;
-                (sfmin, false)
-            } else if cto_big.abs() > cfromc.abs() {
-                // ctoc is very large: scale up first
-                ctoc = cto_big;
-                (big, false)
-            } else {
-                // Normal case
-                (ctoc / cfromc, true)
-            }
-        };
-
-        for v in arr.iter_mut() {
-            *v = *v * mul;
-        }
-
-        if done {
-            break;
-        }
-    }
-}
 
 /// Computes the singular values of a real N-by-N bidiagonal matrix with
 /// diagonal D and off-diagonal E. The singular values are computed to
@@ -144,7 +97,7 @@ where
 
     // DLASCL( 'G', 0, 0, SIGMX, SCALE, 2*N-1, 1, WORK, 2*N-1, IINFO )
     // Scale WORK by SCALE/SIGMX using safe scaling to avoid overflow
-    safe_scale(sigmx, scale, &mut work[..2 * n - 1]);
+    lascl::general(sigmx, scale, &mut work[..2 * n - 1]);
 
     // Compute the q's and e's by squaring
     for w in work.iter_mut().take(2 * n - 1) {
@@ -163,7 +116,7 @@ where
             }
             // DLASCL( 'G', 0, 0, SCALE, SIGMX, N, 1, D, N, IINFO )
             // Unscale D by SIGMX/SCALE using safe scaling
-            safe_scale(scale, sigmx, &mut d[..n]);
+            lascl::general(scale, sigmx, &mut d[..n]);
             Ok(())
         }
         Err(2) => {
@@ -174,8 +127,8 @@ where
                 e[i] = work[2 * i + 1].sqrt();
             }
             // Unscale D and E using safe scaling
-            safe_scale(scale, sigmx, &mut d[..n]);
-            safe_scale(scale, sigmx, &mut e[..n]);
+            lascl::general(scale, sigmx, &mut d[..n]);
+            lascl::general(scale, sigmx, &mut e[..n]);
             Err(2)
         }
         Err(info) => Err(info),

@@ -1,45 +1,45 @@
-use ndarray::{ArrayBase, DataMut, Ix2};
-use num_traits::{Float, One, Zero};
+use num_traits::Float;
 
-use crate::{Real, Scalar};
-
-/// Multiplies a full matrix by a real scalar `c_to / c_from`.
+/// Multiplies a slice by a real scalar `c_to / c_from`, using iterative
+/// scaling to avoid overflow/underflow.
+///
+/// This is the "general" (type 'G') case of LAPACK's DLASCL.
 #[allow(dead_code)]
-pub(crate) fn full<A, S>(c_from: A::Real, c_to: A::Real, a: &mut ArrayBase<S, Ix2>)
-where
-    A: Scalar,
-    S: DataMut<Elem = A>,
-{
-    let small_num = A::Real::sfmin();
-    let large_num = A::Real::one() / small_num;
+pub(crate) fn general<A: Float>(c_from: A, c_to: A, a: &mut [A]) {
+    let small_num = A::min_positive_value();
+    let large_num = A::one() / small_num;
 
-    let mut c_from = c_from;
-    let mut c_to = c_to;
+    let mut cfromc = c_from;
+    let mut ctoc = c_to;
 
     loop {
-        let (mul, done) = {
-            let small_from = c_from * small_num;
-            if small_from == c_from {
-                ((c_to / c_from).into(), true)
+        let cfrom_small = cfromc * small_num;
+        let (mul, done) = if cfrom_small == cfromc {
+            // cfromc is inf: multiply by a correctly signed zero for finite ctoc,
+            // or a NaN if ctoc is infinite.
+            (ctoc / cfromc, true)
+        } else {
+            let cto_big = ctoc / large_num;
+            if cto_big == ctoc {
+                // ctoc is either 0 or inf. In both cases, ctoc itself serves as
+                // the correct multiplication factor.
+                (ctoc, true)
+            } else if cfrom_small.abs() > ctoc.abs() && ctoc != A::zero() {
+                // cfromc is large relative to ctoc: scale down iteratively
+                cfromc = cfrom_small;
+                (small_num, false)
+            } else if cto_big.abs() > cfromc.abs() {
+                // ctoc is large relative to cfromc: scale up iteratively
+                ctoc = cto_big;
+                (large_num, false)
             } else {
-                let small_to = c_to / large_num;
-                if small_to == c_to {
-                    c_from = A::Real::one();
-                    ((c_to).into(), true)
-                } else if small_from.abs() > c_to.abs() && c_to.abs() != A::Real::zero() {
-                    c_from = small_from;
-                    ((small_num).into(), false)
-                } else if small_to.abs() > c_from {
-                    c_to = small_to;
-                    ((large_num).into(), false)
-                } else {
-                    ((c_to / c_from).into(), true)
-                }
+                // Normal case: direct scaling is safe
+                (ctoc / cfromc, true)
             }
         };
 
         for v in a.iter_mut() {
-            *v *= mul;
+            *v = *v * mul;
         }
 
         if done {
@@ -50,12 +50,61 @@ where
 
 #[cfg(test)]
 mod tests {
-    use ndarray::arr2;
+    use approx::assert_abs_diff_eq;
 
     #[test]
-    fn full() {
-        let mut a = arr2(&[[3., 2.], [4., 3.]]);
-        super::full(2., 4., &mut a);
-        assert_eq!(a, arr2(&[[6., 4.], [8., 6.]]));
+    fn general_simple() {
+        let mut a = [3.0f64, 2.0, 4.0, 3.0];
+        super::general(2.0, 4.0, &mut a);
+        assert_eq!(a, [6.0, 4.0, 8.0, 6.0]);
+    }
+
+    #[test]
+    fn general_scale_down() {
+        // Scale down by a factor of 10
+        let mut a = [30.0f64, 20.0, 40.0];
+        super::general(10.0, 1.0, &mut a);
+        assert_eq!(a, [3.0, 2.0, 4.0]);
+    }
+
+    #[test]
+    fn general_extreme_scale_up() {
+        // Scale by a very large factor - should use iterative scaling
+        let mut a = [1.0f64, 2.0];
+        let scale = (f64::EPSILON / f64::MIN_POSITIVE).sqrt();
+        super::general(1.0, scale, &mut a);
+        // Result should be finite, not overflow
+        assert!(a[0].is_finite());
+        assert!(a[1].is_finite());
+        // And approximately correct
+        assert_abs_diff_eq!(a[0], scale, epsilon = scale * 1e-10);
+        assert_abs_diff_eq!(a[1], 2.0 * scale, epsilon = scale * 1e-10);
+    }
+
+    #[test]
+    fn general_extreme_scale_down() {
+        // Scale by a very small factor
+        let mut a = [1.0f64, 2.0];
+        let scale = (f64::EPSILON / f64::MIN_POSITIVE).sqrt();
+        super::general(scale, 1.0, &mut a);
+        // Result should be finite
+        assert!(a[0].is_finite());
+        assert!(a[1].is_finite());
+        // And approximately correct
+        assert_abs_diff_eq!(a[0], 1.0 / scale, epsilon = 1.0 / scale * 1e-10);
+    }
+
+    #[test]
+    fn general_empty() {
+        let mut a: [f64; 0] = [];
+        super::general(2.0, 4.0, &mut a);
+        // Should not panic
+    }
+
+    #[test]
+    fn general_f32() {
+        let mut a = [3.0f32, 2.0];
+        super::general(2.0f32, 6.0f32, &mut a);
+        assert_eq!(a, [9.0, 6.0]);
     }
 }
