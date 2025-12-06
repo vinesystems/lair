@@ -15,6 +15,7 @@ use num_traits::Float;
 ///
 /// * `PP` is not 0 or 1.
 #[allow(dead_code)]
+#[allow(clippy::too_many_lines)]
 pub(crate) fn lasq6<A, const PP: usize>(i0: usize, n0: usize, z: &mut [A]) -> (A, A, A, A, A, A)
 where
     A: Float + MulAssign,
@@ -24,7 +25,14 @@ where
     // Early return if not enough elements to process.
     // Fortran: IF( ( N0-I0-1 ).LE.0 ) RETURN
     if n0 <= i0 + 1 {
-        return (A::zero(), A::zero(), A::zero(), A::zero(), A::zero(), A::zero());
+        return (
+            A::zero(),
+            A::zero(),
+            A::zero(),
+            A::zero(),
+            A::zero(),
+            A::zero(),
+        );
     }
 
     // Initialize: Fortran uses 1-based I0/N0, we use 0-based i0/n0.
