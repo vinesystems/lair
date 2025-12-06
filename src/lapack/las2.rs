@@ -2,7 +2,7 @@ use num_traits::Float;
 
 /// Computes singular values of a 2x2 triangular matrix.
 #[allow(dead_code)]
-fn las2<T>(f: T, g: T, h: T) -> (T, T)
+pub(crate) fn las2<T>(f: T, g: T, h: T) -> (T, T)
 where
     T: Float,
 {

@@ -15,6 +15,7 @@ mod larfg;
 pub mod larft;
 mod lartg;
 mod las2;
+mod lasq1;
 pub mod lascl;
 pub mod laset;
 mod lasq2;
