@@ -4,6 +4,7 @@ use crate::{Real, Scalar};
 
 mod bdsqr;
 mod gebrd;
+mod gelqf;
 mod geqrf;
 mod getrf;
 mod getrs;
@@ -38,7 +39,7 @@ pub use getrs::getrs;
 pub use ilal::{ilalc, ilalr};
 pub use larfg::larfg;
 pub use laswp::laswp;
-use unglq::unglq;
+pub use unglq::unglq;
 use ungqr::ungqr;
 
 fn lacgv<A, S, D>(x: &mut ArrayBase<S, D>)
