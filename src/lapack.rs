@@ -24,6 +24,7 @@ mod lasq4;
 mod lasq5;
 mod lasq6;
 pub mod lasr;
+mod lasv2;
 mod laswp;
 mod ungbr;
 mod unglq;
