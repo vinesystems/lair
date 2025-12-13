@@ -16,6 +16,7 @@ rust-version = "1.68"
 default = []
 serde = ["dep:serde", "num-complex/serde"]
 serialization = ["serde"]  # Deprecated: use "serde" instead
+unstable-svd = []
 
 [dependencies]
 ndarray = "0.17"
