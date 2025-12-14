@@ -44,6 +44,11 @@ harness = false
 name = "getrs"
 harness = false
 
+[[bench]]
+name = "svd"
+harness = false
+required-features = ["unstable-svd"]
+
 [lints.clippy]
 pedantic = "warn"
 
