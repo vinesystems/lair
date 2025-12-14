@@ -8,6 +8,7 @@ use crate::{blas, lapack, Real, Scalar};
 #[derive(Debug, PartialEq)]
 pub(crate) struct Singular(usize);
 
+#[must_use]
 pub fn getrf<A>(a: ArrayViewMut2<A>) -> (Vec<usize>, Option<usize>)
 where
     A: Scalar,

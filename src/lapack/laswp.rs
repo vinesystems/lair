@@ -1,5 +1,12 @@
 use std::ptr;
 
+/// Swap matrix rows in place according to the provided pivot array.
+///
+/// # Safety
+///
+/// * `a` must point to a matrix with at least `piv.len()` rows and `ncols` columns.
+/// * `row_stride`/`col_stride` must describe the actual layout of that matrix.
+/// * `piv` must contain valid row indices; the function trusts the caller.
 #[allow(clippy::cast_possible_wrap)]
 pub unsafe fn laswp<T>(
     ncols: usize,

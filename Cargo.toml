@@ -17,6 +17,7 @@ default = []
 serde = ["dep:serde", "num-complex/serde"]
 serialization = ["serde"]  # Deprecated: use "serde" instead
 unstable-svd = []
+bench-lapack = []
 
 [dependencies]
 ndarray = "0.17"
@@ -31,6 +32,10 @@ criterion = "0.8"
 ndarray = { version = "0.17", features = ["approx"] }
 ndarray-rand = "0.16"
 rand_isaac = "0.4"
+
+[[bench]]
+name = "gebrd"
+harness = false
 
 [[bench]]
 name = "geqrf"

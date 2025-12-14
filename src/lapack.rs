@@ -4,7 +4,7 @@ use crate::{Real, Scalar};
 
 mod bdsdc;
 mod bdsqr;
-mod gebrd;
+pub(crate) mod gebrd;
 mod gelqf;
 mod geqrf;
 pub mod gesdd;

@@ -71,6 +71,16 @@ pub enum Job {
 /// * `Ok(())` if successful.
 /// * `Err(i)` if the SVD algorithm failed to converge; `i` indicates how many
 ///   superdiagonals did not converge to zero.
+///
+/// # Errors
+///
+/// Returns `Err(i)` if the algorithm fails to converge; `i` is the number of
+/// superdiagonals that did not converge to zero.
+///
+/// # Panics
+///
+/// Panics if the provided buffers do not match the expected dimensions for
+/// the chosen `job`, or if `s` is not `min(m, n)` long.
 #[allow(dead_code)]
 #[allow(clippy::many_single_char_names)]
 #[allow(clippy::similar_names)]
