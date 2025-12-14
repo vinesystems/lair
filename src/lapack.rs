@@ -8,6 +8,7 @@ mod gebrd;
 mod gelqf;
 mod geqrf;
 pub mod gesdd;
+#[cfg(feature = "unstable-svd")]
 pub mod gesvd;
 mod getrf;
 mod getrs;
