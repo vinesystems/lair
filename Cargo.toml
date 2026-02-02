@@ -31,7 +31,7 @@ approx = "0.5"                                        # Update only when ndarray
 criterion = "0.8"
 ndarray = { version = "0.17", features = ["approx"] }
 ndarray-rand = "0.16"
-rand_isaac = "0.4"
+rand_isaac = "0.5"
 
 [[bench]]
 name = "gebrd"
