@@ -27,6 +27,7 @@ where
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)]
 mod tests {
     use ndarray::{arr2, Array2};
     use num_complex::Complex32;

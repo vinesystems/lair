@@ -64,7 +64,7 @@ mod tests {
                 a.as_mut_ptr(),
                 a.stride_of(Axis(0)),
                 a.stride_of(Axis(1)),
-            )
+            );
         };
         assert_abs_diff_eq!(a[(0, 0)].re, -7.);
         assert_abs_diff_eq!(a[(0, 0)].im, 8.);

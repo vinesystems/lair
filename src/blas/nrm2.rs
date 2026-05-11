@@ -15,6 +15,7 @@ where
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp, clippy::unreadable_literal)]
 mod tests {
     use approx::assert_abs_diff_eq;
     use ndarray::arr1;

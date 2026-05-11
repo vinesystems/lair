@@ -340,6 +340,11 @@ where
 }
 
 #[cfg(test)]
+#[allow(
+    clippy::cast_precision_loss,
+    clippy::too_many_arguments,
+    clippy::type_complexity
+)]
 mod tests {
     use super::lasq3;
 
@@ -447,8 +452,8 @@ mod tests {
         );
 
         // Should have done at least one iteration
-        assert!(iter >= 1, "iter should be at least 1, got {}", iter);
-        assert!(n_div >= 1, "n_div should be at least 1, got {}", n_div);
+        assert!(iter >= 1, "iter should be at least 1, got {iter}");
+        assert!(n_div >= 1, "n_div should be at least 1, got {n_div}");
     }
 
     #[test]
@@ -505,7 +510,7 @@ mod tests {
             1, 10, &mut z, 2, 1.0, 0.0, 0.0, 4.0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.25, 0.0,
         );
 
-        assert!(pp <= 1, "pp should be 0 or 1, got {}", pp);
+        assert!(pp <= 1, "pp should be 0 or 1, got {pp}");
     }
 
     #[test]

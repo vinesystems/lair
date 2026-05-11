@@ -58,6 +58,7 @@ where
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)]
 mod tests {
     use approx::assert_abs_diff_eq;
     use num_complex::Complex64;

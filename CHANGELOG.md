@@ -5,6 +5,12 @@ file is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and
 this project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Chagned
+
+* Requires Rust 1.71 or later.
+
 ## [0.8.0] - 2025-11-17
 
 ### Changed
@@ -96,6 +102,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 * A circulent matrix builder.
 * A companion matrix builder.
 
+[Unreleased]: https://github.com/vinesystems/lair/compare/0.8.0...main
 [0.8.0]: https://github.com/vinesystems/lair/compare/0.7.0...0.8.0
 [0.7.0]: https://github.com/vinesystems/lair/compare/0.6.0...0.7.0
 [0.6.0]: https://github.com/vinesystems/lair/compare/0.5.0...0.6.0

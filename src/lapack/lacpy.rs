@@ -15,14 +15,14 @@ where
     for (i, (a_row, mut b_row)) in a
         .lanes(Axis(1))
         .into_iter()
-        .zip(b.lanes_mut(Axis(1)).into_iter())
+        .zip(b.lanes_mut(Axis(1)))
         .enumerate()
     {
         let ncols = cmp::min(ncols, i + 1);
         for (a_v, b_v) in a_row
             .slice(s![..ncols])
             .iter()
-            .zip(b_row.slice_mut(s![..ncols]).into_iter())
+            .zip(b_row.slice_mut(s![..ncols]))
         {
             *b_v = *a_v;
         }
@@ -40,21 +40,18 @@ where
     for (i, (a_row, mut b_row)) in a
         .lanes(Axis(1))
         .into_iter()
-        .zip(b.lanes_mut(Axis(1)).into_iter())
+        .zip(b.lanes_mut(Axis(1)))
         .enumerate()
         .take(col_min)
     {
-        for (a_v, b_v) in a_row
-            .slice(s![i..])
-            .iter()
-            .zip(b_row.slice_mut(s![i..]).into_iter())
-        {
+        for (a_v, b_v) in a_row.slice(s![i..]).iter().zip(b_row.slice_mut(s![i..])) {
             *b_v = *a_v;
         }
     }
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)]
 mod tests {
     use ndarray::{arr2, Array2};
 

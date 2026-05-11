@@ -171,6 +171,7 @@ where
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp, clippy::unreadable_literal)]
 mod tests {
     use std::cmp;
 

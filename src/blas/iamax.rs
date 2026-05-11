@@ -21,12 +21,13 @@ where
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)]
 mod tests {
     #[test]
     fn iamax() {
         let (idx, max) = unsafe {
             let x = [1., 3., 2.];
-            super::iamax(x.len(), &x as *const f64, 1)
+            super::iamax(x.len(), std::ptr::addr_of!(x).cast::<f64>(), 1)
         };
         assert_eq!(idx, 1);
         assert_eq!(max, 3.);

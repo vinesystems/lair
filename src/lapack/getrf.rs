@@ -82,14 +82,14 @@ unsafe fn getrf_row_major<A: Scalar>(
                     let ratio = *row_j;
                     let mut row_i = a_ptr.offset(row_stride * ul as isize + ul as isize);
                     for _ in ul + 1..a.ncols() {
-                        row_i = row_i.offset(1);
+                        row_i = row_i.add(1);
                         let elem = ratio * *row_i;
                         *row_i.offset(j * row_stride) -= elem;
                     }
                 }
             } else if row_stride == 1 {
                 for j in 1..(a.nrows() - ul) as isize {
-                    row_j = row_j.offset(1);
+                    row_j = row_j.add(1);
                     *row_j *= pivot_recip;
                     let ratio = *row_j;
                     let mut row_i = a_ptr.offset(ul as isize + col_stride * ul as isize);
@@ -333,6 +333,7 @@ unsafe fn swap_rows<A>(mut n: usize, mut row1: *mut A, mut row2: *mut A, stride:
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp, clippy::unreadable_literal)]
 mod tests {
     use approx::assert_abs_diff_eq;
     use ndarray::{arr2, Array2, ArrayBase, Axis};
@@ -366,7 +367,7 @@ mod tests {
         let (pivots, singular) = super::getrf(a.view_mut());
         assert_eq!(pivots, vec![0]);
         assert!(singular.is_none());
-        assert_eq!(a, arr2(&[[3.]]))
+        assert_eq!(a, arr2(&[[3.]]));
     }
 
     #[test]
@@ -374,7 +375,7 @@ mod tests {
         let mut a = arr2(&[[3_f64]]);
         let p = super::getrf_recursive(a.view_mut()).expect("valid input");
         assert_eq!(p, vec![0]);
-        assert_eq!(a, arr2(&[[3.]]))
+        assert_eq!(a, arr2(&[[3.]]));
     }
 
     #[test]

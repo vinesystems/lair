@@ -274,6 +274,7 @@ where
 }
 
 #[cfg(test)]
+#[allow(clippy::needless_range_loop, clippy::too_many_arguments)]
 mod tests {
     use super::lasq4;
 

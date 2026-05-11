@@ -87,6 +87,7 @@ where
 }
 
 #[cfg(test)]
+#[allow(clippy::unreadable_literal)]
 mod tests {
     use approx::assert_abs_diff_eq;
     use ndarray::{arr1, arr2};

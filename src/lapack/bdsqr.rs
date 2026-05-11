@@ -764,6 +764,7 @@ fn sign<T: Real>(a: T, b: T) -> T {
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp, clippy::many_single_char_names)]
 mod tests {
     use approx::assert_abs_diff_eq;
     use ndarray::{arr2, Array2};
@@ -1110,7 +1111,7 @@ mod tests {
         assert!(result.is_ok());
         // Singular values should be positive and sorted
         for i in 0..n {
-            assert!(d[i] > 0.0, "Singular value {} should be positive", i);
+            assert!(d[i] > 0.0, "Singular value {i} should be positive");
             if i > 0 {
                 assert!(d[i - 1] >= d[i], "Singular values should be sorted");
             }
@@ -1138,7 +1139,7 @@ mod tests {
         assert!(result.is_ok());
         // Check singular values are positive and sorted
         for i in 0..4 {
-            assert!(d[i] > 0.0, "Singular value {} should be positive", i);
+            assert!(d[i] > 0.0, "Singular value {i} should be positive");
             if i > 0 {
                 assert!(d[i - 1] >= d[i], "Singular values should be sorted");
             }

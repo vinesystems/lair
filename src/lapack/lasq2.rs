@@ -449,7 +449,7 @@ mod tests {
     fn test_single_element() {
         let mut z = [4.0f64];
         assert!(lasq2(1, &mut z).is_ok());
-        assert_eq!(z[0], 4.0);
+        assert!((z[0] - 4.0).abs() < 1e-10);
     }
 
     #[test]
@@ -568,8 +568,7 @@ mod tests {
         let result = lasq2(3, &mut z);
         assert!(
             result.is_ok(),
-            "Well-conditioned matrix should converge, got {:?}",
-            result
+            "Well-conditioned matrix should converge, got {result:?}"
         );
 
         // Check eigenvalues are positive and sorted
@@ -588,7 +587,7 @@ mod tests {
 
         // Set up a well-conditioned bidiagonal matrix
         for i in 0..n {
-            z[2 * i] = (n - i) as f64 + 1.0; // q values: 6, 5, 4, 3, 2
+            z[2 * i] = [6.0, 5.0, 4.0, 3.0, 2.0][i];
             if i < n - 1 {
                 z[2 * i + 1] = 0.05; // small off-diagonal
             }
@@ -597,13 +596,12 @@ mod tests {
         let result = lasq2(n, &mut z);
         assert!(
             result.is_ok(),
-            "Well-conditioned larger matrix should converge, got {:?}",
-            result
+            "Well-conditioned larger matrix should converge, got {result:?}"
         );
 
         // Check eigenvalues are positive and sorted
         for i in 0..n {
-            assert!(z[i] > 0.0, "Eigenvalue {} should be positive", i);
+            assert!(z[i] > 0.0, "Eigenvalue {i} should be positive");
             if i > 0 {
                 assert!(
                     z[i - 1] >= z[i],

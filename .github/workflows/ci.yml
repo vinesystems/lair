@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Install Rust
-      uses: dtolnay/rust-toolchain@1.68.0
+      uses: dtolnay/rust-toolchain@1.71.0
     - uses: actions/checkout@v6
     - name: Check compilation
       run: cargo build --verbose
@@ -54,4 +54,4 @@ jobs:
     - name: Generate coverage report
       run: cargo llvm-cov --workspace --lcov --output-path lcov.info
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@v6

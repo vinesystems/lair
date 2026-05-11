@@ -67,6 +67,7 @@ pub(crate) fn lartg<T: Real>(f: T, g: T) -> (T, T, T) {
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp, clippy::unreadable_literal)]
 mod tests {
     use approx::assert_abs_diff_eq;
 

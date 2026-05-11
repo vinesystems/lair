@@ -154,7 +154,7 @@ mod tests {
         let mut e: [f64; 0] = [];
         let mut work = [0.0f64; 4];
         assert!(lasq1(&mut d, &mut e, &mut work).is_ok());
-        assert_eq!(d[0], 3.0);
+        assert_abs_diff_eq!(d[0], 3.0, epsilon = 1e-10);
     }
 
     #[test]
@@ -163,7 +163,7 @@ mod tests {
         let mut e: [f64; 0] = [];
         let mut work = [0.0f64; 4];
         assert!(lasq1(&mut d, &mut e, &mut work).is_ok());
-        assert_eq!(d[0], 5.0); // Should take absolute value
+        assert_abs_diff_eq!(d[0], 5.0, epsilon = 1e-10); // Should take absolute value
     }
 
     #[test]
@@ -217,7 +217,7 @@ mod tests {
         let mut e: [f32; 0] = [];
         let mut work = [0.0f32; 4];
         assert!(lasq1(&mut d, &mut e, &mut work).is_ok());
-        assert_eq!(d[0], 3.0);
+        assert_abs_diff_eq!(d[0], 3.0, epsilon = 1e-6);
     }
 
     #[test]
@@ -230,7 +230,7 @@ mod tests {
         let mut e = [1.0f64, 1.0];
         let mut work = [0.0f64; 12];
         let result = lasq1(&mut d, &mut e, &mut work);
-        assert!(result.is_ok(), "Expected convergence, got {:?}", result);
+        assert!(result.is_ok(), "Expected convergence, got {result:?}");
 
         // Check singular values are positive and sorted
         assert!(d[0] > 0.0);
@@ -247,11 +247,11 @@ mod tests {
         let mut e = [0.1f64, 0.1, 0.1];
         let mut work = [0.0f64; 16];
         let result = lasq1(&mut d, &mut e, &mut work);
-        assert!(result.is_ok(), "Expected convergence, got {:?}", result);
+        assert!(result.is_ok(), "Expected convergence, got {result:?}");
 
         // Check singular values are positive and sorted
         for i in 0..4 {
-            assert!(d[i] > 0.0, "Singular value {} should be positive", i);
+            assert!(d[i] > 0.0, "Singular value {i} should be positive");
             if i > 0 {
                 assert!(d[i - 1] >= d[i], "Singular values should be sorted");
             }

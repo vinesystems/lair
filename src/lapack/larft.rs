@@ -18,7 +18,7 @@ where
     }
 
     let mut prev_last_v = v.nrows();
-    for (i, ((v_row_i, v_col_i), &tau_i)) in (v.rows().into_iter().zip(v.columns().into_iter()))
+    for (i, ((v_row_i, v_col_i), &tau_i)) in (v.rows().into_iter().zip(v.columns()))
         .zip(tau.iter())
         .take(v.ncols())
         .enumerate()
@@ -27,11 +27,7 @@ where
             continue;
         }
 
-        for (&v_i_j, t_j_i) in v_row_i
-            .iter()
-            .zip(triangular.column_mut(i).into_iter())
-            .take(i)
-        {
+        for (&v_i_j, t_j_i) in v_row_i.iter().zip(triangular.column_mut(i)).take(i) {
             *t_j_i = -tau_i * v_i_j;
         }
         prev_last_v = cmp::max(i, prev_last_v);

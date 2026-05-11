@@ -17,7 +17,7 @@ pub fn gemm<A, SA, SB, SC>(
     SC: DataMut<Elem = A>,
 {
     for (a_row, c_row) in a.rows().into_iter().zip(c.rows_mut()) {
-        for (b_col, c_elem) in b.columns().into_iter().zip(c_row.into_iter()) {
+        for (b_col, c_elem) in b.columns().into_iter().zip(c_row) {
             let dot_product = a_row
                 .iter()
                 .zip(b_col)

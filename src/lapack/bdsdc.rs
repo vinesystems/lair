@@ -923,6 +923,7 @@ fn sign<T: Real>(a: T, b: T) -> T {
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)]
 mod tests {
     use approx::assert_abs_diff_eq;
     use ndarray::{arr2, Array2};
